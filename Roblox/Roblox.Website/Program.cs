@@ -137,7 +137,7 @@ builder.WebHost.ConfigureKestrel(options =>
 });
 builder.Services.AddHttpClient("FrontendProxy", client =>
 {
-    Console.WriteLine("[frotnedproxy] base address: " + "http://localhost:3000"); // got too lazy icl
+    
     client.BaseAddress = new Uri("http://localhost:3000");
     client.Timeout = TimeSpan.FromSeconds(20);
     client.DefaultRequestHeaders.ConnectionClose = false;
