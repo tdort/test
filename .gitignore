@@ -1,12 +1,4 @@
 <<<<<<< HEAD
-# project deps
-**/node_modules
-# configuration files
-**/config.json
-# env files
-**/*.env
-# js files (in src)
-src/*.js
 
 # prefix folders with old- if not used anymore/unsure if going to be added
 services/old-*
