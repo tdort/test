@@ -613,7 +613,7 @@ namespace Roblox.Website.Controllers
 
 				if (await services.users.IsDiscordIdUsed(userinfo.id))
 				{
-					return Redirect("/?signupmsg=This Discord account is already linked to another BubbaBlox account.");
+					return Redirect("/?signupmsg=This Discord account is already linked to another Okapi account.");
 				}
 				
 				// this is so retarded please change this later (this should match validatesignupcookie)

@@ -101,12 +101,10 @@ function start(placeId, port, url)
 	
 	------------------------------END START GAME SHARED SCRIPT--------------------------
 	
-	
-	
 	-- StartGame -- 
 	game:GetService("RunService"):Run()
 	
 	
 	end
 	
-start(%placeId%, %port%, "http://bb.zawg.ca")	
+start(%placeId%, %port%, "http://queef.bond")	

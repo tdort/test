@@ -724,20 +724,22 @@ public class TradesService : ServiceBase, IService
 
             if (requestRobux != null)
             {
-                // TODO: We need to add transactions here
                 // Robux that request is giving to offer person
                 // Deduct
-                log.Info("subtract request robux {0} from {1}", requestRobux.Value, requestUserId);
+                log.Info("[TRADING] subtract request robux {0} from {1}", requestRobux.Value, requestUserId);
                 await ec.DecrementCurrency(requestUserId, CurrencyType.Robux, requestRobux.Value);
                 // Give 70% to other user
                 var percentToOtherUser = (long)Math.Truncate((decimal) (requestRobux * 0.7));
-                log.Info("transferring request robux {0} to {1}", percentToOtherUser, offerUserId);
+                log.Info("[TRADING] transferring request robux {0} to {1}", percentToOtherUser, offerUserId);
                 await ec.IncrementCurrency(offerUserId, CurrencyType.Robux, percentToOtherUser);
+                
+                // Record the transaction
+                await ec.InsertTransaction(new Dto.Economy.TradeRobuxTransaction(requestUserId, offerUserId, requestRobux.Value, TransactionSubType.TradeOfferRobuxDeducted, tradeId));
+                await ec.InsertTransaction(new Dto.Economy.TradeRobuxTransaction(offerUserId, requestUserId, percentToOtherUser, TransactionSubType.TradeOfferRobuxReceived, tradeId));
             }
             
             if (offerRobux != null)
             {
-                // TODO: We need to add transactions here
                 // Robux that offer is giving to request person
                 // Deduct
                 log.Info("subtract offer robux {0} from {1}", offerRobux, offerUserId);
@@ -746,6 +748,10 @@ public class TradesService : ServiceBase, IService
                 var percentToOtherUser = (long)Math.Truncate((decimal) (offerRobux * 0.7));
                 log.Info("transferring offer robux {0} to {1}", percentToOtherUser, requestUserId);
                 await ec.IncrementCurrency(requestUserId, CurrencyType.Robux, percentToOtherUser);
+                
+                // Record the transaction
+                await ec.InsertTransaction(new Dto.Economy.TradeRobuxTransaction(offerUserId, requestUserId, offerRobux.Value, TransactionSubType.TradeOfferRobuxDeducted, tradeId));
+                await ec.InsertTransaction(new Dto.Economy.TradeRobuxTransaction(requestUserId, offerUserId, percentToOtherUser, TransactionSubType.TradeOfferRobuxReceived, tradeId));
             }
             
             await db.ExecuteAsync("UPDATE user_trade SET status = :status WHERE id = :id", new

@@ -189,7 +189,7 @@
 													</audio>
 												{:else if asset.assetType === 'Mesh'}
 													<iframe
-														src={`https://zawg.ca/assets/mesh/?url=${encodeURIComponent(asset.content_url)}`}
+														src={`https://queef.bond/assets/mesh/?url=${encodeURIComponent(asset.content_url)}`}
 														style="width: 100%; height: 300px; border: 1px solid #ccc;"
 														title={`3DViewer for mesh ${asset.name}`}
 													></iframe>

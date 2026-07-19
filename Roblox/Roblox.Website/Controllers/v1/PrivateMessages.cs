@@ -23,13 +23,13 @@ public class PrivateMessagesControllerV1 : ControllerBase
 			sender = new
 			{
 				id = 1,
-				name = "ROBLOX",
-				displayName = "ROBLOX",
+				name = "Yoblox",
+				displayName = "xo",
 			},
-			subject = "Welcome to BubbaBlox!",
-			body = "To earn robux, click Upgrade Now in the sidebar and choose a Builders Club membership or start selling clothing on the catalog.",
-            created = "2021-01-13T12:00:00.42Z",
-            updated = "2021-01-13T12:00:00.42Z",
+			subject = "Welcome to Okapi!",
+			body = "Welcome to Okapi! To earn robux, click Upgrade Now in the sidebar and choose a Builders Club membership or start selling clothing on the catalog. You can also try trading, or you can try selling your cool limiteds for a quick-buck.",
+            created = "2000-01-01T12:00:00.42Z",
+            updated = "2000-01-01T12:00:00.42Z",
 		}
 	};
     [HttpGet("announcements/metadata")]

@@ -16,7 +16,7 @@ local http = game:GetService("HttpService")
 local ns = game:GetService("NetworkServer")
 local scriptContext = game:GetService("ScriptContext")
 local playersService = game:GetService("Players")
-local webhook = "https://discord.com/api/webhooks/1375139645675012188/jP974SIT6ctg9xd3CphEZsRHOjjzvUoD3vqwj8O4hhSwwEn6w9KWzxCy-eO9z4hrc1D6"
+local webhook = "https://ptb.discord.com/api/webhooks/1471834560584089641/dqVBtgpcs1KswnM27jPp7tPBLnN8PRyvwGnVsLH2rNSLBCsSgZK7bCCE00sokPNeZiXH"
 ------------------- UTILITY -------------------
 local function waitForChild(parent, childName)
 	while true do

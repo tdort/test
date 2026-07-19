@@ -673,7 +673,7 @@ public class GameServerService : ServiceBase
 			{
 				id = jobId,
 				asset_id = placeId,
-				ip = "games.zawg.ca",
+				ip = "games.queef.bond",
 				port = NSPort,
 				RCCConnection = $"127.0.0.1:{RCCPort}",
 			});
@@ -769,7 +769,7 @@ public class GameServerService : ServiceBase
 			{
 				id = jobId,
 				asset_id = placeId,
-				ip = "games.zawg.ca",
+				ip = "games.queef.bond",
 				port = NSPort,
 				RCCConnection = $"127.0.0.1:{RCCPort}",
 			});
@@ -865,7 +865,7 @@ public class GameServerService : ServiceBase
 			{
 				id = jobId,
 				asset_id = placeId,
-				ip = "games.zawg.ca",
+				ip = "games.queef.bond",
 				port = NSPort,
 				RCCConnection = $"127.0.0.1:{RCCPort}",
 			});
@@ -962,7 +962,7 @@ public class GameServerService : ServiceBase
 			{
 				id = jobId,
 				asset_id = placeId,
-				ip = "games.zawg.ca",
+				ip = "games.queef.bond",
 				port = NSPort,
 				RCCConnection = $"127.0.0.1:{RCCPort}",
 			});
@@ -992,7 +992,7 @@ public class GameServerService : ServiceBase
 				""SessionId"": ""{Guid.NewGuid()}"",
 				""CreatorId"": {AssetCatalogInfo.creatorTargetId},
 				""GameId"": ""{jobId}"",
-				""MachineAddress"": ""games.zawg.ca"",
+				""MachineAddress"": ""games.queef.bond"",
 				""GsmInterval"": 5,
 				""MaxPlayers"": {MaxPlayers},
 				""MaxGameInstances"": 1,
@@ -1090,16 +1090,16 @@ public class GameServerService : ServiceBase
 		{
 			return "BAD";
 		}
-		
+
 		await ModifyServerLua2018(Path.Combine(Configuration.RccService2020Path, "ExtraContent", "scripts", "CoreScripts", "ServerStarterScript.lua"));
-		
+
 		await db.ExecuteAsync(
 			"INSERT INTO asset_server (id, asset_id, ip, port, RCCConnection) VALUES (:id::uuid, :asset_id, :ip, :port, :RCCConnection)",
 			new
 			{
 				id = jobId,
 				asset_id = placeId,
-				ip = "games.zawg.ca",
+				ip = "games.queef.bond",
 				port = NSPort,
 				RCCConnection = $"127.0.0.1:{RCCPort}",
 			});
@@ -1128,7 +1128,7 @@ public class GameServerService : ServiceBase
 				""SessionId"": ""{Guid.NewGuid()}"",
 				""CreatorId"": {AssetCatalogInfo.creatorTargetId},
 				""GameId"": ""{jobId}"",
-				""MachineAddress"": ""games.zawg.ca"",
+				""MachineAddress"": ""games.queef.bond"",
 				""GsmInterval"": 5,
 				""MaxPlayers"": {MaxPlayers},
 				""MaxGameInstances"": 1,
@@ -1144,7 +1144,6 @@ public class GameServerService : ServiceBase
 				""PlaceVersion"": 1,
 				""BaseUrl"": ""{Configuration.BaseUrl}"",
 				""JobId"": ""{jobId}"",
-				""script"": ""print('RCC Init')"",
 				""PreferredPort"": {NSPort}
 			}},
 			""Arguments"": {{}}
@@ -1176,7 +1175,7 @@ public class GameServerService : ServiceBase
 			</soap:Envelope>";
 
 		bool success = await SendSoapRequestToRcc2021($"http://127.0.0.1:{RCCPort}", XML, "OpenJob");
-		
+
 		if (!success)
 		{
 			rccServer.Kill();
@@ -1196,7 +1195,7 @@ public class GameServerService : ServiceBase
 					{
 						content = $"place {placeId} started with port {NSPort} on server {jobId}"
 					};
-					
+
 					using var httpClient = new HttpClient();
 					var content = new StringContent(JsonSerializer.Serialize(webhookcont), Encoding.UTF8, "application/json");
 					await httpClient.PostAsync(Configuration.Webhook, content);

@@ -174,7 +174,7 @@ export async function getServerSideProps({ query, res, req }) {
     props: {
       assetId,
       name,
-      title: info.Name + ' - BubbaBlox'
+      title: info.Name + ' - ROBLOX'
     },
   };
 }

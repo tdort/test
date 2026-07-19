@@ -1,4 +1,5 @@
 using System;
+using System.Net;
 using System.Collections.Generic;
 using System.IO;
 using System.IO.Compression;
@@ -31,6 +32,13 @@ namespace Roblox.Website.Controllers
     [MVC.Route("/")]
     public class Assets : ControllerBase 
     {		
+        private static readonly HttpClient _proxyClient = new(new HttpClientHandler()
+        {
+            AutomaticDecompression = DecompressionMethods.All,
+        })
+        {
+            Timeout = TimeSpan.FromSeconds(30)
+        };
 	    [HttpGet("asset/shader")]
         public async Task<MVC.ActionResult> GetShaderAsset(long id)
         {
@@ -121,6 +129,10 @@ namespace Roblox.Website.Controllers
         [HttpPostBypass("asset")]
 		public async Task<MVC.ActionResult> GetAssetById(long id, [MVC.FromQuery] string? apiKey = null, [MVC.FromQuery(Name = "assetversionid")] long? assetVersionId = null)
         {
+			if (id <= 0)
+			{
+				throw new RobloxException(400, 0, "Asset is invalid or does not exist");
+			}
 			var CachedRobloxAsset = await GetCachedAsset(id);
 			if (CachedRobloxAsset != null)
 			{
@@ -135,12 +147,20 @@ namespace Roblox.Website.Controllers
 			
 			if (apiKey == Configuration.RccAuthorization || apiKey == Configuration.RenderAuthorization)
 			{
-				var latestVersionSecret = await services.assets.GetLatestAssetVersion(id);
-				if (latestVersionSecret?.contentUrl == null)
-					throw new RobloxException(400, 0, "Content URL is null");
+				try
+				{
+					var latestVersionSecret = await services.assets.GetLatestAssetVersion(id);
+					if (latestVersionSecret?.contentUrl == null)
+						throw new RobloxException(400, 0, "Content URL is null");
 
-				var assetContentSecret = await services.assets.GetAssetContent(latestVersionSecret.contentUrl);
-				return base.File(assetContentSecret, "application/binary");
+					var assetContentSecret = await services.assets.GetAssetContent(latestVersionSecret.contentUrl);
+					return base.File(assetContentSecret, "application/binary");
+				}
+				catch (RecordNotFoundException)
+				{
+					// If not found locally, allow it to fall through to the proxy fallback logic below
+					Console.WriteLine($"[proxy] asset {id} not found locally for RCC, falling through to proxy...");
+				}
 			}
 			
             // TODO: This endpoint needs to be updated to return a URL to the asset, not the asset itself.
@@ -196,24 +216,19 @@ namespace Roblox.Website.Controllers
 					// i HATE HTTP HEADERS AND PROXIES!!!!!!
 					var pxyurl = $"{Configuration.AssetUrl}/asset/?id={assetId}";
 
-					using var httpClient = new HttpClient();
-					httpClient.Timeout = TimeSpan.FromSeconds(10);
-					
 					try
 					{
 						var stopwatch = Stopwatch.StartNew();
 						
-						var response = await httpClient.GetAsync(pxyurl, HttpCompletionOption.ResponseHeadersRead);
+						var response = await _proxyClient.GetAsync(pxyurl, HttpCompletionOption.ResponseHeadersRead);
 						stopwatch.Stop();
 						
 						if (response.IsSuccessStatusCode)
 						{
-							var content = await response.Content.ReadAsByteArrayAsync();
 							var contentType = response.Content.Headers.ContentType?.MediaType ?? "application/octet-stream";
 
 							Response.Headers.Clear();
 
-							// is it necessary to copy all headers except bad ones?
 							foreach (var header in response.Headers)
 							{
 								if (!isheaderbad(header.Key))
@@ -224,18 +239,29 @@ namespace Roblox.Website.Controllers
 
 							Response.Headers["Content-Type"] = contentType;
 							
-							// Sorry whoever's hosting this 😂
+							var stream = await response.Content.ReadAsStreamAsync();
+							
+							// Read into memory for caching, but stream to response
+							var ms = new MemoryStream();
+							await stream.CopyToAsync(ms);
+							var content = ms.ToArray();
+							
 							await CacheAsset(assetId, content, contentType);
 							return base.File(content, contentType);
 						}
 						else
 						{
+							Console.WriteLine($"[proxy] failed to fetch asset {assetId} from proxy: {response.StatusCode}. Marking as invalid.");
+							await Services.Cache.distributed.StringSetAsync(invalidIdKey, "1", TimeSpan.FromMinutes(10));
 							throw new RobloxException(400, 0, $"{response.StatusCode}");
 						}
 					}
 					catch (Exception ex)
 					{				
-						if (ex is TaskCanceledException && !ex.Message.Contains("canceled"))
+						Console.WriteLine($"[proxy] exception fetching asset {assetId} from proxy: {ex.Message}. Marking as invalid.");
+						await Services.Cache.distributed.StringSetAsync(invalidIdKey, "1", TimeSpan.FromMinutes(10));
+
+						if (ex is TaskCanceledException)
 						{
 							throw new RobloxException(400, 0, "Timeout");
 						}
@@ -275,7 +301,11 @@ namespace Roblox.Website.Controllers
                 case Models.Assets.Type.Special:
                     if (latestVersion.contentUrl != null)
                         assetContent = await services.assets.GetAssetContent(latestVersion.contentUrl);
-                    // encryptionEnabled = false;
+                    // Prevent images from being played as audio by boombox
+                    if (assetContent != null && isRcc)
+                    {
+                        HttpContext.Response.Headers["Content-Type"] = "image/png";
+                    }
                     break;
                 // Types that require no authentication
                 case Models.Assets.Type.Audio:
@@ -320,7 +350,7 @@ namespace Roblox.Website.Controllers
 						//Console.WriteLine($"[debug] no content URL for assetId: {assetId}, assetType: {details.assetType}, moderationStatus: {details.moderationStatus}");
                     if (details.assetType == Models.Assets.Type.Audio)
                     {
-                        // Convert to WAV file (todo: do we keep this?)
+                        // Convert to WAV file ( todo: do we keep this? answer: fuck no and i changed it (hopefully) ) use mp3 now
                         assetContent = await services.assets.GetAudioContentAsWav(assetId, latestVersion.contentUrl);
                     }
                     else

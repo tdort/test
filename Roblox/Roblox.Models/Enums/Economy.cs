@@ -40,6 +40,8 @@ namespace Roblox.Models.Economy
         StaffReportReview,
         GroupPayoutReceived,
         GroupPayoutSent,
+        TradeOfferRobuxDeducted,
+        TradeOfferRobuxReceived,
     }
 
     public enum PurchaseAbuseFailureReason

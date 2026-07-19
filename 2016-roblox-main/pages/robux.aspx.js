@@ -43,7 +43,7 @@ const ROBUX = () => {
       <iframe
         className={classes.iframe}
         src={iframeSrc}
-        title="ROBUX - BubbaBlox"
+        title="ROBUX - ROBLOX"
         onError={(e) => {
           console.error("iframe failed to load:", e);
         }}

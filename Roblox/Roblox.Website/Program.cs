@@ -84,6 +84,8 @@ Roblox.Configuration.BotAuthorization = configuration.GetSection("BotAuthorizati
 IConfiguration gameServerConfig = new ConfigurationBuilder().AddJsonFile("game-servers.json").Build();
 Roblox.Configuration.GameServerIpAddresses = gameServerConfig.GetSection("GameServers").Get<IEnumerable<GameServerConfigEntry>>();
 Roblox.Configuration.RccAuthorization = configuration.GetSection("RccAuthorization").Value;
+// beautiful
+Roblox.Configuration.RccServiceName = configuration.GetSection("RccServiceName").Value;
 Roblox.Configuration.AllowedQuietGetJson = configuration.GetSection("AllowedQuietGetJson").GetChildren().Select(c => c.Value);
 Roblox.Configuration.AssetValidationServiceUrl =
     configuration.GetSection("AssetValidation:BaseUrl").Value;
@@ -105,7 +107,7 @@ Roblox.Configuration.SignupAssetIdsFemale = configuration.GetSection("SignupAsse
 Roblox.Configuration.SignupAvatarAssetIdsMan = configuration.GetSection("SignupAvatarAssetIdsMan").GetChildren().Select(c => long.Parse(c.Value));
 Roblox.Configuration.SignupAvatarAssetIdsFemale = configuration.GetSection("SignupAvatarAssetIdsFemale").GetChildren().Select(c => long.Parse(c.Value));
 #if DEBUG
-Roblox.Configuration.RobloxAppPrefix = "bbclient://";
+Roblox.Configuration.RobloxAppPrefix = "okapi://";
 #endif
 FeatureFlags.StartUpdateFlagTask();
 Roblox.Website.Filters.StaffFilter.Configure(long.Parse(configuration.GetSection("OwnerUserId").Value));
@@ -135,6 +137,7 @@ builder.WebHost.ConfigureKestrel(options =>
 });
 builder.Services.AddHttpClient("FrontendProxy", client =>
 {
+    Console.WriteLine("[frotnedproxy] base address: " + "http://localhost:3000"); // got too lazy icl
     client.BaseAddress = new Uri("http://localhost:3000");
     client.Timeout = TimeSpan.FromSeconds(20);
     client.DefaultRequestHeaders.ConnectionClose = false;
@@ -166,7 +169,7 @@ app.Use(async (ctx, next) =>
     
     if (Fixed != Original)
     {
-        //Console.WriteLine($"fixing double slashes in path: {Original} -> {Fixed}");
+        Console.WriteLine($"fixing double slashes in path: {Original} -> {Fixed}");
         ctx.Request.Path = Fixed;
     }
     

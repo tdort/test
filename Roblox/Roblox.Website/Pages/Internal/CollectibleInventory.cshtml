@@ -1,0 +1,206 @@
+@page "/internal/collectibles"
+@model Roblox.Website.Pages.Internal.CollectibleInventory
+
+@{
+    Layout = "Shared/_Layout";
+}
+
+@section MetaTags {
+    <title>My Collectibles</title>
+}
+
+<style>
+    body {
+        background-color: #0d2231 !important;
+        background-image: linear-gradient(rgba(5, 18, 30, 0.48), rgba(5, 18, 30, 0.62));
+        background-repeat: no-repeat;
+        background-size: cover;
+        background-position: center center;
+        background-attachment: fixed;
+    }
+
+    .navbar-auth,
+    .navbar-auth.bg-black,
+    main.flex-shrink-0.bg-dark,
+    footer.footer.bg-dark {
+        background: transparent !important;
+    }
+
+    .navbar-auth {
+        border-bottom: none !important;
+        box-shadow: none !important;
+    }
+
+    .navbar-auth .nav-link {
+        color: #f4f7ff !important;
+    }
+
+    footer.footer {
+        border-top: none !important;
+        box-shadow: none !important;
+    }
+
+    footer.footer .container {
+        border-top: none !important;
+    }
+
+    footer.footer .text-muted {
+        color: rgba(236, 244, 255, 0.68) !important;
+    }
+
+    .collectibles-shell {
+        min-height: calc(100vh - 160px);
+        background: transparent;
+        padding: 32px 0;
+    }
+
+    .collectibles-card {
+        width: 100%;
+        max-width: 1080px;
+        margin: 0 auto;
+        background: rgba(255,255,255,0.96);
+        color: #332723;
+        border-radius: 8px;
+        padding: 22px 20px 18px;
+        border: 1px solid rgba(255,255,255,0.58);
+        box-shadow: 0 30px 72px rgba(6, 15, 24, 0.34), 0 10px 24px rgba(0, 0, 0, 0.18), inset 0 1px 0 rgba(255,255,255,0.72);
+    }
+
+    .status-error {
+        color: #b13d2d;
+        margin: 0;
+    }
+
+    .summary {
+        display: flex;
+        gap: 18px;
+        margin-bottom: 16px;
+        align-items: center;
+        flex-wrap: wrap;
+    }
+
+    .summary img {
+        width: 98px;
+        height: 98px;
+        border-radius: 6px;
+        border: 1px solid #d7deea;
+        background: #f4f8fd;
+    }
+
+    .summary h2 {
+        margin: 0 0 4px;
+        color: #1f2b39;
+    }
+
+    .summary .rap {
+        margin: 0;
+        color: #2f4f77;
+        font-weight: 700;
+    }
+
+    .inventory-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(165px, 1fr));
+        gap: 12px;
+    }
+
+    .item {
+        border: 1px solid #dce4ef;
+        border-radius: 6px;
+        background: #f9fbff;
+        overflow: hidden;
+    }
+
+    .item a {
+        text-decoration: none;
+        color: inherit;
+    }
+
+    .item img {
+        display: block;
+        width: 100%;
+        height: 150px;
+        object-fit: contain;
+        background: #fff;
+        border-bottom: 1px solid #e2e8f2;
+    }
+
+    .item-body {
+        padding: 10px;
+    }
+
+    .item-name {
+        margin: 0 0 6px;
+        font-size: 14px;
+        font-weight: 700;
+        color: #202f40;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+
+    .item-meta {
+        margin: 0;
+        font-size: 13px;
+        color: #4b5f77;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+
+    .empty {
+        margin: 28px 0;
+        text-align: center;
+        color: #4f5a6b;
+    }
+</style>
+
+<div class="collectibles-shell">
+    <div class="container">
+        <div class="collectibles-card">
+            @if (Model.errorMessage != null)
+            {
+                <p class="status-error">@Model.errorMessage</p>
+            }
+            else
+            {
+                <div class="summary">
+                    <img src="/thumbs/avatar.ashx?userId=@Model.userId" alt="@Model.username avatar">
+                    <div>
+                        <h2>@Model.username</h2>
+                        <p class="rap">Total RAP: @Model.totalRap.ToString("N0")</p>
+                    </div>
+                </div>
+                @if (Model.inventory.Count == 0)
+                {
+                    <p class="empty">@Model.username does not have any collectible items.</p>
+                }
+                else
+                {
+                    <div class="inventory-grid">
+                        @foreach (var item in Model.inventory)
+                        {
+                            <div class="item">
+                                <a href="/catalog/@item.assetId/--">
+                                    <img src="/thumbs/asset.ashx?assetId=@item.assetId" alt="@item.name">
+                                </a>
+                                <div class="item-body">
+                                    <p class="item-name">@item.name</p>
+                                    <p class="item-meta">RAP: @item.recentAveragePrice.ToString("N0")</p>
+                                    @if (item.serialNumber != null)
+                                    {
+                                        <p class="item-meta">Serial: #@(item.serialNumber) of @(item.serialCount?.ToString() ?? "-")</p>
+                                    }
+                                    else
+                                    {
+                                        <p class="item-meta">UAID: @item.userAssetId</p>
+                                    }
+                                </div>
+                            </div>
+                        }
+                    </div>
+                }
+            }
+        </div>
+    </div>
+</div>

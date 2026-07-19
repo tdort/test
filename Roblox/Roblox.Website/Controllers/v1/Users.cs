@@ -25,18 +25,23 @@ public class UsersControllerV1 : ControllerBase
 	[HttpGet("users/authenticated")]
 	public async Task<IActionResult> GetMySession()
 	{
-		if (userSession is null) throw new UnauthorizedException();
+		if (userSession is null)
+		{
+			return new JsonResult(null);
+		}
 
 		try
 		{
 			bool isStaff = await StaffFilter.IsStaff(userSession.userId);
+			var info = await services.users.GetUserById(userSession.userId);
 
 			var result = new
 			{
 				id = userSession.userId,
 				name = userSession.username,
 				displayName = userSession.username,
-				isStaff = isStaff
+				isStaff = isStaff,
+				isVerified = info.isVerified
 			};
 
 			return new JsonResult(result);
@@ -132,7 +137,7 @@ public class UsersControllerV1 : ControllerBase
     {
         try
         {
-            await services.users.SetUserStatus(userSession.userId, request.status);
+            await services.users.SetUserStatus(safeUserSession.userId, request.status);
         }
         catch (Exception e) when (e is StatusTooLongException or StatusTooShortException)
         {
@@ -155,11 +160,9 @@ public class UsersControllerV1 : ControllerBase
 	[HttpGet("user/get-2020-menu")]
 	public async Task<dynamic> Get2020MenuPreference()
 	{
-		if (userSession is null) throw new UnauthorizedException();
-
 		try
 		{
-			var preference = await services.users.Get2020MenuPref(userSession.userId);
+			var preference = await services.users.Get2020MenuPref(safeUserSession.userId);
 			return new
 			{
 				enabled = preference,
@@ -167,7 +170,7 @@ public class UsersControllerV1 : ControllerBase
 		}
 		catch (Exception ex)
 		{
-			Console.WriteLine($"error getting 2020 menu pref for user {userSession.userId}:");
+			Console.WriteLine($"error getting 2020 menu pref for user {safeUserSession.userId}:");
 			Console.WriteLine(ex.ToString());
 			throw new RobloxException(500, 0, "Internal server error");
 		}
@@ -176,18 +179,15 @@ public class UsersControllerV1 : ControllerBase
 	[HttpPatch("user/2020-menu")]
 	public async Task Set2020MenuPreference([Required, FromBody] Set2020MenuPreferenceReq request)
 	{
-		if (userSession is null) throw new UnauthorizedException();
-
 		try
 		{
-			await services.users.Set2020MenuPref(userSession.userId, request.Enabled);
+			await services.users.Set2020MenuPref(safeUserSession.userId, request.Enabled);
 		}
 		catch (Exception ex)
 		{
-			Console.WriteLine($"error setting 2020 menu prefe for user {userSession.userId}:");
+			Console.WriteLine($"error setting 2020 menu prefe for user {safeUserSession.userId}:");
 			Console.WriteLine(ex.ToString());
 			throw new RobloxException(500, 0, "Internal server error");
 		}
 	}
 }
-

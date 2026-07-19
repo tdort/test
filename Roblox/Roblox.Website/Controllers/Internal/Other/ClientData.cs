@@ -123,25 +123,16 @@ namespace Roblox.Website.Controllers
 			string json = "PCDesktopClient";
 			if (!string.IsNullOrEmpty(applicationName))
 			{
-				switch (applicationName)
-				{
-					case "PCDesktopClient":
-						json = System.IO.Path.Combine(Configuration.JsonDataDirectory, "PCDesktopClient.json");
-						break;
-						
-					case "StudioApp":
-						json = System.IO.Path.Combine(Configuration.JsonDataDirectory, "StudioApp.json");
-						break;
+				if (applicationName == "PCDesktopClient")
+					json = System.IO.Path.Combine(Configuration.JsonDataDirectory, "PCDesktopClient.json");
+				else if (applicationName == "StudioApp")
+					json = System.IO.Path.Combine(Configuration.JsonDataDirectory, "StudioApp.json");
 
-					// Make this configurable in appsettyings
-					case "RCCServiceBubbleRev2021RCCIsSoTuff":
-						json = System.IO.Path.Combine(Configuration.JsonDataDirectory, "RCCService.json");
-						break;
-						
-					case "GD5Z5gO1n0gYX1P":
-						json = System.IO.Path.Combine(Configuration.JsonDataDirectory, "PCDesktopClient.json");
-						break;
-				}
+				// thank me later lads
+				else if (applicationName == Configuration.RccServiceName)
+					json = System.IO.Path.Combine(Configuration.JsonDataDirectory, "RCCService.json");
+				else if (applicationName == "GD5Z5gO1n0gYX1P")
+					json = System.IO.Path.Combine(Configuration.JsonDataDirectory, "PCDesktopClient.json");
 			}
 
 			if (!System.IO.File.Exists(json))

@@ -168,7 +168,7 @@ public class ApplicationService : ServiceBase, IService
             var word = verificationWords[random.Next(verificationWords.Count)];
             phrases.Add(word);
         }
-        return "bubbablox " + string.Join(" ", phrases);
+        return "okapi " + string.Join(" ", phrases);
     }
     
     public bool IsThreadSafe()

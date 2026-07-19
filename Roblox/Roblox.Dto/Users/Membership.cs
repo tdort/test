@@ -14,10 +14,10 @@ public class MembershipMetadata
 {
     private static List<MembershipMetadata> _membershipMetadata = new()
     {
-        new MembershipMetadata(MembershipType.None, "None", 0),
-        new MembershipMetadata(MembershipType.BuildersClub, "Builders Club", 15),
-        new MembershipMetadata(MembershipType.TurboBuildersClub, "Turbo Builders Club", 35),
-        new MembershipMetadata(MembershipType.OutrageousBuildersClub, "Outrageous Builders Club", 60),
+        new MembershipMetadata(MembershipType.None, "None", 150),
+        new MembershipMetadata(MembershipType.BuildersClub, "Builders Club", 200),
+        new MembershipMetadata(MembershipType.TurboBuildersClub, "Turbo Builders Club", 350),
+        new MembershipMetadata(MembershipType.OutrageousBuildersClub, "Outrageous Builders Club", 400),
     };
 
     public static MembershipMetadata GetMetadata(MembershipType membershipType)
@@ -34,7 +34,7 @@ public class MembershipMetadata
         this.dailyRobux = dailyRobux;
         this.displayName = displayName;
     }
-    
+
     public long dailyRobux { get; set; }
     public MembershipType membershipType { get; set; }
     public string displayName { get; set; }

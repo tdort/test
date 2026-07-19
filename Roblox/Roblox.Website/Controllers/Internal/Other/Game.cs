@@ -406,7 +406,7 @@ namespace Roblox.Website.Controllers
 				//string url = HttpContext.Request.GetEncodedUrl();
 				string ip = GetRequesterIpRaw(HttpContext);
 
-				Roblox.Metrics.GameMetrics.ReportRccAuthorizationFailure("http://bbblox.org/gs/hi", auth, ip);
+				Roblox.Metrics.GameMetrics.ReportRccAuthorizationFailure("http://queef.bond/gs/hi", auth, ip);
 				
 				Console.WriteLine($"[INFO] auth failed");
 

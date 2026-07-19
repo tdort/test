@@ -4631,7 +4631,7 @@ return CreateClickToMoveModule
 		MasterControl
 		VehicleController
 --]]
-print("Thank you for playing BubbaBlox! Sorry about the errors, it will not affect your experience")
+print("Thank you for playing Okapi! Sorry about the errors, it will not affect your experience")
 --[[ Services ]]--
 local ContextActionService = game:GetService('ContextActionService')
 local Players = game:GetService('Players')

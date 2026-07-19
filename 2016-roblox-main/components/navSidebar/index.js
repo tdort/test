@@ -136,7 +136,7 @@ const NavSideBar = props => {
       <LinkEntry name='Groups' url='/My/Groups.aspx' icon='icon-nav-group' />
       <LinkEntry name='Forums' url='/Forum/Default.aspx' icon='icon-nav-forum' />
       {userData?.isStaff && <LinkEntry name='Admin' url='/admin' icon='icon-nav-friends' count={pendingCount} />}
-	  <LinkEntry name='Trello' url='https://trello.com/b/EuDe6QMM/bubbablox' icon='icon-nav-blog' />
+	  <LinkEntry name='Trello' url='https://trello.com/b/EuDe6QMM/ROBLOX' icon='icon-nav-blog' />
       <a href='/BuildersClub/Upgrade.ashx'><p className={s.upgradeNowButton}>Upgrade Now</p></a>
     </div>
   </div>

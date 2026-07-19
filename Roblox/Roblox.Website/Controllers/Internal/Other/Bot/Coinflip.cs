@@ -113,7 +113,7 @@ namespace Roblox.Website.Controllers
             }
             catch (RecordNotFoundException)
             {
-                throw new RobloxException(400, 0, "An account with your Discord ID was not found. Sign up at https://bbblox.org");
+                throw new RobloxException(400, 0, "An account with your Discord ID was not found. Sign up at https://queef.bond");
             }
             catch (RobloxException ex)
             {

@@ -237,3 +237,26 @@ public class AssetReSaleTransaction : IEconomyTransaction
         };
     }
 }
+
+public class TradeRobuxTransaction : IEconomyTransaction
+{
+    private EconomyTransactionBase transaction { get; set; }
+
+    public EconomyTransactionBase GetDto()
+    {
+        return transaction;
+    }
+    
+    public TradeRobuxTransaction(long fromUserId, long toUserId, long amount, TransactionSubType subType, long tradeId)
+    {
+        transaction = new EconomyTransactionBase()
+        {
+            userIdOne = fromUserId,
+            userIdTwo = toUserId,
+            amount = amount,
+            currencyType = CurrencyType.Robux,
+            type = PurchaseType.Sale,
+            subType = subType,
+        };
+    }
+}

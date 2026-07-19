@@ -159,21 +159,45 @@ public class RobloxApi
         AutomaticDecompression = DecompressionMethods.All,
     });
 
+    private string _csrf { get; set; } = "";
+
+    private static Regex assetMatchUrlRegex = new Regex("data-mediathumb-url=\"(.+?)\"");
+
+
+    
+public async Task<Stream> GetStreamAsync(string url)
+{
+    var strResult = await _client.GetAsync(url);
+    if (!strResult.IsSuccessStatusCode)
+        throw new Exception("Bad response in GetStreamAsync: " + strResult.StatusCode);
+    return await strResult.Content.ReadAsStreamAsync();
+}
+    // ------------------ PRODUCT INFO ------------------
+
+    // I wanna improve this it feels horrible for some reason
     public async Task<ProductInfoWithAssetDelivery> GetProductInfoAssetDelivery(long assetId)
     {
-        // Literally all it gets is the "assetTypeId". Everything else is blank.
         using var cancel = new CancellationTokenSource();
         cancel.CancelAfter(TimeSpan.FromSeconds(30));
-        var response = await _client.GetAsync("https://assetdelivery.roblox.com/v2/asset?id=" + assetId, cancel.Token);
+
+        var response = await _client.GetAsync("http://localhost:1114/proxy?url=https://assetdelivery.roblox.com/v2/asset?id=" + assetId, cancel.Token);
         if (!response.IsSuccessStatusCode)
-        {
             throw new Exception("Unexpected status code from AssetDeliveryV2: " + response.StatusCode);
-        }
 
         var str = await response.Content.ReadAsStringAsync(cancel.Token);
         var json = JsonSerializer.Deserialize<AssetDeliveryV2Response>(str);
+
         if (json == null)
             throw new Exception("Bad json from assetdelivery");
+
+        // Try Roblox first
+        var robloxLocation = json.locations?.FirstOrDefault(a => a.assetFormat == "source")?.location;
+
+        // Fallback to Pekora if Roblox location is null or empty
+        var finalLocation = !string.IsNullOrEmpty(robloxLocation) 
+            ? robloxLocation 
+            : $"https://assetdelivery.pekora.zip/assetId/{assetId}";
+
         return new ProductInfoWithAssetDelivery()
         {
             AssetTypeId = json.assetTypeId,
@@ -181,15 +205,12 @@ public class RobloxApi
             Description = "ConversionV1.0",
             Created = DateTime.UtcNow,
             Updated = DateTime.UtcNow,
-            
-            location = json.locations?.FirstOrDefault(a => a.assetFormat == "source")?.location,
+            location = finalLocation,
         };
     }
 
     private async Task<ProductDataResponse> GetProductInfoFromHtml(long assetId)
     {
-        // why? well one reason: rate limits.
-        // roblox heavily rate limits productinfo for some reason, but html doesn't seem as bad
         var watch = new Stopwatch();
         watch.Start();
         const int maxAttemptsMs = 60000;
@@ -207,15 +228,11 @@ public class RobloxApi
             }
 
             var str = await response.Content.ReadAsStringAsync(cancel.Token);
-            // regex
             var itemName = System.Web.HttpUtility.HtmlDecode(new Regex("data-item-name=\"(.+)\"").Match(str).Groups[1].Value);
             var assetTypeId = Enum.Parse<Models.Assets.Type>(new Regex("data-asset-type-id=\"(.+)\"").Match(str).Groups[1].Value);
             if (!Enum.IsDefined(assetTypeId))
-            {
                 throw new Exception("Invalid assetTypeId: " + assetTypeId);
-            }
-            // no way to get some values like created :(
-            // we can technically get the description with regex but that might break easily
+
             return new ProductDataResponse()
             {
                 Created = DateTime.UtcNow,
@@ -224,57 +241,17 @@ public class RobloxApi
                 Name = itemName,
                 Updated = DateTime.UtcNow,
             };
-
         }
 
         throw new Exception("Timeout getting details from html");
     }
 
-    public async Task<UsersResponseV1> GetUserInfo(long userId)
-    {
-        using var cancel = new CancellationTokenSource();
-        cancel.CancelAfter(TimeSpan.FromSeconds(5));
-
-        var result = await _client.GetAsync("https://users.roblox.com/v1/users/" + userId, cancel.Token);
-        if (!result.IsSuccessStatusCode)
-        {
-            throw new Exception("Unexpected response from Roblox: " + result.StatusCode);
-        }
-
-        var str = await result.Content.ReadAsStringAsync(cancel.Token);
-        var json = JsonSerializer.Deserialize<UsersResponseV1>(str);
-        if (json == null)
-            throw new Exception("Null json returned from users api");
-        return json;
-    }
-
-    public async Task<bool> DoesUserOwnAsset(long userId, long assetId)
-    {
-        using var cancel = new CancellationTokenSource();
-        cancel.CancelAfter(TimeSpan.FromSeconds(5));
-
-        var result =
-            await _client.GetAsync(
-                "https://inventory.roblox.com/v1/users/" + userId + "/items/Asset/" + assetId + "/is-owned",
-                cancel.Token);
-        if (!result.IsSuccessStatusCode)
-            throw new Exception("Unexpected response: " + result.StatusCode);
-        
-        var str = await result.Content.ReadAsStringAsync(cancel.Token);
-        return str switch
-        {
-            "true" => true,
-            "false" => false,
-            _ => throw new Exception("Unexpected response body: " + str)
-        };
-    }
-    
     public async Task<ProductDataResponse> GetProductInfo(long assetId, bool allFieldsRequired = false)
     {
         var watch = new Stopwatch();
         watch.Start();
         const int maxAttemptTimeMs = 5000;
-        
+
         while (watch.ElapsedMilliseconds < maxAttemptTimeMs)
         {
             try
@@ -291,10 +268,12 @@ public class RobloxApi
                         await Task.Delay(TimeSpan.FromSeconds(1), cancel.Token);
                         continue;
                     }
-                    break; // switch to html
+                    break;
                 }
+
                 if (!result.IsSuccessStatusCode)
                     throw new Exception("Unexpected response from Roblox: " + result.StatusCode + " (URL=" + url + ")");
+
                 var str = await result.Content.ReadAsStringAsync(cancel.Token);
                 var des = JsonSerializer.Deserialize<ProductDataResponse>(str);
                 if (des == null)
@@ -306,124 +285,50 @@ public class RobloxApi
                 break;
             }
         }
-        // last attempt
-        return await GetProductInfoFromRealRoblox(assetId);
-    }
-	
-	public async Task<ProductDataResponse> GetProductInfoFromRealRoblox(long assetId, bool allFieldsRequired = false)
-    {
-        var watch = new Stopwatch();
-        watch.Start();
-        const int maxAttemptTimeMs = 5000;
-        
-        while (watch.ElapsedMilliseconds < maxAttemptTimeMs)
-        {
-            try
-            {
-                using var cancel = new CancellationTokenSource();
-                cancel.CancelAfter(TimeSpan.FromMilliseconds(maxAttemptTimeMs));
-                var url = $"https://economy.roblox.com/v2/assets/{assetId}/details";
-                var result = await _client.GetAsync(url, cancel.Token);
-                if (result.StatusCode is HttpStatusCode.TooManyRequests)
-                {
-                    Writer.Info(LogGroup.RealRobloxApi, "conversion error - got 429 during getproductinfo");
-                    if (allFieldsRequired)
-                    {
-                        await Task.Delay(TimeSpan.FromSeconds(1), cancel.Token);
-                        continue;
-                    }
-                    break; // switch to html
-                }
-                if (!result.IsSuccessStatusCode)
-                    throw new Exception("Unexpected response from Roblox: " + result.StatusCode + " (URL=" + url + ")");
-                var str = await result.Content.ReadAsStringAsync(cancel.Token);
-                var des = JsonSerializer.Deserialize<ProductDataResponse>(str);
-                if (des == null)
-                    throw new Exception("Null product data response from Roblox");
-                return des;
-            }
-            catch (TaskCanceledException)
-            {
-                break;
-            }
-        }
-        // last attempt
-        return await GetProductInfo(assetId);
+
+        return await GetProductInfoFromHtml(assetId);
     }
 
-    public async Task<Stream> GetStreamAsync(string url)
+    // ------------------ USERS ------------------
+    public async Task<UsersResponseV1> GetUserInfo(long userId)
     {
-        var strResult = await _client.GetAsync(url);
-        if (!strResult.IsSuccessStatusCode)
-            throw new Exception("Bad response in GetStreamAsync: " + strResult.StatusCode);
-        return await strResult.Content.ReadAsStreamAsync();
-    }
+        using var cancel = new CancellationTokenSource();
+        cancel.CancelAfter(TimeSpan.FromSeconds(5));
 
-	public async Task<Stream> GetAssetContent(long assetId)
-	{
-		if (!_client.DefaultRequestHeaders.UserAgent.Any())
-		{
-			_client.DefaultRequestHeaders.UserAgent.ParseAdd("Roblox/WinInet");
-		}
-
-		try
-		{
-			var result = await _client.GetAsync($"https://assetdelivery.roblox.com/v1/assetId/{assetId}");
-			if (result.StatusCode == HttpStatusCode.TooManyRequests)
-			{
-				await Task.Delay(TimeSpan.FromSeconds(2));
-				result = await _client.GetAsync($"https://assetdelivery.roblox.com/v1/assetId/{assetId}");
-			}
-
-			if (!result.IsSuccessStatusCode)
-				throw new Exception("Unexpected response from Roblox: " + result.StatusCode);
-
-
-			var str = await result.Content.ReadAsStringAsync();
-			var bod = JsonSerializer.Deserialize<AssetDeliveryResponse>(str);
-
-			if (bod != null && !string.IsNullOrEmpty(bod.location))
-			{
-				var strResult = await _client.GetAsync(bod.location);
-				return await strResult.Content.ReadAsStreamAsync();
-			}
-
-			throw new Exception("Roblox did not provide a URL for asset content.");
-		}
-		catch (Exception ex)
-		{
-			Writer.Info(LogGroup.RealRobloxApi, "Roblox asset delivery failed for {0}: {1}. Using gs url", assetId, ex.Message);
-
-			var GSfallback = $"{Configuration.AssetUrl}/asset/?id={assetId}";
-			var GSResult = await _client.GetAsync(GSfallback);
-			if (!GSResult.IsSuccessStatusCode)
-				throw new Exception($"fallback endpoint failed for asset {assetId}: {GSResult.StatusCode}");
-
-			return await GSResult.Content.ReadAsStreamAsync();
-		}
-	}
-
-    private static Regex assetMatchUrlRegex = new Regex("data-mediathumb-url=\"(.+?)\"");
-    
-    public async Task<Stream> GetAssetAudioContent(long assetId)
-    {
-        var result = await _client.GetAsync($"https://www.roblox.com/library/{assetId}/--");
+        var result = await _client.GetAsync("https://users.roblox.com/v1/users/" + userId, cancel.Token);
         if (!result.IsSuccessStatusCode)
-            throw new Exception("Asset error: " + result.StatusCode);
-        var bod = await result.Content.ReadAsStringAsync();
-        var match = assetMatchUrlRegex.Match(bod);
-        if (!match.Success)
-            throw new Exception("Audio URL match failed for assetid = " + assetId);
-        var groups = match.Groups.Values.ToArray();
-        if (groups.Length < 1)
-            throw new Exception("No match groups for audio URL");
+            throw new Exception("Unexpected response from Roblox: " + result.StatusCode);
 
-        var fileUrl = groups[1].Value;
-
-        var strResult = await _client.GetAsync(fileUrl);
-        return await strResult.Content.ReadAsStreamAsync();
+        var str = await result.Content.ReadAsStringAsync(cancel.Token);
+        var json = JsonSerializer.Deserialize<UsersResponseV1>(str);
+        if (json == null)
+            throw new Exception("Null json returned from users api");
+        return json;
     }
 
+    public async Task<bool> DoesUserOwnAsset(long userId, long assetId)
+    {
+        using var cancel = new CancellationTokenSource();
+        cancel.CancelAfter(TimeSpan.FromSeconds(5));
+
+        var result = await _client.GetAsync(
+            $"https://inventory.roblox.com/v1/users/{userId}/items/Asset/{assetId}/is-owned",
+            cancel.Token
+        );
+
+        if (!result.IsSuccessStatusCode)
+            throw new Exception("Unexpected response: " + result.StatusCode);
+
+        var str = await result.Content.ReadAsStringAsync(cancel.Token);
+        return str switch
+        {
+            "true" => true,
+            "false" => false,
+            _ => throw new Exception("Unexpected response body: " + str)
+        };
+    }
+
+    // ------------------ AVATAR ------------------
     public async Task<AvatarResponse> GetAvatar(long userId)
     {
         var result = await _client.GetAsync("https://avatar.roblox.com/v1/users/" + userId + "/avatar");
@@ -436,33 +341,28 @@ public class RobloxApi
         return json;
     }
 
-    private string _csrf { get; set; } = "";
-    
+    // ------------------ MULTIGET ------------------
     public async Task<MultiGetDetailsResponse> MultiGetAssetDetails(IEnumerable<MultiGetDetailsRequestEntry> request)
     {
         var attempts = 0;
-        var s = JsonSerializer.Serialize(new MultiGetDetailsRequest()
-        {
-            items = request,
-        });
+        var s = JsonSerializer.Serialize(new MultiGetDetailsRequest() { items = request });
         while (true)
         {
             var msg = new HttpRequestMessage(HttpMethod.Post, "https://catalog.roblox.com/v1/catalog/items/details");
             msg.Content = new StringContent(s, Encoding.UTF8, "application/json");
             msg.Headers.Add("x-csrf-token", _csrf);
-            
+
             var result = await _client.SendAsync(msg);
             if (result.StatusCode == HttpStatusCode.Forbidden && result.Headers.Contains("x-csrf-token"))
             {
                 Writer.Info(LogGroup.RealRobloxApi, "use new csrf {0}", result.Headers.GetValues("x-csrf-token"));
                 _csrf = result.Headers.GetValues("x-csrf-token").First();
                 if (attempts > 0)
-                {
                     await Task.Delay(TimeSpan.FromSeconds(attempts));
-                }
                 attempts++;
                 continue;
             }
+
             var body = await result.Content.ReadAsStringAsync();
 
             if (!result.IsSuccessStatusCode)
@@ -474,9 +374,10 @@ public class RobloxApi
         }
     }
 
+    // ------------------ COUNT ------------------
     public async Task<long> CountFollowers(long userId)
     {
-        var result = await _client.GetAsync("https://friends.roblox.com/v1/users/"+userId+"/followers/count");
+        var result = await _client.GetAsync("https://friends.roblox.com/v1/users/" + userId + "/followers/count");
         if (!result.IsSuccessStatusCode)
             throw new Exception("Follower count error: " + result.StatusCode);
         var body = await result.Content.ReadAsStringAsync();
@@ -485,10 +386,10 @@ public class RobloxApi
             throw new Exception("Null follower count response from Roblox");
         return json.count;
     }
-    
+
     public async Task<long> CountFriends(long userId)
     {
-        var result = await _client.GetAsync("https://friends.roblox.com/v1/users/"+userId+"/friends/count");
+        var result = await _client.GetAsync("https://friends.roblox.com/v1/users/" + userId + "/friends/count");
         if (!result.IsSuccessStatusCode)
             throw new Exception("Friends count error: " + result.StatusCode);
         var body = await result.Content.ReadAsStringAsync();
@@ -498,13 +399,14 @@ public class RobloxApi
         return json.count;
     }
 
+    // ------------------ INVENTORY ------------------
     public async Task<InventoryResponse> GetInventory(long userId, string? cursor = null)
     {
         var url = "https://inventory.roblox.com/v2/users/"+userId+"/inventory?assetTypes=Hat%2CGear%2CHairAccessory%2CNeckAccessory%2CShoulderAccessory%2CBackAccessory%2CFrontAccessory%2CWaistAccessory&limit=100&sortOrder=Asc&cursor=" + (cursor ?? "");
         var result = await _client.GetAsync(url);
         if (result.StatusCode is HttpStatusCode.BadRequest or HttpStatusCode.Forbidden)
             throw new InvalidUserException();
-        
+
         if (!result.IsSuccessStatusCode)
             throw new Exception("Inventory error: " + result.StatusCode);
         var body = await result.Content.ReadAsStringAsync();
@@ -514,9 +416,10 @@ public class RobloxApi
         return json;
     }
 
+    // ------------------ BADGES ------------------
     public async Task<IEnumerable<BadgeEntry>> GetRobloxBadges(long userId)
     {
-            var result = await _client.GetAsync("https://accountinformation.roblox.com/v1/users/"+userId+"/roblox-badges");
+        var result = await _client.GetAsync("https://accountinformation.roblox.com/v1/users/" + userId + "/roblox-badges");
         if (!result.IsSuccessStatusCode)
             throw new Exception("Badges error: " + result.StatusCode);
         var body = await result.Content.ReadAsStringAsync();
@@ -539,9 +442,10 @@ public class RobloxApi
         return json;
     }
 
+    // ------------------ BUNDLES ------------------
     public async Task<BundleResponseEntry> GetBundle(long bundleId)
     {
-        var url = "https://catalog.roproxy.com/v1/bundles/details?bundleIds=" + bundleId; // MultiGetBundlesResponse
+        var url = "https://catalog.roproxy.com/v1/bundles/details?bundleIds=" + bundleId;
         var result = await _client.GetAsync(url);
         if (!result.IsSuccessStatusCode)
             throw new Exception("GetBundle error: " + bundleId + " " + result.StatusCode);
@@ -553,4 +457,80 @@ public class RobloxApi
         return json[0];
     }
 
+    // ------------------ ASSET CONTENT ------------------
+    private async Task<Stream> GetAssetFromPekora(long assetId)
+    {
+        var url = $"https://assetdelivery.pekora.zip/assetId/{assetId}";
+        var result = await _client.GetAsync(url);
+        if (!result.IsSuccessStatusCode)
+            throw new Exception($"Pekora asset delivery failed for asset {assetId}: {result.StatusCode}");
+        return await result.Content.ReadAsStreamAsync();
+    }
+
+    public async Task<Stream> GetAssetContent(long assetId)
+    {
+        if (!_client.DefaultRequestHeaders.UserAgent.Any())
+            _client.DefaultRequestHeaders.UserAgent.ParseAdd("Roblox/WinInet");
+
+        try
+        {
+            var result = await _client.GetAsync($"http://localhost:1114/proxy?url=https://assetdelivery.roblox.com/v1/assetId/{assetId}");
+            if (result.StatusCode == HttpStatusCode.TooManyRequests)
+            {
+                await Task.Delay(TimeSpan.FromSeconds(2));
+                result = await _client.GetAsync($"http://localhost:1114/proxy?url=https://assetdelivery.roblox.com/v1/assetId/{assetId}");
+            }
+
+            if (!result.IsSuccessStatusCode)
+                throw new Exception("Unexpected response from Roblox: " + result.StatusCode);
+
+            var str = await result.Content.ReadAsStringAsync();
+            var bod = JsonSerializer.Deserialize<AssetDeliveryResponse>(str);
+
+            if (bod != null && !string.IsNullOrEmpty(bod.location))
+            {
+                try
+                {
+                    var strResult = await _client.GetAsync(bod.location);
+                    if (strResult.IsSuccessStatusCode)
+                        return await strResult.Content.ReadAsStreamAsync();
+                }
+                catch { }
+            }
+
+            return await GetAssetFromPekora(assetId);
+        }
+        catch
+        {
+            return await GetAssetFromPekora(assetId);
+        }
+    }
+
+    public async Task<Stream> GetAssetAudioContent(long assetId)
+    {
+        try
+        {
+            var result = await _client.GetAsync($"http://localhost:1114/proxy?url=https://www.roblox.com/library/{assetId}/--");
+            if (!result.IsSuccessStatusCode)
+                throw new Exception("Asset error: " + result.StatusCode);
+
+            var bod = await result.Content.ReadAsStringAsync();
+            var match = assetMatchUrlRegex.Match(bod);
+
+            if (!match.Success)
+                throw new Exception("Audio URL match failed for assetid = " + assetId);
+
+            var fileUrl = match.Groups[1].Value;
+            var strResult = await _client.GetAsync(fileUrl);
+            if (strResult.IsSuccessStatusCode)
+                return await strResult.Content.ReadAsStreamAsync();
+        }
+        catch
+        {
+            // fallback to Pekora audio
+            return await GetAssetFromPekora(assetId);
+        }
+
+        throw new Exception("Failed to get audio content for asset " + assetId);
+    }
 }

@@ -113,7 +113,7 @@ const CatalogDetails = props => {
 
   if (!store.details) return null;
 
-  const subTitle = `BubbaBlox ${store.subCategoryDisplayName}${(isLimited || isLimitedUnique) ? ' / Collectible Item' : ''}${isLimitedUnique ? ' / Limited Edition' : ''}`;
+  const subTitle = `ROBLOX ${store.subCategoryDisplayName}${(isLimited || isLimitedUnique) ? ' / Collectible Item' : ''}${isLimitedUnique ? ' / Limited Edition' : ''}`;
 
   return <div className='container'>
     <AdBanner />

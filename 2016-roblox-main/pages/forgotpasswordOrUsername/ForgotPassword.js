@@ -52,7 +52,7 @@ const ForgotPassword = () => {
       <iframe
         className={classes.iframe}
         src={iframeSrc}
-        title="Forgot Password - BubbaBlox"
+        title="Forgot Password - ROBLOX"
         onError={(e) => {
           console.error("iframe failed to load:", e);
         }}

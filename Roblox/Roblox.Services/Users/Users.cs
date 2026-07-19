@@ -27,6 +27,7 @@ using Roblox.Dto.Tickets;
 using Type = Roblox.Models.Assets.Type;
 
 namespace Roblox.Services;
+
 public class UsersService : ServiceBase, IService
 {
     public async Task<bool> IsNameAvailableForNameChange(long contextUserId, string username)
@@ -68,20 +69,20 @@ public class UsersService : ServiceBase, IService
             throw new LockNotAcquiredException();
         return result;
     }
-	
-	public async Task<bool> IsDiscordIdUsed(string discordId)
-	{
-		return await db.ExecuteScalarAsync<bool>(
-			"SELECT EXISTS(SELECT 1 FROM user_discord_links WHERE discord_id = @discordId)",
-			new { discordId });
-	}
 
-	public async Task LinkDiscordAccount(long userId, string discordId)
-	{
-		await db.ExecuteAsync(
-			"INSERT INTO user_discord_links (user_id, discord_id) VALUES (@userId, @discordId)",
-			new { userId, discordId });
-	}
+    public async Task<bool> IsDiscordIdUsed(string discordId)
+    {
+        return await db.ExecuteScalarAsync<bool>(
+            "SELECT EXISTS(SELECT 1 FROM user_discord_links WHERE discord_id = @discordId)",
+            new { discordId });
+    }
+
+    public async Task LinkDiscordAccount(long userId, string discordId)
+    {
+        await db.ExecuteAsync(
+            "INSERT INTO user_discord_links (user_id, discord_id) VALUES (@userId, @discordId)",
+            new { userId, discordId });
+    }
 
     /// <summary>
     /// Acquire multiple locks and return a CombinedAsyncDisposable (which disposes all locks when disposed).
@@ -128,13 +129,13 @@ public class UsersService : ServiceBase, IService
         var idsArray = userAssetIds.ToArray();
         return await MultiAcquireLock(idsArray.Length, i => AcquireUserAssetLock(idsArray[i]));
     }
-	
-	public async Task<bool> UserExists(long userId)
-	{
-		return await db.ExecuteScalarAsync<bool>(
-			"SELECT EXISTS(SELECT 1 FROM \"user\" WHERE id = :id)", 
-			new { id = userId });
-	}
+
+    public async Task<bool> UserExists(long userId)
+    {
+        return await db.ExecuteScalarAsync<bool>(
+            "SELECT EXISTS(SELECT 1 FROM \"user\" WHERE id = :id)",
+            new { id = userId });
+    }
 
     /// <summary>
     /// VerifyPassword will return true if the password specified matches the password stored in the database for the userId.
@@ -143,20 +144,20 @@ public class UsersService : ServiceBase, IService
     /// <param name="password"></param>
     /// <returns>True if valid, otherwise false</returns>
 	public async Task<bool> VerifyPassword(long userId, string password)
-	{
-		if (!await UserExists(userId))
-			return false;
+    {
+        if (!await UserExists(userId))
+            return false;
 
-		var dbPass = await db.QuerySingleOrDefaultAsync<PasswordEntry>(
-			"SELECT password FROM \"user\" WHERE id = :id", 
-			new { id = userId });
+        var dbPass = await db.QuerySingleOrDefaultAsync<PasswordEntry>(
+            "SELECT password FROM \"user\" WHERE id = :id",
+            new { id = userId });
 
-		if (dbPass == null || string.IsNullOrEmpty(dbPass.password))
-			return false;
+        if (dbPass == null || string.IsNullOrEmpty(dbPass.password))
+            return false;
 
-		var hasher = new PasswordHasher();
-		return hasher.Verify(dbPass.password, password);
-	}
+        var hasher = new PasswordHasher();
+        return hasher.Verify(dbPass.password, password);
+    }
     public async Task UpdatePassword(long userId, string newPassword)
     {
         var hasher = new PasswordHasher();
@@ -184,7 +185,7 @@ public class UsersService : ServiceBase, IService
         {
             throw new AccountLastOnlineTooRecentlyException();
         }
-        var newUsername = "bubbablox_user_" + userId;
+        var newUsername = "okapi_user_" + userId;
         var transferId = await GetUserIdFromUsername("BadDecisions");
         await InTransaction(async _ =>
         {
@@ -254,14 +255,14 @@ public class UsersService : ServiceBase, IService
     public async Task<long> GetUserIdFromUsername(string username)
     {
         username = username.Replace("%", "");
-		var result = await db.QuerySingleOrDefaultAsync<UserId>(
-			"SELECT id as userId FROM \"user\" WHERE username = :username", 
-			new { username });
+        var result = await db.QuerySingleOrDefaultAsync<UserId>(
+            "SELECT id as userId FROM \"user\" WHERE username = :username",
+            new { username });
         if (result == null || result.userId == 0) throw new RecordNotFoundException();
         return result.userId;
     }
-	
-	public async Task<UserInfo> GetUserByName(string username)
+
+    public async Task<UserInfo> GetUserByName(string username)
     {
         var res = await db.QuerySingleOrDefaultAsync<UserInfo>("SELECT id as userId, username, status as accountStatus, created_at as created, description FROM \"user\" WHERE username = :name", new { name = username });
         if (res == null) throw new RecordNotFoundException();
@@ -282,7 +283,7 @@ public class UsersService : ServiceBase, IService
     {
         if (await IsBadUsername(usernameToAdd))
             return;
-        
+
         await db.ExecuteAsync("INSERT INTO moderation_bad_username (username) VALUES (:name)", new
         {
             name = usernameToAdd,
@@ -291,7 +292,7 @@ public class UsersService : ServiceBase, IService
 
     public async Task ResetUsername(long userId, long requesterUserId)
     {
-        var newName = "bubbablox_user_" + userId;
+        var newName = "okapi_user_" + userId;
         await db.ExecuteAsync(
             "INSERT INTO moderation_bad_username_log (username, user_id, author_id) VALUES (:name, :id, :author)", new
             {
@@ -340,11 +341,11 @@ public class UsersService : ServiceBase, IService
         if (!normalizedNameArray.Success) return false;
         var normalizedName = normalizedNameArray.Value;
         if (normalizedName != nameToCheck) return false;
-        
+
         // Check for duplicate whitespace
         for (var i = 1; i < normalizedName.Length; i++)
         {
-            if (normalizedName[i-1] == ' ' && normalizedName[i] == ' ') return false;
+            if (normalizedName[i - 1] == ' ' && normalizedName[i] == ' ') return false;
         }
 
         // word filter, removing spaces and other words
@@ -369,12 +370,12 @@ public class UsersService : ServiceBase, IService
             return false;
         if (lowerName.Contains("tranny") || lowerName.Contains("fag") || lowerName.Contains("goblina") || lowerName.Contains("dyke") || lowerName.Contains("dick") || lowerName.Contains("cock") || lowerName.Contains("c0ck") || lowerName.Contains("d1ck") || lowerName.Contains("hitler") || lowerName.Contains("hitier"))
             return false;
-        
+
         // mod blocked
         var blocked = await IsBadUsername(nameToCheck);
         if (blocked)
             return false;
-        
+
         return true;
     }
 
@@ -394,107 +395,107 @@ public class UsersService : ServiceBase, IService
             });
 
     }
-	
-	// this really sucks but it works so
-	// user requests discord callback, it creates a token and sets the cookie
-	public async Task CreatePasswordResetToken(long userId, string token, DateTime expiry)
-	{
-		await db.ExecuteAsync(
-			"INSERT INTO password_reset_tokens (user_id, token, expires_at) " +
-			"VALUES (@userId, @token, @expiresAt) " +
-			"ON CONFLICT (user_id, token) DO UPDATE SET expires_at = @expiresAt, used = false",
-			new { userId, token, expiresAt = expiry });
-	}
-	
-	// then we validate the token before resetting
-	public async Task<bool> ValidatePasswordResetToken(long userId, string token)
-	{
-		var valid = await db.ExecuteScalarAsync<bool>(
-			"SELECT EXISTS(SELECT 1 FROM password_reset_tokens " +
-			"WHERE user_id = @userId AND token = @token AND expires_at > NOW() AND used = false)",
-			new { userId, token });
-		return valid;
-	}
-	
-	// once done, delete the token
-	public async Task DeleteResetPassword(long userId, string token)
-	{
-		await db.ExecuteAsync(
-			"DELETE FROM password_reset_tokens WHERE user_id = @userId AND token = @token",
-			new { userId, token });
-	}
+
+    // this really sucks but it works so
+    // user requests discord callback, it creates a token and sets the cookie
+    public async Task CreatePasswordResetToken(long userId, string token, DateTime expiry)
+    {
+        await db.ExecuteAsync(
+            "INSERT INTO password_reset_tokens (user_id, token, expires_at) " +
+            "VALUES (@userId, @token, @expiresAt) " +
+            "ON CONFLICT (user_id, token) DO UPDATE SET expires_at = @expiresAt, used = false",
+            new { userId, token, expiresAt = expiry });
+    }
+
+    // then we validate the token before resetting
+    public async Task<bool> ValidatePasswordResetToken(long userId, string token)
+    {
+        var valid = await db.ExecuteScalarAsync<bool>(
+            "SELECT EXISTS(SELECT 1 FROM password_reset_tokens " +
+            "WHERE user_id = @userId AND token = @token AND expires_at > NOW() AND used = false)",
+            new { userId, token });
+        return valid;
+    }
+
+    // once done, delete the token
+    public async Task DeleteResetPassword(long userId, string token)
+    {
+        await db.ExecuteAsync(
+            "DELETE FROM password_reset_tokens WHERE user_id = @userId AND token = @token",
+            new { userId, token });
+    }
 
 
-	public async Task<long> GetUserIdFromDiscordId(string discordId)
-	{
-		return await db.ExecuteScalarAsync<long>(
-			"SELECT user_id FROM user_discord_links WHERE discord_id = @discordId",
-			new { discordId });
-	}
-	
-	public async Task<string?> GetUserHashedIp(long userId)
-	{
-		return await db.QuerySingleOrDefaultAsync<string>(
-			"SELECT hashed_ip FROM user_hashed_ips WHERE user_id = @userId",
-			new { userId });
-	}
+    public async Task<long> GetUserIdFromDiscordId(string discordId)
+    {
+        return await db.ExecuteScalarAsync<long>(
+            "SELECT user_id FROM user_discord_links WHERE discord_id = @discordId",
+            new { discordId });
+    }
 
-	public async Task UpdateUserHashedIp(long userId, string ipHash, int blockStatus)
-	{
-		await db.ExecuteAsync(
-			"INSERT INTO user_hashed_ips (user_id, hashed_ip, block_status, last_seen) " +
-			"VALUES (@userId, @ipHash, @blockStatus, NOW()) " +
-			"ON CONFLICT (user_id) DO UPDATE " +
-			"SET hashed_ip = @ipHash, block_status = @blockStatus, last_seen = NOW()",
-			new 
-			{
-				userId,
-				ipHash,
-				blockStatus
-			});
-	}
-	
-	public async Task ChangePassword(long userId, string newPW)
-	{
-		if (!IsPasswordValid(newPW))
-		{
-			throw new ArgumentException("Bad password");
-		}
+    public async Task<string?> GetUserHashedIp(long userId)
+    {
+        return await db.QuerySingleOrDefaultAsync<string>(
+            "SELECT hashed_ip FROM user_hashed_ips WHERE user_id = @userId",
+            new { userId });
+    }
 
-		var hasher = new PasswordHasher();
-		var newpw = hasher.Hash(newPW);
+    public async Task UpdateUserHashedIp(long userId, string ipHash, int blockStatus)
+    {
+        await db.ExecuteAsync(
+            "INSERT INTO user_hashed_ips (user_id, hashed_ip, block_status, last_seen) " +
+            "VALUES (@userId, @ipHash, @blockStatus, NOW()) " +
+            "ON CONFLICT (user_id) DO UPDATE " +
+            "SET hashed_ip = @ipHash, block_status = @blockStatus, last_seen = NOW()",
+            new
+            {
+                userId,
+                ipHash,
+                blockStatus
+            });
+    }
 
-		try
-		{
-			await db.ExecuteAsync(
-				"UPDATE \"user\" SET password = :newPW WHERE id = :userId",
-				new 
-				{
-					userId,
-					newPW = newpw
-				});
-		}
-		catch (Exception ex)
-		{
-			Debug.WriteLine($"db pw update failed: {ex.Message}");
-			throw;
-		}
+    public async Task ChangePassword(long userId, string newPW)
+    {
+        if (!IsPasswordValid(newPW))
+        {
+            throw new ArgumentException("Bad password");
+        }
 
-		await ExpireAllSessions(userId);
+        var hasher = new PasswordHasher();
+        var newpw = hasher.Hash(newPW);
 
-		try
-		{
-			using (var userCache = ServiceProvider.GetOrCreate<GetUserByIdCache>())
-			{
-				userCache.Remove(userId);
-			}
-		}
-		catch (Exception ex)
-		{
-			Debug.WriteLine($"user cache clear failed: {ex.Message}");
-			throw;
-		}
-	}
+        try
+        {
+            await db.ExecuteAsync(
+                "UPDATE \"user\" SET password = :newPW WHERE id = :userId",
+                new
+                {
+                    userId,
+                    newPW = newpw
+                });
+        }
+        catch (Exception ex)
+        {
+            Debug.WriteLine($"db pw update failed: {ex.Message}");
+            throw;
+        }
+
+        await ExpireAllSessions(userId);
+
+        try
+        {
+            using (var userCache = ServiceProvider.GetOrCreate<GetUserByIdCache>())
+            {
+                userCache.Remove(userId);
+            }
+        }
+        catch (Exception ex)
+        {
+            Debug.WriteLine($"user cache clear failed: {ex.Message}");
+            throw;
+        }
+    }
 
     /// <summary>
     /// Charge the user username price, and change the user's username
@@ -582,7 +583,7 @@ public class UsersService : ServiceBase, IService
         var (exists, cached) = userInfoCache.Get(userId);
         if (exists && cached != null)
             return cached;
-        
+
         var res = await db.QuerySingleOrDefaultAsync<UserInfo>("SELECT id as userId, username, status as accountStatus, created_at as created, description, verified as isVerified FROM \"user\" WHERE id = :id", new { id = userId });
         if (res == null) throw new RecordNotFoundException();
         if (userId == 1)
@@ -598,7 +599,7 @@ public class UsersService : ServiceBase, IService
     {
         var ids = userIds.Distinct().ToList();
         if (ids.Count == 0) return Array.Empty<MultiGetAccountStatusEntry>();
-        
+
         var sql = new SqlBuilder();
         var t = sql.AddTemplate("SELECT id as userId, u.status as accountStatus FROM \"user\" u /**where**/");
         sql.OrWhereMulti("u.id = $1", ids);
@@ -657,54 +658,55 @@ public class UsersService : ServiceBase, IService
             requestedName = c.requestedUsername ?? c.username,
         });
     }
-	
-	public async Task<bool> Get2020MenuPref(long userId) 
-	{ 	var result = await db.QuerySingleOrDefaultAsync<int?>( "SELECT \"2020_menu_enabled\" FROM user_settings WHERE user_id = @userId", new { userId }); 
-		return result == null || result.Value == 1; 
-	} 
-	
-	public async Task Set2020MenuPref(long userId, bool enabled) 
-	{ 
-		var value = enabled ? 1 : 0; 
-		await db.ExecuteAsync( "INSERT INTO user_settings (user_id, \"2020_menu_enabled\") " + "VALUES (@userId, @value) " + "ON CONFLICT (user_id) DO UPDATE SET \"2020_menu_enabled\" = @value", new { userId, value }); 
-	}
 
-	public async Task<UserDiscord> GetUserDataByDiscordId(string ID)
-	{
-		var userId = await GetUserIdFromDiscordId(ID);
-		var userInfo = await GetUserById(userId);
-		var presence = (await MultiGetPresence(new[] { userId })).FirstOrDefault();
-		
-		return new UserDiscord
-		{
-			userId = userId,
-			username = userInfo.username,
-			created = userInfo.created,
-			lastOnline = presence?.lastOnline ?? userInfo.created
-		};
-	}
-	
-	public async Task<long> GetLatestTicket()
-	{
-		var latest = await db.QuerySingleOrDefaultAsync<long?>(
-			"SELECT ticket_id FROM moderation_transcripts ORDER BY ticket_id DESC LIMIT 1");
-		
-		return (latest ?? 0) + 1;
-	}
-	
-	public async Task StoreTranscriptMessage(long ticketId, long userId, string ID, string message, string name)
-	{
-		await InsertAsync("moderation_transcripts", new
-		{
-			ticket_id = ticketId,
-			user_id = userId,
-			discord_id = ID,
-			message = message,
-			name = name,
-			created_at = DateTime.UtcNow,
-			updated_at = DateTime.UtcNow
-		});
-	}
+    public async Task<bool> Get2020MenuPref(long userId)
+    {
+        var result = await db.QuerySingleOrDefaultAsync<int?>("SELECT \"2020_menu_enabled\" FROM user_settings WHERE user_id = @userId", new { userId });
+        return result == null || result.Value == 1;
+    }
+
+    public async Task Set2020MenuPref(long userId, bool enabled)
+    {
+        var value = enabled ? 1 : 0;
+        await db.ExecuteAsync("INSERT INTO user_settings (user_id, \"2020_menu_enabled\") " + "VALUES (@userId, @value) " + "ON CONFLICT (user_id) DO UPDATE SET \"2020_menu_enabled\" = @value", new { userId, value });
+    }
+
+    public async Task<UserDiscord> GetUserDataByDiscordId(string ID)
+    {
+        var userId = await GetUserIdFromDiscordId(ID);
+        var userInfo = await GetUserById(userId);
+        var presence = (await MultiGetPresence(new[] { userId })).FirstOrDefault();
+
+        return new UserDiscord
+        {
+            userId = userId,
+            username = userInfo.username,
+            created = userInfo.created,
+            lastOnline = presence?.lastOnline ?? userInfo.created
+        };
+    }
+
+    public async Task<long> GetLatestTicket()
+    {
+        var latest = await db.QuerySingleOrDefaultAsync<long?>(
+            "SELECT ticket_id FROM moderation_transcripts ORDER BY ticket_id DESC LIMIT 1");
+
+        return (latest ?? 0) + 1;
+    }
+
+    public async Task StoreTranscriptMessage(long ticketId, long userId, string ID, string message, string name)
+    {
+        await InsertAsync("moderation_transcripts", new
+        {
+            ticket_id = ticketId,
+            user_id = userId,
+            discord_id = ID,
+            message = message,
+            name = name,
+            created_at = DateTime.UtcNow,
+            updated_at = DateTime.UtcNow
+        });
+    }
 
     public async Task<StatusEntry> GetUserStatus(long userId)
     {
@@ -811,9 +813,9 @@ public class UsersService : ServiceBase, IService
         else
         {
             var result = await redis.StringGetAsync(redisKeyPrefix + sessionId);
-            if (result == null) 
+            if (result == null)
                 throw new RecordNotFoundException();
-            
+
             mySess = JsonSerializer.Deserialize<SessionEntry>(result);
             sessCache.Set(sessionId, mySess);
 
@@ -860,8 +862,8 @@ public class UsersService : ServiceBase, IService
             app = await GetApplicationByUserId(userId);
             appCache.Set(userId, app);
         }
-        
-        if (app is {status: UserApplicationStatus.Approved})
+
+        if (app is { status: UserApplicationStatus.Approved })
             return true;
 
         // Default
@@ -888,27 +890,27 @@ public class UsersService : ServiceBase, IService
 
     public async Task<UserApplicationEntry?> GetApplicationById(string applicationId)
     {
-        var (q,t) = GetApplicationQuery();
+        var (q, t) = GetApplicationQuery();
         q.Where("id = :id LIMIT 1", new
         {
             id = applicationId,
         });
         return await db.QuerySingleOrDefaultAsync<UserApplicationEntry>(t.RawSql, t.Parameters);
     }
-    
+
     public async Task<UserApplicationEntry?> GetApplicationByJoinId(string joinId)
     {
-        var (q,t) = GetApplicationQuery();
+        var (q, t) = GetApplicationQuery();
         q.Where("join_id = :join_id LIMIT 1", new
         {
             join_id = joinId,
         });
         return await db.QuerySingleOrDefaultAsync<UserApplicationEntry>(t.RawSql, t.Parameters);
     }
-    
+
     public async Task<UserApplicationEntry?> GetApplicationByUserId(long userId)
     {
-        var (q,t) = GetApplicationQuery();
+        var (q, t) = GetApplicationQuery();
         q.Where("user_id = :user_id LIMIT 1", new
         {
             user_id = userId,
@@ -972,10 +974,10 @@ public class UsersService : ServiceBase, IService
         await using var getAppsLock = await Cache.redLock.CreateLockAsync("GetApplicationsV1", TimeSpan.FromSeconds(5));
         if (!getAppsLock.IsAcquired)
             throw new LockNotAcquiredException();
-        
+
         if (contextUserId != null)
             await ReleaseApplicationLocks(contextUserId.Value);
-        var (q,t) = GetApplicationQuery();
+        var (q, t) = GetApplicationQuery();
         q.OrderBy("created_at " + sortOrder.ToSql() + " LIMIT :limit OFFSET :offset", new
         {
             offset,
@@ -1068,7 +1070,7 @@ public class UsersService : ServiceBase, IService
     {
         if (app == null)
             return ApplicationRedemptionFailureReason.DoesNotExist;
-        if (app.createdAt <= DateTime.UtcNow.Subtract(TimeSpan.FromDays(30))) 
+        if (app.createdAt <= DateTime.UtcNow.Subtract(TimeSpan.FromDays(30)))
             return ApplicationRedemptionFailureReason.Expired;
         if (app.userId is not null)
             return ApplicationRedemptionFailureReason.AlreadyAssociatedWithUser;
@@ -1104,7 +1106,7 @@ public class UsersService : ServiceBase, IService
             status = UserApplicationStatus.Approved,
         });
     }
-    
+
     public async Task DeleteUnusedAppsWithSameUrlUnverified(string socialUrl)
     {
         await db.ExecuteAsync("DELETE FROM join_application WHERE social_presence = :url AND status = :status AND user_id is null", new
@@ -1137,200 +1139,211 @@ public class UsersService : ServiceBase, IService
         }
         return result;
     }
-	
-	public async Task<UserId> CreateUser(string username, string password, Gender gender, long? overrideUserId = null)
-	{
-		if (!Enum.IsDefined(gender))
-			throw new ArgumentException(nameof(gender) + " is invalid: " + gender);
-		
-		// Validate username first (outside transaction to fail fast)
-		var nameTaken = await db.QuerySingleOrDefaultAsync<bool>(
-			"SELECT EXISTS(SELECT 1 FROM \"user\" WHERE username ILIKE :username)", 
-			new { username });
-		if (nameTaken)
-			throw new UsernameTakenException("Username is already taken");
 
-		long userId = 0;
-		var result = await InTransaction(async _ =>
-		{
-			// Double-check username availability inside transaction
-			nameTaken = await db.QuerySingleOrDefaultAsync<bool>(
-				"SELECT EXISTS(SELECT 1 FROM \"user\" WHERE username ILIKE :username FOR UPDATE)", 
-				new { username });
-			if (nameTaken)
-				throw new UsernameTakenException("Username was taken during transaction");
+    public async Task<UserId> CreateUser(string username, string password, Gender gender, long? overrideUserId = null)
+    {
+        if (!Enum.IsDefined(gender))
+            throw new ArgumentException(nameof(gender) + " is invalid: " + gender);
 
-			var hasher = new PasswordHasher();
-			var now = DateTime.UtcNow;
-			
-			if (overrideUserId != null)
-			{
-				userId = overrideUserId.Value;
-				var exists = await db.QuerySingleOrDefaultAsync<bool>(
-					"SELECT EXISTS(SELECT 1 FROM \"user\" WHERE id = :id FOR UPDATE)", 
-					new { id = userId });
-				if (exists)
-					throw new UserIdTakenException("UserID is already taken");
+        var nameTaken = await db.QuerySingleOrDefaultAsync<bool>(
+            "SELECT EXISTS(SELECT 1 FROM \"user\" WHERE username ILIKE :username)",
+            new { username });
 
-				await InsertAsync("user", new
-				{
-					id = userId,
-					username,
-					password = hasher.Hash(password),
-					created_at = now,
-					description = (string?)null,
-					is_18_plus = false,
-					online_at = now,
-					session_expired_at = (DateTime?)null,
-					session_key = 0,
-					status = 1
-				});
-			}
-			else
-			{
-				int retries = 3;
-				while (retries-- > 0)
-				{
-					try
-					{
-						var h = hasher.Hash(password);
-						userId = await InsertAsync("user", new
-						{
-							username,
-							password = h,
-							created_at = now,
-							description = (string?)null,
-							is_18_plus = false,
-							online_at = now,
-							session_expired_at = (DateTime?)null,
-							session_key = 0,
-							status = 1
-						});
-						break;
-					}
-					catch (Npgsql.PostgresException ex) when (ex.SqlState == "23505" && retries > 0)
-					{
-						await db.ExecuteAsync(@"
-							SELECT setval(
-								pg_get_serial_sequence('user', 'id'),
-								(SELECT coalesce(max(id), 0) + 1 FROM ""user""),
-								false
-							)");
-						await Task.Delay(100 * (3 - retries));
-					}
-				}
-			}
+        if (nameTaken)
+            throw new UsernameTakenException("Username is already taken");
 
-			var usersService = ServiceProvider.GetOrCreate<UsersService>();
-			
-			var appId = await usersService.CreateApplication(new CreateUserApplicationRequest()
-			{
-				about = "User signed up",
-				socialPresence = "None provided",
-				isVerified = true,
-				verifiedUrl = "None provided",
-				verificationPhrase = "Automatically approved",
-				verifiedId = "0",
-			});
+        long userId = 0;
+        UserId result = null!;
 
-			var joinId = await usersService.ProcessApplication(appId, 1, UserApplicationStatus.Approved);
-			await usersService.SetApplicationUserIdByJoinId(joinId, userId);
+        int retries = 3;
 
-			// Account settings
-			await InsertAsync("user_settings", "user_id", new
-			{
-				user_id = userId,
-				theme = 1,
-				gender = (int)gender,
-				private_message_privacy = GeneralPrivacy.All,
-				inventory_privacy = InventoryPrivacy.AllUsers,
-				trade_privacy = GeneralPrivacy.All,
-			});
+        while (true)
+        {
+            try
+            {
+                result = await InTransaction(async _ =>
+                {
+                    nameTaken = await db.QuerySingleOrDefaultAsync<bool>(
+                        "SELECT EXISTS(SELECT 1 FROM \"user\" WHERE username ILIKE :username)",
+                        new { username });
 
-			// Balance
-			await InsertAsync("user_economy", "user_id", new
-			{
-				user_id = userId,
-				balance_tickets = 0,
-				balance_robux = 100,
-			});
+                    if (nameTaken)
+                        throw new UsernameTakenException("Username was taken during transaction");
 
-			// First transaction
-			await InsertAsync("user_transaction", new
-			{
-				amount = 100,
-				type = PurchaseType.BuildersClubStipend,
-				currency_type = 1,
-				user_id_one = userId,
-				user_id_two = 1,
-				created_at = now,
-			});
-			
-			await InsertAsync("user_avatar", "user_id", new
-			{
-				user_id = userId,
-				thumbnail_url = "/images/thumbnails/default_thumbnail.png", // will be generated
-				avatar_type = 2,
-				scale_height = 1.0f,
-				scale_width = 1.0f,
-				scale_head = 1.0f,
-				scale_depth = 1.0f,
-				scale_proportion = 0.0f,
-				scale_body_type = 0.0f,
-				head_color_id = 194,
-				torso_color_id = 23,
-				right_arm_color_id = 194,
-				left_arm_color_id = 194,
-				right_leg_color_id = 102,
-				left_leg_color_id = 102,
-				headshot_thumbnail_url = "/images/thumbnails/default_headshot.png" // will be generated
-			});
-			
-			await InsertAsync("user_avatar_type", new
-			{
-				user_id = userId,
-				r15 = false,
-				height = 100,
-				width = 100,
-				head = 100,
-				proportion = 0,
-				body_type = 0,
-			});
+                    var hasher = new PasswordHasher();
+                    var now = DateTime.UtcNow;
 
-			// Give gender-specific assets
-			var assetIds = gender == Gender.Male 
-				? Roblox.Configuration.SignupAssetIdsMan 
-				: Roblox.Configuration.SignupAssetIdsFemale;
-				
-			var userAssetIds = new List<long>();
-			foreach (var id in assetIds)
-			{
-				var userAssetId = await CreateUserAsset(userId, id);
-				userAssetIds.Add(userAssetId);
-			}
+                    if (overrideUserId != null)
+                    {
+                        userId = overrideUserId.Value;
 
-			return new UserId { userId = userId };
-		});
-		
-		using var av = ServiceProvider.GetOrCreate<AvatarService>();
-		var avatarAssetIds = gender == Gender.Male
-			? Roblox.Configuration.SignupAvatarAssetIdsMan
-			: Roblox.Configuration.SignupAvatarAssetIdsFemale;
+                        var exists = await db.QuerySingleOrDefaultAsync<bool>(
+                            "SELECT EXISTS(SELECT 1 FROM \"user\" WHERE id = :id)",
+                            new { id = userId });
 
-		await av.RedrawAvatar(userId, avatarAssetIds);
+                        if (exists)
+                            throw new UserIdTakenException("UserID is already taken");
 
-		return result;
-	}
+                        await InsertAsync("user", new
+                        {
+                            id = userId,
+                            username,
+                            password = hasher.Hash(password),
+                            created_at = now,
+                            description = (string?)null,
+                            is_18_plus = false,
+                            online_at = now,
+                            session_expired_at = (DateTime?)null,
+                            session_key = 0,
+                            status = 1
+                        });
+                    }
+                    else
+                    {
+                        userId = await InsertAsync("user", new
+                        {
+                            username,
+                            password = hasher.Hash(password),
+                            created_at = now,
+                            description = (string?)null,
+                            is_18_plus = false,
+                            online_at = now,
+                            session_expired_at = (DateTime?)null,
+                            session_key = 0,
+                            status = 1
+                        });
+                    }
 
-	public class UsernameTakenException : Exception
-	{
-		public UsernameTakenException(string message) : base(message) { }
-	}
+                    var usersService = ServiceProvider.GetOrCreate<UsersService>();
 
-	public class UserIdTakenException : Exception
-	{
-		public UserIdTakenException(string message) : base(message) { }
-	}
+                    var appId = await usersService.CreateApplication(new CreateUserApplicationRequest()
+                    {
+                        about = "User signed up",
+                        socialPresence = "None provided",
+                        isVerified = true,
+                        verifiedUrl = "None provided",
+                        verificationPhrase = "Automatically approved",
+                        verifiedId = "0",
+                    });
+
+                    var joinId = await usersService.ProcessApplication(
+                        appId,
+                        1,
+                        UserApplicationStatus.Approved);
+
+                    await usersService.SetApplicationUserIdByJoinId(joinId, userId);
+
+                    await InsertAsync("user_settings", "user_id", new
+                    {
+                        user_id = userId,
+                        theme = 1,
+                        gender = (int)gender,
+                        private_message_privacy = GeneralPrivacy.All,
+                        inventory_privacy = InventoryPrivacy.AllUsers,
+                        trade_privacy = GeneralPrivacy.All,
+                    });
+
+                    await InsertAsync("user_economy", "user_id", new
+                    {
+                        user_id = userId,
+                        balance_tickets = 0,
+                        balance_robux = 100,
+                    });
+
+                    await InsertAsync("user_transaction", new
+                    {
+                        amount = 100,
+                        type = PurchaseType.BuildersClubStipend,
+                        currency_type = 1,
+                        user_id_one = userId,
+                        user_id_two = 1,
+                        created_at = now,
+                    });
+
+                    await InsertAsync("user_avatar", "user_id", new
+                    {
+                        user_id = userId,
+                        thumbnail_url = "/images/thumbnails/default_thumbnail.png",
+                        avatar_type = 2,
+                        scale_height = 1.0f,
+                        scale_width = 1.0f,
+                        scale_head = 1.0f,
+                        scale_depth = 1.0f,
+                        scale_proportion = 0.0f,
+                        scale_body_type = 0.0f,
+                        head_color_id = 194,
+                        torso_color_id = 23,
+                        right_arm_color_id = 194,
+                        left_arm_color_id = 194,
+                        right_leg_color_id = 102,
+                        left_leg_color_id = 102,
+                        headshot_thumbnail_url = "/images/thumbnails/default_headshot.png"
+                    });
+
+                    await InsertAsync("user_avatar_type", new
+                    {
+                        user_id = userId,
+                        r15 = false,
+                        height = 100,
+                        width = 100,
+                        head = 100,
+                        proportion = 0,
+                        body_type = 0,
+                    });
+
+                    var assetIds = gender == Gender.Male
+                        ? Roblox.Configuration.SignupAssetIdsMan
+                        : Roblox.Configuration.SignupAssetIdsFemale;
+
+                    foreach (var id in assetIds)
+                    {
+                        await CreateUserAsset(userId, id);
+                    }
+
+                    return new UserId { userId = userId };
+                });
+
+                break;
+            }
+            catch (Npgsql.PostgresException ex)
+                when (ex.SqlState == "23505" && retries-- > 0)
+            {
+                Console.WriteLine(
+                    $"Duplicate key during signup. Constraint: {ex.ConstraintName}");
+
+                // Transaction has already rolled back here.
+                // Safe to fix sequence now.
+                await db.ExecuteAsync(@"
+				SELECT setval(
+					pg_get_serial_sequence('user', 'id'),
+					(SELECT coalesce(max(id), 0) FROM ""user"") + 1,
+					false
+				)");
+
+                await Task.Delay(100);
+            }
+        }
+
+        using var av = ServiceProvider.GetOrCreate<AvatarService>();
+
+        var avatarAssetIds = gender == Gender.Male
+            ? Roblox.Configuration.SignupAvatarAssetIdsMan
+            : Roblox.Configuration.SignupAvatarAssetIdsFemale;
+
+        await av.RedrawAvatar(userId, avatarAssetIds);
+
+        return result;
+    }
+
+    public class UsernameTakenException : Exception
+    {
+        public UsernameTakenException(string message) : base(message) { }
+    }
+
+    public class UserIdTakenException : Exception
+    {
+        public UserIdTakenException(string message) : base(message) { }
+    }
 
     public async Task<long> CreateUserAsset(long userId, long assetId)
     {
@@ -1341,7 +1354,7 @@ public class UsersService : ServiceBase, IService
                     user_id = userId,
                     asset_id = assetId,
                 });
-        return (long) result.id;
+        return (long)result.id;
     }
 
     public async Task<IEnumerable<CollectibleUserAssetEntry>> GetUserAssets(long userId, long assetId)
@@ -1392,40 +1405,40 @@ public class UsersService : ServiceBase, IService
         return result;
     }
 
-	public async Task SetPriceOfUserAsset(long userAssetId, long userId, long newPrice)
-	{
-		if (newPrice < 1 && newPrice != 0)
-			throw new ArgumentException("Price must be at least 1 Robux or 0");
+    public async Task SetPriceOfUserAsset(long userAssetId, long userId, long newPrice)
+    {
+        if (newPrice < 1 && newPrice != 0)
+            throw new ArgumentException("Price must be at least 1 Robux or 0");
 
-		await InTransaction(async _ =>
-		{
-			await using var userAssetLock = await AcquireUserAssetLock(userAssetId);
-			
-			var currentOwner = await GetUserAssetById(userAssetId);
-			if (currentOwner.userId != userId)
-				throw new RobloxException(401, 0, "Cannot change the price of this item");
-			
-			var CurrentPrice = currentOwner.price;
-			
-			await UpdateAsync("user_asset", userAssetId, new
-			{
-				price = newPrice,
-			});
+        await InTransaction(async _ =>
+        {
+            await using var userAssetLock = await AcquireUserAssetLock(userAssetId);
 
-			await InsertAsync("moderation_sell_asset", new
-			{
-				user_asset_id = userAssetId,
-				user_id = userId,
-				asset_id = currentOwner.assetId,
-				old_price = CurrentPrice,
-				new_price = newPrice,
-				created_at = DateTime.UtcNow,
-				updated_at = DateTime.UtcNow
-			});
-			
-			return 0;
-		});
-	}
+            var currentOwner = await GetUserAssetById(userAssetId);
+            if (currentOwner.userId != userId)
+                throw new RobloxException(401, 0, "Cannot change the price of this item");
+
+            var CurrentPrice = currentOwner.price;
+
+            await UpdateAsync("user_asset", userAssetId, new
+            {
+                price = newPrice,
+            });
+
+            await InsertAsync("moderation_sell_asset", new
+            {
+                user_asset_id = userAssetId,
+                user_id = userId,
+                asset_id = currentOwner.assetId,
+                old_price = CurrentPrice,
+                new_price = newPrice,
+                created_at = DateTime.UtcNow,
+                updated_at = DateTime.UtcNow
+            });
+
+            return 0;
+        });
+    }
 
     public async Task<EconomySummary> GetTransactionSummary(long userId, DateTime minCreationDate)
     {
@@ -1490,7 +1503,7 @@ public class UsersService : ServiceBase, IService
             sub_type = TransactionSubType.ItemPurchase,
         })).total > 0;
     }
-    
+
     private async Task<UserEconomy> GetTotalCurrencyExchangedWithInvitedUsers(long userId, TimeSpan period)
     {
         var result = new UserEconomy()
@@ -1513,16 +1526,16 @@ public class UsersService : ServiceBase, IService
             userIdsInvited);
         foreach (var item in await db.QueryAsync(t.RawSql, t.Parameters))
         {
-            var transactionType = (PurchaseType) item.type;
+            var transactionType = (PurchaseType)item.type;
             if (transactionType != PurchaseType.Sale) continue;
-            var currency = (CurrencyType) item.currency_type;
+            var currency = (CurrencyType)item.currency_type;
             if (currency == CurrencyType.Robux)
             {
-                result.robux += (int) item.amount;
+                result.robux += (int)item.amount;
             }
             else
             {
-                result.tickets += (int) item.amount;
+                result.tickets += (int)item.amount;
             }
         }
         return result;
@@ -1539,7 +1552,7 @@ public class UsersService : ServiceBase, IService
         var details = await assets.GetAssetCatalogInfo(assetId);
         var restrictions = details.itemRestrictions.ToArray();
         var isLimited = restrictions.Contains("Limited") || restrictions.Contains("LimitedUnique");
-        
+
         // don't check free items
         if (details.isForSale && details.price == 0 && currency == CurrencyType.Robux)
             return PurchaseAbuseFailureReason.Ok;
@@ -1548,7 +1561,7 @@ public class UsersService : ServiceBase, IService
         // don't check Roblox or UGC items
         if ((sellerId is 1 or 2) && details.creatorType == CreatorType.User && !isLimited)
             return PurchaseAbuseFailureReason.Ok;
-        
+
         if (details.creatorType == CreatorType.Group)
         {
             // just check group creator for now
@@ -1564,9 +1577,9 @@ public class UsersService : ServiceBase, IService
         var didBuyerJoinFromSeller = sellerInvite?.authorId == buyerUserId;
         var didSellerJoinFromBuyer = buyerInvite?.authorId == sellerId;
         var usersInvitedBySamePerson = sellerInvite != null && buyerInvite != null && sellerInvite.authorId == buyerInvite.authorId;
-        var didAnyUserJoinFromInviteByRelatedParty = 
-            didBuyerJoinFromSeller || 
-            didSellerJoinFromBuyer || 
+        var didAnyUserJoinFromInviteByRelatedParty =
+            didBuyerJoinFromSeller ||
+            didSellerJoinFromBuyer ||
             usersInvitedBySamePerson;
 
         if (didAnyUserJoinFromInviteByRelatedParty)
@@ -1598,9 +1611,9 @@ public class UsersService : ServiceBase, IService
             if (sellerEarnings.robux > maxRobuxPerDay || sellerEarnings.tickets > maxTicketsPerDay)
                 return PurchaseAbuseFailureReason.UsersRelatedAndTooMuchTransacted;
             // check half as well (roughly 30 robux + 300 tickets would equal 60 robux, hitting the max)
-            if (sellerEarnings.robux > maxRobuxPerDay/2 && sellerEarnings.tickets > maxTicketsPerDay/2)
+            if (sellerEarnings.robux > maxRobuxPerDay / 2 && sellerEarnings.tickets > maxTicketsPerDay / 2)
                 return PurchaseAbuseFailureReason.UsersRelatedAndTooMuchTransacted;
-            
+
             if (currency == CurrencyType.Robux)
             {
                 if (sellerEarnings.robux + details.price > maxRobuxPerDay)
@@ -1636,7 +1649,7 @@ public class UsersService : ServiceBase, IService
                 return PurchaseAbuseFailureReason.UsersRelatedPurchasedTooMany;
         }
         Writer.Info(LogGroup.AbuseDetection, "CanAssetBePurchased true");
-        
+
         return PurchaseAbuseFailureReason.Ok;
     }
 
@@ -1656,7 +1669,7 @@ public class UsersService : ServiceBase, IService
         if (!redLock.IsAcquired)
             throw new RobloxException(429, 0, "TooManyRequests");
         // log.Info($"got PurchaseAsset lock");
-        
+
         await InTransaction(async _ =>
         {
             // Double check that user still doesn't own item yet
@@ -1684,7 +1697,7 @@ public class UsersService : ServiceBase, IService
 
             if (isExpired)
                 throw new InternalPurchaseFailureException(InternalPurchaseFailReason.AssetExpired);
-            
+
             using var ec = ServiceProvider.GetOrCreate<EconomyService>(this);
             await using var buyerLock = await ec.AcquireEconomyLock(CreatorType.User, userIdBuyer);
             // Check balance
@@ -1699,7 +1712,7 @@ public class UsersService : ServiceBase, IService
 
             if (realPrice is < 0)
                 throw new InternalPurchaseFailureException(InternalPurchaseFailReason.AssetPriceLessThanZero);
-            
+
             if (balance < realPrice)
             {
                 if (expectedCurrency == CurrencyType.Robux)
@@ -1707,7 +1720,7 @@ public class UsersService : ServiceBase, IService
                 throw new InternalPurchaseFailureException(InternalPurchaseFailReason.BalanceLessThanPrice);
             }
             // log.Info("buyer balance = {0} item price = {1}", balance, assetDetails.priceRobux);
-            
+
             // Not all groups have an economy yet. Create if required.
             if (assetDetails.creatorType == CreatorType.Group)
             {
@@ -1817,21 +1830,21 @@ public class UsersService : ServiceBase, IService
         });
     }
 
-/*     public async Task<long> GetMaximumCopyCount(long assetId)
-    {
-        var totalResult = await db.QuerySingleOrDefaultAsync<Dto.Total>("SELECT COUNT(*) as total FROM user_asset WHERE asset_id = :assetId", new
+    /*     public async Task<long> GetMaximumCopyCount(long assetId)
         {
-            assetId = assetId,
-        });
-        var totalInExistence = totalResult.total;
-        var maxCopies = (long) Math.Truncate(totalInExistence * 0.1);
-        return Math.Clamp(maxCopies, 2, 100);
-    } */
-	
-	public async Task<long> GetMaximumCopyCount(long assetId)
-	{
-		return 5;
-	}
+            var totalResult = await db.QuerySingleOrDefaultAsync<Dto.Total>("SELECT COUNT(*) as total FROM user_asset WHERE asset_id = :assetId", new
+            {
+                assetId = assetId,
+            });
+            var totalInExistence = totalResult.total;
+            var maxCopies = (long) Math.Truncate(totalInExistence * 0.1);
+            return Math.Clamp(maxCopies, 2, 100);
+        } */
+
+    public async Task<long> GetMaximumCopyCount(long assetId)
+    {
+        return 5;
+    }
 
     public async Task PurchaseResellableItem(long userIdBuyer, long userAssetId)
     {
@@ -1841,7 +1854,7 @@ public class UsersService : ServiceBase, IService
         await using var userAssetLock = await AcquireUserAssetLock(userAssetId);
         // Buyer lock
         await using var buyerLock = await AcquireEconomyLock(userIdBuyer);
-        
+
         await InTransaction(async _ =>
         {
             // Double check that everything is still valid
@@ -1859,7 +1872,7 @@ public class UsersService : ServiceBase, IService
             if (copies.Count() >= maxPossibleCopies)
                 throw new InternalPurchaseFailureException(InternalPurchaseFailReason
                   .UserWouldExceedMaximumCopiesIfPurchased);
-            
+
             // Check balance
             using var ec = ServiceProvider.GetOrCreate<EconomyService>(this);
             var buyerBalanceOriginal = await ec.GetUserRobux(userIdBuyer);
@@ -1881,7 +1894,7 @@ public class UsersService : ServiceBase, IService
             await ec.DecrementCurrency(CreatorType.User, userIdBuyer, CurrencyType.Robux, userAsset.price);
             // log.Info("subtracted {0} from buyer", userAsset.price);
             // Triple check
-            var newBalance = await ec.GetUserRobux(userIdBuyer);;
+            var newBalance = await ec.GetUserRobux(userIdBuyer); ;
             // log.Info("buyer new balance = {0}",newBalance);
             if (newBalance != expectedBuyerBalanceAfterSale)
                 throw new Exception("Branch 4 (Critical) - Somebody REALLY broke a lock!");
@@ -1937,16 +1950,16 @@ public class UsersService : ServiceBase, IService
             // log.Info("purchase success");
             // Finally, metrics
             EconomyMetrics.ReportRobuxVolumeChange(userAsset.price);
-			await InsertAsync("moderation_purchase_resale_asset", new
-			{
-				user_asset_id = userAsset.userAssetId,
-				buyer_user_id = userIdBuyer,
-				seller_user_id = userAsset.userId,
-				asset_id = userAsset.assetId,
-				purchase_price = userAsset.price,
-				created_at = DateTime.UtcNow,
-				updated_at = DateTime.UtcNow
-			});
+            await InsertAsync("moderation_purchase_resale_asset", new
+            {
+                user_asset_id = userAsset.userAssetId,
+                buyer_user_id = userIdBuyer,
+                seller_user_id = userAsset.userId,
+                asset_id = userAsset.assetId,
+                purchase_price = userAsset.price,
+                created_at = DateTime.UtcNow,
+                updated_at = DateTime.UtcNow
+            });
             return 0;
         });
     }
@@ -2011,7 +2024,7 @@ public class UsersService : ServiceBase, IService
             // User already got daily robux in the past timespan, so do nothing
             return;
         }
-        
+
         // WEB-36
         var l = "TicketsStipendLockV1:" + userId;
         await using var robuxLock = await Cache.redLock.CreateLockAsync(l, TimeSpan.FromSeconds(5));
@@ -2056,7 +2069,7 @@ public class UsersService : ServiceBase, IService
             return;
         var metadata = MembershipMetadata.GetMetadata(membershipType.membershipType);
         //var dailyRobux = isStaff ? 250 : metadata.dailyRobux;
-		var dailyRobux = metadata.dailyRobux;
+        var dailyRobux = metadata.dailyRobux;
         if (dailyRobux == 0)
             return;
 
@@ -2113,7 +2126,7 @@ public class UsersService : ServiceBase, IService
 
     private static readonly Mutex OnlineStatusUpdateMux = new();
     private static readonly Dictionary<long, bool> OnlineStatusUpdatedList = new();
-    
+
     public bool TrySetOnlineTimeUpdated(long userId)
     {
         bool result;
@@ -2133,7 +2146,7 @@ public class UsersService : ServiceBase, IService
                 OnlineStatusUpdatedList.Remove(userId);
             }
         });
-        
+
         return result;
     }
 
@@ -2170,74 +2183,74 @@ public class UsersService : ServiceBase, IService
             }
         });
     }
-	
-	public async Task<bool> IsUserPoisoned(string hashedIp)
-	{
-		return await db.ExecuteScalarAsync<bool>(
-			"SELECT EXISTS(SELECT 1 FROM user_hashed_ips WHERE hashed_ip = @hashedIp AND poisoned = true)",
-			new { hashedIp });
-	}
-	
-	public async Task BanForBypass(long userId)
-	{
-		var expiry = DateTime.UtcNow.AddDays(3);
-		const string reason = "Please do not attempt to upload bypassed audios. If this is a mistake, open a ticket in our Discord.";
-		const string internalReason = "Audio bypass attempt";
-		
-		var info = await GetUserById(userId);
-		if (info.accountStatus != AccountStatus.Ok && info.accountStatus != AccountStatus.Suppressed && info.accountStatus != AccountStatus.MustValidateEmail)
-			throw new Exception("You cannot ban this user. Current status is " + info.accountStatus);
-		
-		await InTransaction(async _ =>
-		{
-			// insert ban
-			await db.ExecuteAsync(
-				"INSERT INTO user_ban (user_id, reason, author_user_id, expired_at, internal_reason) VALUES (:user_id, :reason, :author, :expires, :internal_reason)", new
-				{
-					internal_reason = internalReason,
-					user_id = userId,
-					reason = reason,
-					author = 1,
-					expires = expiry,
-				});
-			
-			// insert into user ban history
-			await db.ExecuteAsync(
-				"INSERT INTO moderation_user_ban (user_id, reason, author_user_id, expired_at, internal_reason) VALUES (:user_id, :reason, :author, :expires, :internal_reason)", new
-				{
-					internal_reason = internalReason,
-					user_id = userId,
-					reason = reason,
-					author = 1,
-					expires = expiry,
-				});
-			
-			// log
-			await db.ExecuteAsync("INSERT INTO moderation_ban (user_id, actor_id, reason, internal_reason, expired_at) VALUES (:user_id, :author, :reason, :internal_reason, :expires)", new
-			{
-				user_id = userId,
-				author = 1,
-				reason = reason,
-				internal_reason = internalReason,
-				expires = expiry,
-			});
-			
-			// mark as suppressed (temporary ban)
-			await db.ExecuteAsync("UPDATE \"user\" SET status = :st WHERE id = :id", new
-			{
-				st = AccountStatus.Suppressed,
-				id = userId,
-			});
 
-			// take all limited items off sale
-			await db.ExecuteAsync("UPDATE user_asset SET price = 0 WHERE price != 0 AND user_id = :user_id", new
-			{
-				user_id = userId,
-			});
-			
-			return 0;
-		});
-	}
+    public async Task<bool> IsUserPoisoned(string hashedIp)
+    {
+        return await db.ExecuteScalarAsync<bool>(
+            "SELECT EXISTS(SELECT 1 FROM user_hashed_ips WHERE hashed_ip = @hashedIp AND poisoned = true)",
+            new { hashedIp });
+    }
+
+    public async Task BanForBypass(long userId)
+    {
+        var expiry = DateTime.UtcNow.AddDays(3);
+        const string reason = "Please do not attempt to upload bypassed audios. If this is a mistake, open a ticket in our Discord.";
+        const string internalReason = "Audio bypass attempt";
+
+        var info = await GetUserById(userId);
+        if (info.accountStatus != AccountStatus.Ok && info.accountStatus != AccountStatus.Suppressed && info.accountStatus != AccountStatus.MustValidateEmail)
+            throw new Exception("You cannot ban this user. Current status is " + info.accountStatus);
+
+        await InTransaction(async _ =>
+        {
+            // insert ban
+            await db.ExecuteAsync(
+                "INSERT INTO user_ban (user_id, reason, author_user_id, expired_at, internal_reason) VALUES (:user_id, :reason, :author, :expires, :internal_reason)", new
+                {
+                    internal_reason = internalReason,
+                    user_id = userId,
+                    reason = reason,
+                    author = 1,
+                    expires = expiry,
+                });
+
+            // insert into user ban history
+            await db.ExecuteAsync(
+                "INSERT INTO moderation_user_ban (user_id, reason, author_user_id, expired_at, internal_reason) VALUES (:user_id, :reason, :author, :expires, :internal_reason)", new
+                {
+                    internal_reason = internalReason,
+                    user_id = userId,
+                    reason = reason,
+                    author = 1,
+                    expires = expiry,
+                });
+
+            // log
+            await db.ExecuteAsync("INSERT INTO moderation_ban (user_id, actor_id, reason, internal_reason, expired_at) VALUES (:user_id, :author, :reason, :internal_reason, :expires)", new
+            {
+                user_id = userId,
+                author = 1,
+                reason = reason,
+                internal_reason = internalReason,
+                expires = expiry,
+            });
+
+            // mark as suppressed (temporary ban)
+            await db.ExecuteAsync("UPDATE \"user\" SET status = :st WHERE id = :id", new
+            {
+                st = AccountStatus.Suppressed,
+                id = userId,
+            });
+
+            // take all limited items off sale
+            await db.ExecuteAsync("UPDATE user_asset SET price = 0 WHERE price != 0 AND user_id = :user_id", new
+            {
+                user_id = userId,
+            });
+
+            return 0;
+        });
+    }
 
     public async Task<UserBanEntry> GetBanData(long userId)
     {
@@ -2265,7 +2278,7 @@ public class UsersService : ServiceBase, IService
     {
         return "GlobalAlert:v2";
     }
-    
+
     public async Task<Alert?> GetGlobalAlert()
     {
         var result = await redis.StringGetAsync(GetAlertKey());
@@ -2281,7 +2294,7 @@ public class UsersService : ServiceBase, IService
             await redis.KeyDeleteAsync(GetAlertKey());
             return;
         }
-        
+
         await redis.StringSetAsync(GetAlertKey(), JsonSerializer.Serialize(new Alert()
         {
             url = newUrl,
@@ -2295,7 +2308,7 @@ public class UsersService : ServiceBase, IService
         var (exists, year) = s.Get(userId);
         if (exists)
             return year;
-        
+
         var result = await redis.StringGetAsync("useryeartheme:v1:" + userId);
         if (result == null)
         {
@@ -2334,15 +2347,15 @@ public class UsersService : ServiceBase, IService
             if (is18OrOver.ContainsKey(userId))
                 return is18OrOver[userId];
         }
-        
+
         var result = await db.QuerySingleOrDefaultAsync<User18OrOver>("SELECT is_18_plus as is18Plus FROM \"user\" WHERE id = :id ", new
         {
             id = userId,
         });
-        
+
         if (result == null)
             return false;
-        
+
         lock (is18OrOverMapMux)
         {
             is18OrOver[userId] = result.is18Plus;
@@ -2357,7 +2370,7 @@ public class UsersService : ServiceBase, IService
         {
             is18OrOver[userId] = true;
         }
-        
+
         await Database.connection.ExecuteAsync("UPDATE \"user\" SET is_18_plus = true WHERE id = :id", new
         {
             id = userId,
@@ -2434,7 +2447,7 @@ public class UsersService : ServiceBase, IService
             {
                 created_at = DateTime.UtcNow,
                 id = Guid.NewGuid().ToString(),
-                user_id = (long?) null,
+                user_id = (long?)null,
                 author_id = authorUserId,
             });
     }
@@ -2498,7 +2511,7 @@ public class UsersService : ServiceBase, IService
     {
         if (!Enum.IsDefined(newMembershipType))
             throw new ArgumentException("Invalid " + nameof(newMembershipType));
-        
+
         await using var memLock = await GetUpdateMembershipLock(userId);
         await InTransaction(async _ =>
         {
@@ -2543,7 +2556,7 @@ public class UsersService : ServiceBase, IService
         return await db.QueryAsync<UserId>(
             "SELECT distinct user_id as userId FROM user_permission");
     }
-    
+
     public async Task<IEnumerable<StaffUserPermissionEntry>> GetStaffPermissions(long userId)
     {
         return await db.QueryAsync<StaffUserPermissionEntry>(
@@ -2578,7 +2591,7 @@ public class UsersService : ServiceBase, IService
             throw new ArgumentException(nameof(socialUrl) + " cannot be null");
         if (string.IsNullOrWhiteSpace(verificationPhrase))
             throw new ArgumentException(nameof(verificationPhrase) + " cannot be null");
-        
+
         var uuid = Guid.NewGuid().ToString();
         await db.ExecuteAsync("INSERT INTO user_password_reset (user_id, id, created_at, status, social_url, verification_phrase) VALUES (:user_id, :id, :created_at, :status, :social_url, :verification_phrase)", new
         {
@@ -2615,7 +2628,7 @@ public class UsersService : ServiceBase, IService
         var ticket = await GetPasswordResetEntry(id);
         if (ticket == null)
             throw new ArgumentException("Invalid " + nameof(id));
-        
+
         var updated = await db.ExecuteAsync("UPDATE user_password_reset SET status = :status WHERE id = :id AND status = :old_status", new
         {
             id = id,
@@ -2624,110 +2637,110 @@ public class UsersService : ServiceBase, IService
         });
         if (updated != 1)
             throw new ArgumentException("Password reset was already redeemed");
-        
+
         await ChangePassword(ticket.userId, newPW);
     }
-	
-	public async Task GiveUserEgg(long userId, long assetId)
-	{
-		// basically giving a user an asset
-		var HasEgg = await db.QueryFirstOrDefaultAsync<bool>(
-			"SELECT COUNT(*) > 0 FROM user_asset WHERE user_id = @user_id AND asset_id = @asset_id",
-			new
-			{
-				user_id = userId,
-				asset_id = assetId,
-			});
-		
-		if (!HasEgg)
-		{
-			await db.ExecuteAsync("INSERT INTO user_asset (user_id, asset_id) VALUES (@user_id, @asset_id)", new
-			{
-				user_id = userId,
-				asset_id = assetId,
-			});
-		}
-	}
-	
-	public async Task GiveUserBadge(long userId, long badgeId)
-	{
-		// check if the user already has the badge
-		var HasBadge = await db.QueryFirstOrDefaultAsync<bool>(
-			"SELECT COUNT(*) > 0 FROM user_badge WHERE user_id = :user_id AND badge_id = :badge_id",
-			new
-			{
-				user_id = userId,
-				badge_id = badgeId,
-			});
-		
-		if (!HasBadge)
-		{
-			await db.ExecuteAsync("INSERT INTO user_badge (user_id, badge_id) VALUES (:user_id, :badge_id)", new
-			{
-				user_id = userId,
-				badge_id = badgeId,
-			});
-		}
-	}
-	
-	public async Task<IEnumerable<GamePassEntry>> GetUserGamePassess(long userId)
-	{
-		var result = await db.QueryAsync<GamePassEntry>(
-			@"SELECT ua.asset_id as id, a.name
+
+    public async Task GiveUserEgg(long userId, long assetId)
+    {
+        // basically giving a user an asset
+        var HasEgg = await db.QueryFirstOrDefaultAsync<bool>(
+            "SELECT COUNT(*) > 0 FROM user_asset WHERE user_id = @user_id AND asset_id = @asset_id",
+            new
+            {
+                user_id = userId,
+                asset_id = assetId,
+            });
+
+        if (!HasEgg)
+        {
+            await db.ExecuteAsync("INSERT INTO user_asset (user_id, asset_id) VALUES (@user_id, @asset_id)", new
+            {
+                user_id = userId,
+                asset_id = assetId,
+            });
+        }
+    }
+
+    public async Task GiveUserBadge(long userId, long badgeId)
+    {
+        // check if the user already has the badge
+        var HasBadge = await db.QueryFirstOrDefaultAsync<bool>(
+            "SELECT COUNT(*) > 0 FROM user_badge WHERE user_id = :user_id AND badge_id = :badge_id",
+            new
+            {
+                user_id = userId,
+                badge_id = badgeId,
+            });
+
+        if (!HasBadge)
+        {
+            await db.ExecuteAsync("INSERT INTO user_badge (user_id, badge_id) VALUES (:user_id, :badge_id)", new
+            {
+                user_id = userId,
+                badge_id = badgeId,
+            });
+        }
+    }
+
+    public async Task<IEnumerable<GamePassEntry>> GetUserGamePassess(long userId)
+    {
+        var result = await db.QueryAsync<GamePassEntry>(
+            @"SELECT ua.asset_id as id, a.name
 			  FROM public.user_asset ua
 			  JOIN public.asset a ON a.id = ua.asset_id
 			  WHERE ua.user_id = :user_id AND a.asset_type = 34",
-			new
-			{
-				user_id = userId
-			});
+            new
+            {
+                user_id = userId
+            });
 
-		return result.Select(c =>
-		{
-			c.name = c.name ?? "Game Pass";
-			return c;
-		});
-	}
-	
-	public async Task<IEnumerable<GameBadgeEntry>> GetUserBadges(long userId)
-	{
-		var result = await db.QueryAsync<GameBadgeEntry>(
-			@"SELECT ua.asset_id as id, a.name
+        return result.Select(c =>
+        {
+            c.name = c.name ?? "Game Pass";
+            return c;
+        });
+    }
+
+    public async Task<IEnumerable<GameBadgeEntry>> GetUserBadges(long userId)
+    {
+        var result = await db.QueryAsync<GameBadgeEntry>(
+            @"SELECT ua.asset_id as id, a.name
 			  FROM public.user_asset ua
 			  JOIN public.asset a ON a.id = ua.asset_id
 			  WHERE ua.user_id = :user_id AND a.asset_type = 21",
-			new
-			{
-				user_id = userId
-			});
+            new
+            {
+                user_id = userId
+            });
 
-		return result.Select(c =>
-		{
-			c.name = c.name ?? "Badge";
-			return c;
-		});
-	}
-	
-	public async Task<bool> GiveUserGameBadge(long userId, long badgeId)
-	{
-		var AlreadyAwarded = await db.QuerySingleOrDefaultAsync<bool>(
-			"SELECT EXISTS(SELECT 1 FROM user_asset WHERE user_id = :user_id AND asset_id = :asset_id)",
-			new { user_id = userId, asset_id = badgeId }
-		);
-		
-		if (AlreadyAwarded)
-		{
-			return false;
-		}
-		
-		await db.ExecuteAsync(
-			@"INSERT INTO public.user_asset (user_id, asset_id, price)
+        return result.Select(c =>
+        {
+            c.name = c.name ?? "Badge";
+            return c;
+        });
+    }
+
+    public async Task<bool> GiveUserGameBadge(long userId, long badgeId)
+    {
+        var AlreadyAwarded = await db.QuerySingleOrDefaultAsync<bool>(
+            "SELECT EXISTS(SELECT 1 FROM user_asset WHERE user_id = :user_id AND asset_id = :asset_id)",
+            new { user_id = userId, asset_id = badgeId }
+        );
+
+        if (AlreadyAwarded)
+        {
+            return false;
+        }
+
+        await db.ExecuteAsync(
+            @"INSERT INTO public.user_asset (user_id, asset_id, price)
 			  VALUES (:user_id, :asset_id, 0)
 			  ON CONFLICT (user_id, asset_id) DO NOTHING",
-			new { user_id = userId, asset_id = badgeId }
-		);
-		return true;
-	}
+            new { user_id = userId, asset_id = badgeId }
+        );
+        return true;
+    }
 
     public bool IsThreadSafe()
     {

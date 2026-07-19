@@ -335,7 +335,7 @@
 				{/if}
 				
 				<li class="nav-item mt-2 d-md-none d-block">
-					<a class="nav-link" href="/home">Back to BubbaBlox</a>
+					<a class="nav-link" href="/home">Back to Okapi</a>
 				</li>
 			</ul>
 		</div>

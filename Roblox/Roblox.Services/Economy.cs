@@ -27,20 +27,12 @@ public class EconomyService : ServiceBase, IService
     public async Task<UserEconomy> GetUserBalance(long userId)
     {
         var result = await db.QuerySingleOrDefaultAsync<UserEconomy?>(
-            "SELECT balance_robux As robux, balance_tickets as tickets FROM user_economy WHERE user_id = :user_id", new { user_id = userId });
-        // Some early users have no economy
+            "SELECT balance_robux As robux, balance_tickets as tickets FROM user_economy WHERE user_id = :user_id", 
+            new { user_id = userId });
+
         if (result == null)
             throw new Exception("User does not have an economy entry");
-        // NOTE: We could do this, but it might break things that check the balance AFTER subtracting/adding
-        /*
-        {
-            await db.ExecuteAsync(
-                "INSERT INTO user_economy (user_id, balance_robux, balance_tickets) VALUES (:user_id, 0, 0)", new
-                {
-                    user_id = userId,
-                });
-        }
-        */
+
         return result;
     }
     
@@ -48,7 +40,8 @@ public class EconomyService : ServiceBase, IService
     {
         if (!Enum.IsDefined(creatorType))
             throw new ArgumentException("Invalid creatorType");
-        var result = await Cache.redLock.CreateLockAsync("EconomyLockV2:"+creatorType.ToString()+":" + creatorId, TimeSpan.FromSeconds(5));
+        
+        var result = await Cache.redLock.CreateLockAsync("EconomyLockV2:" + creatorType + ":" + creatorId, TimeSpan.FromSeconds(5));
         if (!result.IsAcquired)
             throw new LockNotAcquiredException();
         return result;
@@ -57,136 +50,92 @@ public class EconomyService : ServiceBase, IService
     public async Task CreateGroupBalanceIfRequired(long groupId)
     {
         var exists = await db.QuerySingleOrDefaultAsync<Dto.Total>(
-            "SELECT COUNT(*) as total FROM group_economy WHERE group_id = :group_id", new
-            {
-                group_id = groupId,
-            });
+            "SELECT COUNT(*) as total FROM group_economy WHERE group_id = :group_id", new { group_id = groupId });
+
         if (exists.total == 0)
         {
             await db.ExecuteAsync(
-                "INSERT INTO group_economy (group_id, balance_robux, balance_tickets) VALUES (:group_id, 0, 0)", new
-                {
-                    group_id = groupId,
-                });
+                "INSERT INTO group_economy (group_id, balance_robux, balance_tickets) VALUES (:group_id, 0, 0)", 
+                new { group_id = groupId });
         }
     }
-	
-	public async Task SetUserBalance(long userId, long robux, long tickets)
-	{
-		await db.ExecuteAsync(
-			"UPDATE user_economy SET balance_robux = @robux, balance_tickets = @tickets WHERE user_id = @user_id", 
-			new 
-			{
-				robux = robux,
-				tickets = tickets,
-				user_id = userId
-			});
-	}
-    
+
     private async Task<UserEconomy> GetGroupBalance(long groupId)
     {
-        var result = await db.QuerySingleOrDefaultAsync<UserEconomy?>(
-            "SELECT balance_robux As robux, balance_tickets as tickets FROM group_economy WHERE group_id = :group_id", new { group_id = groupId });
-        // Some early users have no economy
-        if (result == null)
-            throw new Exception("User does not have an economy entry");
-        return result;
+        await CreateGroupBalanceIfRequired(groupId); // this should fix the Economy.cs error
+
+        var result = await db.QuerySingleOrDefaultAsync<UserEconomy>(
+            "SELECT balance_robux As robux, balance_tickets as tickets FROM group_economy WHERE group_id = :group_id", 
+            new { group_id = groupId });
+
+        return result; // will never be null now, always come with a result
+    }
+
+    public async Task SetUserBalance(long userId, long robux, long tickets)
+    {
+        await db.ExecuteAsync(
+            "UPDATE user_economy SET balance_robux = @robux, balance_tickets = @tickets WHERE user_id = @user_id", 
+            new { robux, tickets, user_id = userId });
     }
 
     private async Task UnsafeIncrementUserRobux(long userId, long amount)
     {
-        if (amount < 0)
-            throw new ArgumentException("Amount must be zero or more");
+        if (amount < 0) throw new ArgumentException("Amount must be zero or more");
         await db.ExecuteAsync("UPDATE user_economy SET balance_robux = balance_robux + :amt WHERE user_id = :user_id",
-            new
-            {
-                user_id = userId,
-                amt = amount,
-            });
+            new { user_id = userId, amt = amount });
     }
-    
+
     private async Task UnsafeIncrementUserTickets(long userId, long amount)
     {
-        if (amount < 0)
-            throw new ArgumentException("Amount must be zero or more");
+        if (amount < 0) throw new ArgumentException("Amount must be zero or more");
         await db.ExecuteAsync("UPDATE user_economy SET balance_tickets = balance_tickets + :amt WHERE user_id = :user_id",
-            new
-            {
-                user_id = userId,
-                amt = amount,
-            });
+            new { user_id = userId, amt = amount });
     }
-    
+
     private async Task UnsafeDecrementUserRobux(long userId, long amount)
     {
-        if (amount < 0)
-            throw new ArgumentException("Amount must be zero or more");
+        if (amount < 0) throw new ArgumentException("Amount must be zero or more");
         await db.ExecuteAsync("UPDATE user_economy SET balance_robux = balance_robux - :amt WHERE user_id = :user_id",
-            new
-            {
-                user_id = userId,
-                amt = amount,
-            });
+            new { user_id = userId, amt = amount });
     }
-    
+
     private async Task UnsafeDecrementUserTickets(long userId, long amount)
     {
-        if (amount < 0)
-            throw new ArgumentException("Amount must be zero or more");
+        if (amount < 0) throw new ArgumentException("Amount must be zero or more");
         await db.ExecuteAsync("UPDATE user_economy SET balance_tickets = balance_tickets - :amt WHERE user_id = :user_id",
-            new
-            {
-                user_id = userId,
-                amt = amount,
-            });
+            new { user_id = userId, amt = amount });
     }
-    
+
     private async Task UnsafeIncrementGroupRobux(long groupId, long amount)
     {
-        if (amount < 0)
-            throw new ArgumentException("Amount must be zero or more");
+        if (amount < 0) throw new ArgumentException("Amount must be zero or more");
+        await CreateGroupBalanceIfRequired(groupId); // Safety
         await db.ExecuteAsync("UPDATE group_economy SET balance_robux = balance_robux + :amt WHERE group_id = :group_id",
-            new
-            {
-                group_id = groupId,
-                amt = amount,
-            });
+            new { group_id = groupId, amt = amount });
     }
-    
+
     private async Task UnsafeIncrementGroupTickets(long groupId, long amount)
     {
-        if (amount < 0)
-            throw new ArgumentException("Amount must be zero or more");
+        if (amount < 0) throw new ArgumentException("Amount must be zero or more");
+        await CreateGroupBalanceIfRequired(groupId); // Safety
         await db.ExecuteAsync("UPDATE group_economy SET balance_tickets = balance_tickets + :amt WHERE group_id = :group_id",
-            new
-            {
-                group_id = groupId,
-                amt = amount,
-            });
+            new { group_id = groupId, amt = amount });
     }
-    
+
     private async Task UnsafeDecrementGroupRobux(long groupId, long amount)
     {
-        if (amount < 0)
-            throw new ArgumentException("Amount must be zero or more");
+        if (amount < 0) throw new ArgumentException("Amount must be zero or more");
+        await CreateGroupBalanceIfRequired(groupId);
         await db.ExecuteAsync("UPDATE group_economy SET balance_robux = balance_robux - :amt WHERE group_id = :group_id",
-            new
-            {
-                group_id = groupId,
-                amt = amount,
-            });
+            new { group_id = groupId, amt = amount });
     }
-    
+
     private async Task UnsafeDecrementGroupTickets(long groupId, long amount)
     {
-        if (amount < 0)
-            throw new ArgumentException("Amount must be zero or more");
+        if (amount < 0) throw new ArgumentException("Amount must be zero or more");
+        await CreateGroupBalanceIfRequired(groupId);
         await db.ExecuteAsync("UPDATE group_economy SET balance_tickets = balance_tickets - :amt WHERE group_id = :group_id",
-            new
-            {
-                group_id = groupId,
-                amt = amount,
-            });
+            new { group_id = groupId, amt = amount });
     }
     
     [Obsolete("Use the overload with a creatorType instead")]

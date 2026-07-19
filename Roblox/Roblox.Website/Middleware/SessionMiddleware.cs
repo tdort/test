@@ -50,6 +50,8 @@ public class SessionMiddleware
     {
         if (cookieJwtKey != null) throw new Exception("Already configured");
         cookieJwtKey = newJwtKey;
+        // TODO: For load balancing support, ensure the JWT secret (configured in appsettings.json) 
+        // is the same across all server instances. Session validation will fail if secrets differ.
     }
 
 
@@ -282,11 +284,11 @@ public class SessionMiddleware
 
 						if (userInfo.accountStatus is AccountStatus.Suppressed or AccountStatus.Poisoned or AccountStatus.Deleted)
 						{
-							if (!currentPath.StartsWith("/auth/"))
+							if (!currentPath.StartsWith("/auth/") && currentPath != "/notapproved")
 							{
 								authTimer.Stop();
 								ctx.Response.StatusCode = 302;
-								ctx.Response.Headers.Add("location", "/auth/notapproved");
+								ctx.Response.Headers.Add("location", "/notapproved");
 								return;
 							}
 						}

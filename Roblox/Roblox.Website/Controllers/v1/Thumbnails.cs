@@ -15,7 +15,7 @@ namespace Roblox.Website.Controllers;
 [Route("/apisite/thumbnails/v1")]
 public class ThumbnailsControllerV1 : ControllerBase
 {
-    
+
     public static void StartThumbnailFixLoop()
     {
         // this thing is annoying in debug
@@ -30,7 +30,7 @@ public class ThumbnailsControllerV1 : ControllerBase
                 }
                 catch (Exception e)
                 {
-                    Writer.Info(LogGroup.FixBrokenThumbnails, "Failure in Fix: {0}\n{1}",e.Message,e.StackTrace);
+                    Writer.Info(LogGroup.FixBrokenThumbnails, "Failure in Fix: {0}\n{1}", e.Message, e.StackTrace);
                 }
                 await Task.Delay(TimeSpan.FromMinutes(5));
             }
@@ -80,7 +80,7 @@ public class ThumbnailsControllerV1 : ControllerBase
                 TimeSpan.FromMinutes(5));
             t.Stop();
             // No acquire means the avatar is still being rendered
-            if (!isLocked.IsAcquired) 
+            if (!isLocked.IsAcquired)
                 continue;
             t.Stop();
             Writer.Info(LogGroup.FixBrokenThumbnails, "acquired lock for {0} in {1}ms", user, t.ElapsedMilliseconds);
@@ -89,11 +89,11 @@ public class ThumbnailsControllerV1 : ControllerBase
             if (av.headshotUrl != null && av.thumbnailUrl != null) continue;
             Writer.Info(LogGroup.FixBrokenThumbnails, "fix thumbnail for user {0}", user);
             // IgnoreLock because we are already calling function with a lock
-            try 
+            try
             {
                 await avatar.RedrawAvatar(user, null, null, null, true, true);
             }
-            catch(Exception e) 
+            catch (Exception e)
             {
                 Writer.Info(LogGroup.FixBrokenThumbnails, "Error fixing user: {0}\n{1}", e.Message, e.StackTrace);
             }
@@ -118,11 +118,11 @@ public class ThumbnailsControllerV1 : ControllerBase
             }
             catch (Exception e)
             {
-                Writer.Info(LogGroup.FixBrokenThumbnails, "Error fixing asset: {0}\n{1}",e.Message, e.StackTrace);
+                Writer.Info(LogGroup.FixBrokenThumbnails, "Error fixing asset: {0}\n{1}", e.Message, e.StackTrace);
             }
         }
     }
-   
+
 
     private async Task<RobloxCollection<ThumbnailEntry>> Process18PlusAvatars(IEnumerable<ThumbnailEntry> data)
     {
@@ -149,21 +149,37 @@ public class ThumbnailsControllerV1 : ControllerBase
     [HttpGet("users/avatar-headshot")]
     public async Task<RobloxCollection<ThumbnailEntry>> GetUserHeadshots(string userIds)
     {
-        var parsed = userIds.Split(",").Select(long.Parse).Distinct().ToList();
-        if (parsed.Count is > 200 or < 0) throw new BadRequestException();
+        var parsed = ParseUserIds(userIds);
+        if (parsed.Count == 0)
+            return new RobloxCollection<ThumbnailEntry>();
+
         var result = (await services.thumbnails.GetUserHeadshots(parsed)).ToList();
         return await Process18PlusAvatars(result);
     }
-    
+
     [HttpGet("users/avatar")]
     public async Task<RobloxCollection<ThumbnailEntry>> GetUserThumbnails(string userIds)
     {
-        var parsed = userIds.Split(",").Select(long.Parse).Distinct().ToList();
-        if (parsed.Count is > 200 or < 0) throw new BadRequestException();
-        var result = await services.thumbnails.GetUserThumbnails(parsed);
+        var parsed = ParseUserIds(userIds);
+        if (parsed.Count == 0)
+            return new RobloxCollection<ThumbnailEntry>();
+
+        var result = (await services.thumbnails.GetUserThumbnails(parsed)).ToList();
         return await Process18PlusAvatars(result);
     }
-    
+
+    private List<long> ParseUserIds(string userIds, int max = 200)
+    {
+        if (string.IsNullOrWhiteSpace(userIds)) return new List<long>();
+
+        return userIds.Split(',', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries)
+                      .Select(x => long.TryParse(x, out long id) ? id : 0)
+                      .Where(x => x > 0)
+                      .Distinct()
+                      .Take(max)
+                      .ToList();
+    }
+
     private async Task<RobloxCollection<ThumbnailEntry>> Process18PlusAssets(IEnumerable<ThumbnailEntry> data)
     {
         var result = data.ToList();
@@ -185,7 +201,7 @@ public class ThumbnailsControllerV1 : ControllerBase
             data = result,
         };
     }
-    
+
     [HttpGet("assets")]
     public async Task<RobloxCollection<ThumbnailEntry>> GetAssetThumbnails(string assetIds)
     {
@@ -194,20 +210,20 @@ public class ThumbnailsControllerV1 : ControllerBase
         var result = await services.thumbnails.GetAssetThumbnails(parsed);
         return await Process18PlusAssets(result);
     }
-    
+
     [HttpGet("users/outfits")]
     public async Task<RobloxCollection<ThumbnailEntry>> GetUserOutfitThumbnails(string userOutfitIds)
     {
         var parsed = userOutfitIds.Split(",").Select(long.Parse).Distinct().ToList();
         if (parsed.Count is > 200 or < 0) throw new BadRequestException();
         var result = await services.thumbnails.GetUserOutfitThumbnails(parsed);
-        
+
         return new()
         {
             data = result,
         };
     }
-    
+
     [HttpGet("groups/icons")]
     public async Task<RobloxCollection<ThumbnailEntry>> GetGroupIcons(string groupIds)
     {
@@ -224,7 +240,7 @@ public class ThumbnailsControllerV1 : ControllerBase
     {
         var idList = thumbs.Where(c => c.type == type).Select(c => c.targetId).ToList();
         if (idList.Count == 0) return Array.Empty<dynamic>();
-        
+
         return (await method(idList)).Select(c => new
         {
             imageUrl = c.imageUrl,
@@ -252,47 +268,47 @@ public class ThumbnailsControllerV1 : ControllerBase
         };
     }
 
-	[HttpGet("games/icons")]
-	public async Task<RobloxCollection<ThumbnailEntry>> GetGameIcons(string universeIds)
-	{
-		var requestedIds = universeIds.Split(",").Select(long.Parse).Distinct().ToList();
-		if (requestedIds.Count is > 200 or < 0) throw new BadRequestException();
+    [HttpGet("games/icons")]
+    public async Task<RobloxCollection<ThumbnailEntry>> GetGameIcons(string universeIds)
+    {
+        var requestedIds = universeIds.Split(",").Select(long.Parse).Distinct().ToList();
+        if (requestedIds.Count is > 200 or < 0) throw new BadRequestException();
 
-		var existingIcons = await services.thumbnails.GetGameIcons(requestedIds);
+        var existingIcons = await services.thumbnails.GetGameIcons(requestedIds);
 
-		var iconsDict = existingIcons.ToDictionary(x => x.targetId, x => x);
+        var iconsDict = existingIcons.ToDictionary(x => x.targetId, x => x);
 
-		var result = new List<ThumbnailEntry>();
-		foreach (var id in requestedIds)
-		{
-			if (iconsDict.TryGetValue(id, out var existing))
-			{
-				if (existing.imageUrl?.StartsWith("/images/thumbnails//images/thumbnails/") == true)
-				{
-					existing.imageUrl = existing.imageUrl.Replace("/images/thumbnails//images/thumbnails/", "/images/thumbnails/");
-				}
-				
-				if (existing.state == ThumbnailState.Pending)
-				{
-					existing.imageUrl = "/img/placeholder.png";
-				}
-				
-				result.Add(existing);
-			}
-			else
-			{
-				result.Add(new ThumbnailEntry
-				{
-					targetId = id,
-					state = ThumbnailState.Completed,
-					imageUrl = "/img/placeholder/icon_one.png"
-				});
-			}
-		}
-		
-		return new RobloxCollection<ThumbnailEntry>
-		{
-			data = result
-		};
-	}
+        var result = new List<ThumbnailEntry>();
+        foreach (var id in requestedIds)
+        {
+            if (iconsDict.TryGetValue(id, out var existing))
+            {
+                if (existing.imageUrl?.StartsWith("/images/thumbnails//images/thumbnails/") == true)
+                {
+                    existing.imageUrl = existing.imageUrl.Replace("/images/thumbnails//images/thumbnails/", "/images/thumbnails/");
+                }
+
+                if (existing.state == ThumbnailState.Pending)
+                {
+                    existing.imageUrl = "/img/placeholder.png";
+                }
+
+                result.Add(existing);
+            }
+            else
+            {
+                result.Add(new ThumbnailEntry
+                {
+                    targetId = id,
+                    state = ThumbnailState.Completed,
+                    imageUrl = "/img/placeholder/icon_one.png"
+                });
+            }
+        }
+
+        return new RobloxCollection<ThumbnailEntry>
+        {
+            data = result
+        };
+    }
 }
