@@ -1,0 +1,13 @@
+c:\Users\Cris\Desktop\okapi.bond\bubbablox-v2\Roblox\Roblox.Cache\bin\Debug\net6.0\Roblox.Cache.deps.json
+c:\Users\Cris\Desktop\okapi.bond\bubbablox-v2\Roblox\Roblox.Cache\bin\Debug\net6.0\Roblox.Cache.dll
+c:\Users\Cris\Desktop\okapi.bond\bubbablox-v2\Roblox\Roblox.Cache\bin\Debug\net6.0\Roblox.Cache.pdb
+c:\Users\Cris\Desktop\okapi.bond\bubbablox-v2\Roblox\Roblox.Cache\obj\Debug\net6.0\Roblox.Cache.csproj.AssemblyReference.cache
+c:\Users\Cris\Desktop\okapi.bond\bubbablox-v2\Roblox\Roblox.Cache\obj\Debug\net6.0\Roblox.Cache.GeneratedMSBuildEditorConfig.editorconfig
+c:\Users\Cris\Desktop\okapi.bond\bubbablox-v2\Roblox\Roblox.Cache\obj\Debug\net6.0\Roblox.Cache.AssemblyInfoInputs.cache
+c:\Users\Cris\Desktop\okapi.bond\bubbablox-v2\Roblox\Roblox.Cache\obj\Debug\net6.0\Roblox.Cache.AssemblyInfo.cs
+c:\Users\Cris\Desktop\okapi.bond\bubbablox-v2\Roblox\Roblox.Cache\obj\Debug\net6.0\Roblox.Cache.csproj.CoreCompileInputs.cache
+c:\Users\Cris\Desktop\okapi.bond\bubbablox-v2\Roblox\Roblox.Cache\obj\Debug\net6.0\Roblox.Cache.sourcelink.json
+c:\Users\Cris\Desktop\okapi.bond\bubbablox-v2\Roblox\Roblox.Cache\obj\Debug\net6.0\Roblox.Cache.dll
+c:\Users\Cris\Desktop\okapi.bond\bubbablox-v2\Roblox\Roblox.Cache\obj\Debug\net6.0\refint\Roblox.Cache.dll
+c:\Users\Cris\Desktop\okapi.bond\bubbablox-v2\Roblox\Roblox.Cache\obj\Debug\net6.0\Roblox.Cache.pdb
+c:\Users\Cris\Desktop\okapi.bond\bubbablox-v2\Roblox\Roblox.Cache\obj\Debug\net6.0\ref\Roblox.Cache.dll

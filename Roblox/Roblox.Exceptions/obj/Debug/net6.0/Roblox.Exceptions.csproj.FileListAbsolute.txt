@@ -1,0 +1,13 @@
+c:\Users\Cris\Desktop\okapi.bond\bubbablox-v2\Roblox\Roblox.Exceptions\bin\Debug\net6.0\Roblox.Exceptions.deps.json
+c:\Users\Cris\Desktop\okapi.bond\bubbablox-v2\Roblox\Roblox.Exceptions\bin\Debug\net6.0\Roblox.Exceptions.dll
+c:\Users\Cris\Desktop\okapi.bond\bubbablox-v2\Roblox\Roblox.Exceptions\bin\Debug\net6.0\Roblox.Exceptions.pdb
+c:\Users\Cris\Desktop\okapi.bond\bubbablox-v2\Roblox\Roblox.Exceptions\obj\Debug\net6.0\Roblox.Exceptions.csproj.AssemblyReference.cache
+c:\Users\Cris\Desktop\okapi.bond\bubbablox-v2\Roblox\Roblox.Exceptions\obj\Debug\net6.0\Roblox.Exceptions.GeneratedMSBuildEditorConfig.editorconfig
+c:\Users\Cris\Desktop\okapi.bond\bubbablox-v2\Roblox\Roblox.Exceptions\obj\Debug\net6.0\Roblox.Exceptions.AssemblyInfoInputs.cache
+c:\Users\Cris\Desktop\okapi.bond\bubbablox-v2\Roblox\Roblox.Exceptions\obj\Debug\net6.0\Roblox.Exceptions.AssemblyInfo.cs
+c:\Users\Cris\Desktop\okapi.bond\bubbablox-v2\Roblox\Roblox.Exceptions\obj\Debug\net6.0\Roblox.Exceptions.csproj.CoreCompileInputs.cache
+c:\Users\Cris\Desktop\okapi.bond\bubbablox-v2\Roblox\Roblox.Exceptions\obj\Debug\net6.0\Roblox.Exceptions.sourcelink.json
+c:\Users\Cris\Desktop\okapi.bond\bubbablox-v2\Roblox\Roblox.Exceptions\obj\Debug\net6.0\Roblox.Exceptions.dll
+c:\Users\Cris\Desktop\okapi.bond\bubbablox-v2\Roblox\Roblox.Exceptions\obj\Debug\net6.0\refint\Roblox.Exceptions.dll
+c:\Users\Cris\Desktop\okapi.bond\bubbablox-v2\Roblox\Roblox.Exceptions\obj\Debug\net6.0\Roblox.Exceptions.pdb
+c:\Users\Cris\Desktop\okapi.bond\bubbablox-v2\Roblox\Roblox.Exceptions\obj\Debug\net6.0\ref\Roblox.Exceptions.dll

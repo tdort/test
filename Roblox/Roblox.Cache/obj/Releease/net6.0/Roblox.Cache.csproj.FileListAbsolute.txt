@@ -1,0 +1,13 @@
+C:\Users\Cris\Downloads\bubbablox-v2\Roblox\Roblox.Cache\bin\Releease\net6.0\Roblox.Cache.deps.json
+C:\Users\Cris\Downloads\bubbablox-v2\Roblox\Roblox.Cache\bin\Releease\net6.0\Roblox.Cache.dll
+C:\Users\Cris\Downloads\bubbablox-v2\Roblox\Roblox.Cache\bin\Releease\net6.0\Roblox.Cache.pdb
+C:\Users\Cris\Downloads\bubbablox-v2\Roblox\Roblox.Cache\obj\Releease\net6.0\Roblox.Cache.csproj.AssemblyReference.cache
+C:\Users\Cris\Downloads\bubbablox-v2\Roblox\Roblox.Cache\obj\Releease\net6.0\Roblox.Cache.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\Cris\Downloads\bubbablox-v2\Roblox\Roblox.Cache\obj\Releease\net6.0\Roblox.Cache.AssemblyInfoInputs.cache
+C:\Users\Cris\Downloads\bubbablox-v2\Roblox\Roblox.Cache\obj\Releease\net6.0\Roblox.Cache.AssemblyInfo.cs
+C:\Users\Cris\Downloads\bubbablox-v2\Roblox\Roblox.Cache\obj\Releease\net6.0\Roblox.Cache.csproj.CoreCompileInputs.cache
+C:\Users\Cris\Downloads\bubbablox-v2\Roblox\Roblox.Cache\obj\Releease\net6.0\Roblox.Cache.sourcelink.json
+C:\Users\Cris\Downloads\bubbablox-v2\Roblox\Roblox.Cache\obj\Releease\net6.0\Roblox.Cache.dll
+C:\Users\Cris\Downloads\bubbablox-v2\Roblox\Roblox.Cache\obj\Releease\net6.0\refint\Roblox.Cache.dll
+C:\Users\Cris\Downloads\bubbablox-v2\Roblox\Roblox.Cache\obj\Releease\net6.0\Roblox.Cache.pdb
+C:\Users\Cris\Downloads\bubbablox-v2\Roblox\Roblox.Cache\obj\Releease\net6.0\ref\Roblox.Cache.dll

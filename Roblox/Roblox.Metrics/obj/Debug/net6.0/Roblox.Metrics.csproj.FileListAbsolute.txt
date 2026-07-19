@@ -1,0 +1,16 @@
+c:\Users\Cris\Desktop\okapi.bond\bubbablox-v2\Roblox\Roblox.Metrics\bin\Debug\net6.0\Roblox.Metrics.deps.json
+c:\Users\Cris\Desktop\okapi.bond\bubbablox-v2\Roblox\Roblox.Metrics\bin\Debug\net6.0\Roblox.Metrics.dll
+c:\Users\Cris\Desktop\okapi.bond\bubbablox-v2\Roblox\Roblox.Metrics\bin\Debug\net6.0\Roblox.Metrics.pdb
+c:\Users\Cris\Desktop\okapi.bond\bubbablox-v2\Roblox\Roblox.Metrics\bin\Debug\net6.0\Roblox.Logging.dll
+c:\Users\Cris\Desktop\okapi.bond\bubbablox-v2\Roblox\Roblox.Metrics\bin\Debug\net6.0\Roblox.Logging.pdb
+c:\Users\Cris\Desktop\okapi.bond\bubbablox-v2\Roblox\Roblox.Metrics\obj\Debug\net6.0\Roblox.Metrics.csproj.AssemblyReference.cache
+c:\Users\Cris\Desktop\okapi.bond\bubbablox-v2\Roblox\Roblox.Metrics\obj\Debug\net6.0\Roblox.Metrics.GeneratedMSBuildEditorConfig.editorconfig
+c:\Users\Cris\Desktop\okapi.bond\bubbablox-v2\Roblox\Roblox.Metrics\obj\Debug\net6.0\Roblox.Metrics.AssemblyInfoInputs.cache
+c:\Users\Cris\Desktop\okapi.bond\bubbablox-v2\Roblox\Roblox.Metrics\obj\Debug\net6.0\Roblox.Metrics.AssemblyInfo.cs
+c:\Users\Cris\Desktop\okapi.bond\bubbablox-v2\Roblox\Roblox.Metrics\obj\Debug\net6.0\Roblox.Metrics.csproj.CoreCompileInputs.cache
+c:\Users\Cris\Desktop\okapi.bond\bubbablox-v2\Roblox\Roblox.Metrics\obj\Debug\net6.0\Roblox.Metrics.sourcelink.json
+c:\Users\Cris\Desktop\okapi.bond\bubbablox-v2\Roblox\Roblox.Metrics\obj\Debug\net6.0\Roblox.M.C59AA971.Up2Date
+c:\Users\Cris\Desktop\okapi.bond\bubbablox-v2\Roblox\Roblox.Metrics\obj\Debug\net6.0\Roblox.Metrics.dll
+c:\Users\Cris\Desktop\okapi.bond\bubbablox-v2\Roblox\Roblox.Metrics\obj\Debug\net6.0\refint\Roblox.Metrics.dll
+c:\Users\Cris\Desktop\okapi.bond\bubbablox-v2\Roblox\Roblox.Metrics\obj\Debug\net6.0\Roblox.Metrics.pdb
+c:\Users\Cris\Desktop\okapi.bond\bubbablox-v2\Roblox\Roblox.Metrics\obj\Debug\net6.0\ref\Roblox.Metrics.dll

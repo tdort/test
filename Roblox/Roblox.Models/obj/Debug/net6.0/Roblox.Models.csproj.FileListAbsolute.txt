@@ -1,0 +1,16 @@
+c:\Users\Cris\Desktop\okapi.bond\bubbablox-v2\Roblox\Roblox.Models\bin\Debug\net6.0\Roblox.Models.deps.json
+c:\Users\Cris\Desktop\okapi.bond\bubbablox-v2\Roblox\Roblox.Models\bin\Debug\net6.0\Roblox.Models.dll
+c:\Users\Cris\Desktop\okapi.bond\bubbablox-v2\Roblox\Roblox.Models\bin\Debug\net6.0\Roblox.Models.pdb
+c:\Users\Cris\Desktop\okapi.bond\bubbablox-v2\Roblox\Roblox.Models\bin\Debug\net6.0\Roblox.Configuration.dll
+c:\Users\Cris\Desktop\okapi.bond\bubbablox-v2\Roblox\Roblox.Models\bin\Debug\net6.0\Roblox.Configuration.pdb
+c:\Users\Cris\Desktop\okapi.bond\bubbablox-v2\Roblox\Roblox.Models\obj\Debug\net6.0\Roblox.Models.csproj.AssemblyReference.cache
+c:\Users\Cris\Desktop\okapi.bond\bubbablox-v2\Roblox\Roblox.Models\obj\Debug\net6.0\Roblox.Models.GeneratedMSBuildEditorConfig.editorconfig
+c:\Users\Cris\Desktop\okapi.bond\bubbablox-v2\Roblox\Roblox.Models\obj\Debug\net6.0\Roblox.Models.AssemblyInfoInputs.cache
+c:\Users\Cris\Desktop\okapi.bond\bubbablox-v2\Roblox\Roblox.Models\obj\Debug\net6.0\Roblox.Models.AssemblyInfo.cs
+c:\Users\Cris\Desktop\okapi.bond\bubbablox-v2\Roblox\Roblox.Models\obj\Debug\net6.0\Roblox.Models.csproj.CoreCompileInputs.cache
+c:\Users\Cris\Desktop\okapi.bond\bubbablox-v2\Roblox\Roblox.Models\obj\Debug\net6.0\Roblox.Models.sourcelink.json
+c:\Users\Cris\Desktop\okapi.bond\bubbablox-v2\Roblox\Roblox.Models\obj\Debug\net6.0\Roblox.M.74AD7172.Up2Date
+c:\Users\Cris\Desktop\okapi.bond\bubbablox-v2\Roblox\Roblox.Models\obj\Debug\net6.0\Roblox.Models.dll
+c:\Users\Cris\Desktop\okapi.bond\bubbablox-v2\Roblox\Roblox.Models\obj\Debug\net6.0\refint\Roblox.Models.dll
+c:\Users\Cris\Desktop\okapi.bond\bubbablox-v2\Roblox\Roblox.Models\obj\Debug\net6.0\Roblox.Models.pdb
+c:\Users\Cris\Desktop\okapi.bond\bubbablox-v2\Roblox\Roblox.Models\obj\Debug\net6.0\ref\Roblox.Models.dll
