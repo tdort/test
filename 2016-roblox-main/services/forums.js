@@ -88,7 +88,7 @@ const ForumsCategories = [
         id: 13,
         name: 'ROBLOX Talk',
         description:
-          'A popular hangout where ROBLOXians talk about various topics.',
+          'A popular hangout where Okapians talk about various topics.',
       },
       {
         id: 18,

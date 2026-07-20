@@ -14,10 +14,10 @@ public class MembershipMetadata
 {
     private static List<MembershipMetadata> _membershipMetadata = new()
     {
-        new MembershipMetadata(MembershipType.None, "None", 150),
-        new MembershipMetadata(MembershipType.BuildersClub, "Builders Club", 200),
-        new MembershipMetadata(MembershipType.TurboBuildersClub, "Turbo Builders Club", 350),
-        new MembershipMetadata(MembershipType.OutrageousBuildersClub, "Outrageous Builders Club", 400),
+        new MembershipMetadata(MembershipType.None, "None", 10),
+        new MembershipMetadata(MembershipType.BuildersClub, "Builders Club", 25),
+        new MembershipMetadata(MembershipType.TurboBuildersClub, "Turbo Builders Club", 50),
+        new MembershipMetadata(MembershipType.OutrageousBuildersClub, "Outrageous Builders Club", 100),
     };
 
     public static MembershipMetadata GetMetadata(MembershipType membershipType)

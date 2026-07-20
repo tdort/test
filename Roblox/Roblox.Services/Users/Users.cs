@@ -27,7 +27,6 @@ using Roblox.Dto.Tickets;
 using Type = Roblox.Models.Assets.Type;
 
 namespace Roblox.Services;
-
 public class UsersService : ServiceBase, IService
 {
     public async Task<bool> IsNameAvailableForNameChange(long contextUserId, string username)
@@ -124,6 +123,16 @@ public class UsersService : ServiceBase, IService
         }
     }
 
+    public async Task DeleteUserAsset(long userId, long assetId)
+    {
+        await db.QuerySingleOrDefaultAsync(
+            "DELETE FROM user_asset WHERE user_id = :userId AND asset_id = :assetId", new
+            {
+                userId,
+                assetId,
+            });
+    }
+    
     public async Task<CombinedAsyncDisposable> MultiAcquireUserAssetLock(IEnumerable<long> userAssetIds)
     {
         var idsArray = userAssetIds.ToArray();
@@ -185,7 +194,7 @@ public class UsersService : ServiceBase, IService
         {
             throw new AccountLastOnlineTooRecentlyException();
         }
-        var newUsername = "okapi_user_" + userId;
+        var newUsername = "Carbon_user_" + userId;
         var transferId = await GetUserIdFromUsername("BadDecisions");
         await InTransaction(async _ =>
         {
@@ -316,7 +325,7 @@ public class UsersService : ServiceBase, IService
         ".",
     };
 
-    private static readonly Regex UsernameValidationRegex = new Regex("([a-zA-Z0-9_. ]+)", RegexOptions.IgnoreCase | RegexOptions.CultureInvariant);
+    private static readonly Regex UsernameValidationRegex = new Regex("([a-zA-Z0-9_.]+)", RegexOptions.IgnoreCase | RegexOptions.CultureInvariant);
 
     /// <summary>
     /// Check if the username is valid
@@ -510,18 +519,18 @@ public class UsersService : ServiceBase, IService
         {
             using var ec = ServiceProvider.GetOrCreate<EconomyService>(this);
             var balance = await ec.GetUserBalance(userId);
-            if (balance.robux < 1000)
+            if (balance.robux < 300)
                 throw new NotEnoughRobuxForPurchaseException();
 
             // subtract from balance
-            await ec.DecrementCurrency(userId, CurrencyType.Robux, 1000);
+            await ec.DecrementCurrency(userId, CurrencyType.Robux, 300);
 
             // trans
             await InsertAsync("user_transaction", new
             {
                 type = PurchaseType.Purchase,
                 currency_type = 1,
-                amount = 1000,
+                amount = 300,
                 // details
                 old_username = oldUsername,
                 new_username = newUsername,
@@ -1145,65 +1154,61 @@ public class UsersService : ServiceBase, IService
         if (!Enum.IsDefined(gender))
             throw new ArgumentException(nameof(gender) + " is invalid: " + gender);
 
+        // Validate username first (outside transaction to fail fast)
         var nameTaken = await db.QuerySingleOrDefaultAsync<bool>(
             "SELECT EXISTS(SELECT 1 FROM \"user\" WHERE username ILIKE :username)",
             new { username });
-
         if (nameTaken)
             throw new UsernameTakenException("Username is already taken");
 
         long userId = 0;
-        UserId result = null!;
-
-        int retries = 3;
-
-        while (true)
+        var result = await InTransaction(async _ =>
         {
-            try
+            // Double-check username availability inside transaction
+            nameTaken = await db.QuerySingleOrDefaultAsync<bool>(
+                "SELECT EXISTS(SELECT 1 FROM \"user\" WHERE username ILIKE :username FOR UPDATE)",
+                new { username });
+            if (nameTaken)
+                throw new UsernameTakenException("Username was taken during transaction");
+
+            var hasher = new PasswordHasher();
+            var now = DateTime.UtcNow;
+
+            if (overrideUserId != null)
             {
-                result = await InTransaction(async _ =>
+                userId = overrideUserId.Value;
+                var exists = await db.QuerySingleOrDefaultAsync<bool>(
+                    "SELECT EXISTS(SELECT 1 FROM \"user\" WHERE id = :id FOR UPDATE)",
+                    new { id = userId });
+                if (exists)
+                    throw new UserIdTakenException("UserID is already taken");
+
+                await InsertAsync("user", new
                 {
-                    nameTaken = await db.QuerySingleOrDefaultAsync<bool>(
-                        "SELECT EXISTS(SELECT 1 FROM \"user\" WHERE username ILIKE :username)",
-                        new { username });
-
-                    if (nameTaken)
-                        throw new UsernameTakenException("Username was taken during transaction");
-
-                    var hasher = new PasswordHasher();
-                    var now = DateTime.UtcNow;
-
-                    if (overrideUserId != null)
+                    id = userId,
+                    username,
+                    password = hasher.Hash(password),
+                    created_at = now,
+                    description = (string?)null,
+                    is_18_plus = false,
+                    online_at = now,
+                    session_expired_at = (DateTime?)null,
+                    session_key = 0,
+                    status = 1
+                });
+            }
+            else
+            {
+                int retries = 3;
+                while (retries-- > 0)
+                {
+                    try
                     {
-                        userId = overrideUserId.Value;
-
-                        var exists = await db.QuerySingleOrDefaultAsync<bool>(
-                            "SELECT EXISTS(SELECT 1 FROM \"user\" WHERE id = :id)",
-                            new { id = userId });
-
-                        if (exists)
-                            throw new UserIdTakenException("UserID is already taken");
-
-                        await InsertAsync("user", new
-                        {
-                            id = userId,
-                            username,
-                            password = hasher.Hash(password),
-                            created_at = now,
-                            description = (string?)null,
-                            is_18_plus = false,
-                            online_at = now,
-                            session_expired_at = (DateTime?)null,
-                            session_key = 0,
-                            status = 1
-                        });
-                    }
-                    else
-                    {
+                        var h = hasher.Hash(password);
                         userId = await InsertAsync("user", new
                         {
                             username,
-                            password = hasher.Hash(password),
+                            password = h,
                             created_at = now,
                             description = (string?)null,
                             is_18_plus = false,
@@ -1212,120 +1217,113 @@ public class UsersService : ServiceBase, IService
                             session_key = 0,
                             status = 1
                         });
+                        break;
                     }
-
-                    var usersService = ServiceProvider.GetOrCreate<UsersService>();
-
-                    var appId = await usersService.CreateApplication(new CreateUserApplicationRequest()
+                    catch (Npgsql.PostgresException ex) when (ex.SqlState == "23505" && retries > 0)
                     {
-                        about = "User signed up",
-                        socialPresence = "None provided",
-                        isVerified = true,
-                        verifiedUrl = "None provided",
-                        verificationPhrase = "Automatically approved",
-                        verifiedId = "0",
-                    });
-
-                    var joinId = await usersService.ProcessApplication(
-                        appId,
-                        1,
-                        UserApplicationStatus.Approved);
-
-                    await usersService.SetApplicationUserIdByJoinId(joinId, userId);
-
-                    await InsertAsync("user_settings", "user_id", new
-                    {
-                        user_id = userId,
-                        theme = 1,
-                        gender = (int)gender,
-                        private_message_privacy = GeneralPrivacy.All,
-                        inventory_privacy = InventoryPrivacy.AllUsers,
-                        trade_privacy = GeneralPrivacy.All,
-                    });
-
-                    await InsertAsync("user_economy", "user_id", new
-                    {
-                        user_id = userId,
-                        balance_tickets = 0,
-                        balance_robux = 100,
-                    });
-
-                    await InsertAsync("user_transaction", new
-                    {
-                        amount = 100,
-                        type = PurchaseType.BuildersClubStipend,
-                        currency_type = 1,
-                        user_id_one = userId,
-                        user_id_two = 1,
-                        created_at = now,
-                    });
-
-                    await InsertAsync("user_avatar", "user_id", new
-                    {
-                        user_id = userId,
-                        thumbnail_url = "/images/thumbnails/default_thumbnail.png",
-                        avatar_type = 2,
-                        scale_height = 1.0f,
-                        scale_width = 1.0f,
-                        scale_head = 1.0f,
-                        scale_depth = 1.0f,
-                        scale_proportion = 0.0f,
-                        scale_body_type = 0.0f,
-                        head_color_id = 194,
-                        torso_color_id = 23,
-                        right_arm_color_id = 194,
-                        left_arm_color_id = 194,
-                        right_leg_color_id = 102,
-                        left_leg_color_id = 102,
-                        headshot_thumbnail_url = "/images/thumbnails/default_headshot.png"
-                    });
-
-                    await InsertAsync("user_avatar_type", new
-                    {
-                        user_id = userId,
-                        r15 = false,
-                        height = 100,
-                        width = 100,
-                        head = 100,
-                        proportion = 0,
-                        body_type = 0,
-                    });
-
-                    var assetIds = gender == Gender.Male
-                        ? Roblox.Configuration.SignupAssetIdsMan
-                        : Roblox.Configuration.SignupAssetIdsFemale;
-
-                    foreach (var id in assetIds)
-                    {
-                        await CreateUserAsset(userId, id);
+                        await db.ExecuteAsync(@"
+							SELECT setval(
+								pg_get_serial_sequence('user', 'id'),
+								(SELECT coalesce(max(id), 0) + 1 FROM ""user""),
+								false
+							)");
+                        await Task.Delay(100 * (3 - retries));
                     }
-
-                    return new UserId { userId = userId };
-                });
-
-                break;
+                }
             }
-            catch (Npgsql.PostgresException ex)
-                when (ex.SqlState == "23505" && retries-- > 0)
+
+            var usersService = ServiceProvider.GetOrCreate<UsersService>();
+
+            var appId = await usersService.CreateApplication(new CreateUserApplicationRequest()
             {
-                Console.WriteLine(
-                    $"Duplicate key during signup. Constraint: {ex.ConstraintName}");
+                about = "User signed up",
+                socialPresence = "None provided",
+                isVerified = true,
+                verifiedUrl = "None provided",
+                verificationPhrase = "Automatically approved",
+                verifiedId = "0",
+            });
 
-                // Transaction has already rolled back here.
-                // Safe to fix sequence now.
-                await db.ExecuteAsync(@"
-				SELECT setval(
-					pg_get_serial_sequence('user', 'id'),
-					(SELECT coalesce(max(id), 0) FROM ""user"") + 1,
-					false
-				)");
+            var joinId = await usersService.ProcessApplication(appId, 1, UserApplicationStatus.Approved);
+            await usersService.SetApplicationUserIdByJoinId(joinId, userId);
 
-                await Task.Delay(100);
+            // Account settings
+            await InsertAsync("user_settings", "user_id", new
+            {
+                user_id = userId,
+                theme = 1,
+                gender = (int)gender,
+                private_message_privacy = GeneralPrivacy.All,
+                inventory_privacy = InventoryPrivacy.AllUsers,
+                trade_privacy = GeneralPrivacy.All,
+            });
+
+            // Balance
+            await InsertAsync("user_economy", "user_id", new
+            {
+                user_id = userId,
+                balance_tickets = 0,
+                balance_robux = 100,
+            });
+
+            // First transaction
+            await InsertAsync("user_transaction", new
+            {
+                amount = 100,
+                type = PurchaseType.BuildersClubStipend,
+                currency_type = 1,
+                user_id_one = userId,
+                user_id_two = 1,
+                created_at = now,
+            });
+
+            await InsertAsync("user_avatar", "user_id", new
+            {
+                user_id = userId,
+                thumbnail_url = "/images/thumbnails/default_thumbnail.png", // will be generated
+                avatar_type = 2,
+                scale_height = 1.0f,
+                scale_width = 1.0f,
+                scale_head = 1.0f,
+                scale_depth = 1.0f,
+                scale_proportion = 0.0f,
+                scale_body_type = 0.0f,
+                head_color_id = 194,
+                torso_color_id = 23,
+                right_arm_color_id = 194,
+                left_arm_color_id = 194,
+                right_leg_color_id = 102,
+                left_leg_color_id = 102,
+                headshot_thumbnail_url = "/images/thumbnails/default_headshot.png" // will be generated
+            });
+
+            await InsertAsync("user_avatar_type", new
+            {
+                user_id = userId,
+                r15 = false,
+                height = 100,
+                width = 100,
+                head = 100,
+                proportion = 0,
+                body_type = 0,
+            });
+
+            // Give gender-specific assets
+            var assetIds = gender == Gender.Male
+                ? Roblox.Configuration.SignupAssetIdsMan
+                : Roblox.Configuration.SignupAssetIdsFemale;
+
+            var userAssetIds = new List<long>();
+            foreach (var id in assetIds)
+            {
+                var userAssetId = await CreateUserAsset(userId, id);
+                userAssetIds.Add(userAssetId);
             }
-        }
+
+            return new UserId { userId = userId };
+        });
 
         using var av = ServiceProvider.GetOrCreate<AvatarService>();
-
         var avatarAssetIds = gender == Gender.Male
             ? Roblox.Configuration.SignupAvatarAssetIdsMan
             : Roblox.Configuration.SignupAvatarAssetIdsFemale;
@@ -1843,7 +1841,7 @@ public class UsersService : ServiceBase, IService
 
     public async Task<long> GetMaximumCopyCount(long assetId)
     {
-        return 5;
+        return 10;
     }
 
     public async Task PurchaseResellableItem(long userIdBuyer, long userAssetId)
@@ -2568,6 +2566,7 @@ public class UsersService : ServiceBase, IService
 
     public async Task AddStaffPermission(long userId, Access permission)
     {
+        Writer.Info(LogGroup.AdminApi, "PERMS MODIFICATION: Added {0} to user {1}", permission, userId);
         await db.ExecuteAsync("INSERT INTO user_permission (user_id, permission) VALUES (:user_id, :permission) ON CONFLICT (user_id, permission) DO NOTHING", new
         {
             user_id = userId,
@@ -2577,6 +2576,7 @@ public class UsersService : ServiceBase, IService
 
     public async Task RemoveStaffPermission(long userId, Access permission)
     {
+        Writer.Info(LogGroup.AdminApi, "PERMS MODIFICATION: Removed {0} from user {1}", permission, userId);
         await db.ExecuteAsync("DELETE FROM user_permission WHERE user_id = :user_id AND permission = :permission", new
         {
             user_id = userId,
@@ -2603,6 +2603,14 @@ public class UsersService : ServiceBase, IService
             status = PasswordResetState.Created,
         });
         return uuid;
+    }
+
+public async Task<string> GetUserMemberShipAsString(long userId)
+    {
+        UserMembershipEntry? result = await GetUserMembership(userId);
+        if (result == null)
+            return "None";
+        return result.membershipType.ToString();
     }
 
     public async Task<PasswordResetEntry?> GetPasswordResetEntry(string id)
