@@ -5294,11 +5294,11 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Users\\Cris\\Desktop\\okapi.bond\\bubbablox-v2\\Roblox\\Roblox.EconomyChat\\Roblox.EconomyChat.csproj",
+      "projectUniqueName": "c:\\Users\\Cris\\Desktop\\okapi.bond\\bubbablox-v2\\Roblox\\Roblox.EconomyChat\\Roblox.EconomyChat.csproj",
       "projectName": "Roblox.EconomyChat",
-      "projectPath": "C:\\Users\\Cris\\Desktop\\okapi.bond\\bubbablox-v2\\Roblox\\Roblox.EconomyChat\\Roblox.EconomyChat.csproj",
+      "projectPath": "c:\\Users\\Cris\\Desktop\\okapi.bond\\bubbablox-v2\\Roblox\\Roblox.EconomyChat\\Roblox.EconomyChat.csproj",
       "packagesPath": "C:\\Users\\Cris\\.nuget\\packages\\",
-      "outputPath": "C:\\Users\\Cris\\Desktop\\okapi.bond\\bubbablox-v2\\Roblox\\Roblox.EconomyChat\\obj\\",
+      "outputPath": "c:\\Users\\Cris\\Desktop\\okapi.bond\\bubbablox-v2\\Roblox\\Roblox.EconomyChat\\obj\\",
       "projectStyle": "PackageReference",
       "fallbackFolders": [
         "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
@@ -5320,8 +5320,8 @@
         "net6.0": {
           "targetAlias": "net6.0",
           "projectReferences": {
-            "C:\\Users\\Cris\\Desktop\\okapi.bond\\bubbablox-v2\\Roblox\\Roblox.Services\\Roblox.Services.csproj": {
-              "projectPath": "C:\\Users\\Cris\\Desktop\\okapi.bond\\bubbablox-v2\\Roblox\\Roblox.Services\\Roblox.Services.csproj"
+            "c:\\Users\\Cris\\Desktop\\okapi.bond\\bubbablox-v2\\Roblox\\Roblox.Services\\Roblox.Services.csproj": {
+              "projectPath": "c:\\Users\\Cris\\Desktop\\okapi.bond\\bubbablox-v2\\Roblox\\Roblox.Services\\Roblox.Services.csproj"
             }
           }
         }

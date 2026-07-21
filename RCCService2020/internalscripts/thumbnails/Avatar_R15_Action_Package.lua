@@ -16,7 +16,7 @@ player:LoadCharacterBlocking()
 
 ThumbnailGenerator:AddProfilingCheckpoint("PlayerCharacterLoaded")
 
-local poseAnimationId = "http://bbblox.org/asset/?id=532421348"
+local poseAnimationId = "http://queef.bond/asset/?id=532421348" -- wait would localhost work????
 local function getJointBetween(part0, part1)
     for _, obj in pairs(part1:GetChildren()) do
         if obj:IsA("Motor6D") and obj.Part0 == part0 then

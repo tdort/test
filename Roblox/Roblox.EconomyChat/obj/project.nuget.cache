@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "mWfEpn0YN8E=",
+  "dgSpecHash": "eSAtAtmgFNA=",
   "success": true,
-  "projectFilePath": "C:\\Users\\Cris\\Desktop\\okapi.bond\\bubbablox-v2\\Roblox\\Roblox.EconomyChat\\Roblox.EconomyChat.csproj",
+  "projectFilePath": "c:\\Users\\Cris\\Desktop\\okapi.bond\\bubbablox-v2\\Roblox\\Roblox.EconomyChat\\Roblox.EconomyChat.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\Cris\\.nuget\\packages\\csvhelper\\27.2.1\\csvhelper.27.2.1.nupkg.sha512",
     "C:\\Users\\Cris\\.nuget\\packages\\dapper\\2.0.123\\dapper.2.0.123.nupkg.sha512",
@@ -112,9 +112,9 @@
       "code": "NU1903",
       "level": "Warning",
       "message": "Package 'SixLabors.ImageSharp' 2.1.3 has a known high severity vulnerability, https://github.com/advisories/GHSA-2cmq-823j-5qj8",
-      "projectPath": "C:\\Users\\Cris\\Desktop\\okapi.bond\\bubbablox-v2\\Roblox\\Roblox.EconomyChat\\Roblox.EconomyChat.csproj",
+      "projectPath": "c:\\Users\\Cris\\Desktop\\okapi.bond\\bubbablox-v2\\Roblox\\Roblox.EconomyChat\\Roblox.EconomyChat.csproj",
       "warningLevel": 1,
-      "filePath": "C:\\Users\\Cris\\Desktop\\okapi.bond\\bubbablox-v2\\Roblox\\Roblox.EconomyChat\\Roblox.EconomyChat.csproj",
+      "filePath": "c:\\Users\\Cris\\Desktop\\okapi.bond\\bubbablox-v2\\Roblox\\Roblox.EconomyChat\\Roblox.EconomyChat.csproj",
       "libraryId": "SixLabors.ImageSharp",
       "targetGraphs": [
         "net6.0"
@@ -124,9 +124,9 @@
       "code": "NU1902",
       "level": "Warning",
       "message": "Package 'SixLabors.ImageSharp' 2.1.3 has a known moderate severity vulnerability, https://github.com/advisories/GHSA-5x7m-6737-26cr",
-      "projectPath": "C:\\Users\\Cris\\Desktop\\okapi.bond\\bubbablox-v2\\Roblox\\Roblox.EconomyChat\\Roblox.EconomyChat.csproj",
+      "projectPath": "c:\\Users\\Cris\\Desktop\\okapi.bond\\bubbablox-v2\\Roblox\\Roblox.EconomyChat\\Roblox.EconomyChat.csproj",
       "warningLevel": 1,
-      "filePath": "C:\\Users\\Cris\\Desktop\\okapi.bond\\bubbablox-v2\\Roblox\\Roblox.EconomyChat\\Roblox.EconomyChat.csproj",
+      "filePath": "c:\\Users\\Cris\\Desktop\\okapi.bond\\bubbablox-v2\\Roblox\\Roblox.EconomyChat\\Roblox.EconomyChat.csproj",
       "libraryId": "SixLabors.ImageSharp",
       "targetGraphs": [
         "net6.0"
@@ -136,9 +136,9 @@
       "code": "NU1903",
       "level": "Warning",
       "message": "Package 'SixLabors.ImageSharp' 2.1.3 has a known high severity vulnerability, https://github.com/advisories/GHSA-63p8-c4ww-9cg7",
-      "projectPath": "C:\\Users\\Cris\\Desktop\\okapi.bond\\bubbablox-v2\\Roblox\\Roblox.EconomyChat\\Roblox.EconomyChat.csproj",
+      "projectPath": "c:\\Users\\Cris\\Desktop\\okapi.bond\\bubbablox-v2\\Roblox\\Roblox.EconomyChat\\Roblox.EconomyChat.csproj",
       "warningLevel": 1,
-      "filePath": "C:\\Users\\Cris\\Desktop\\okapi.bond\\bubbablox-v2\\Roblox\\Roblox.EconomyChat\\Roblox.EconomyChat.csproj",
+      "filePath": "c:\\Users\\Cris\\Desktop\\okapi.bond\\bubbablox-v2\\Roblox\\Roblox.EconomyChat\\Roblox.EconomyChat.csproj",
       "libraryId": "SixLabors.ImageSharp",
       "targetGraphs": [
         "net6.0"
@@ -148,9 +148,9 @@
       "code": "NU1903",
       "level": "Warning",
       "message": "Package 'SixLabors.ImageSharp' 2.1.3 has a known high severity vulnerability, https://github.com/advisories/GHSA-65x7-c272-7g7r",
-      "projectPath": "C:\\Users\\Cris\\Desktop\\okapi.bond\\bubbablox-v2\\Roblox\\Roblox.EconomyChat\\Roblox.EconomyChat.csproj",
+      "projectPath": "c:\\Users\\Cris\\Desktop\\okapi.bond\\bubbablox-v2\\Roblox\\Roblox.EconomyChat\\Roblox.EconomyChat.csproj",
       "warningLevel": 1,
-      "filePath": "C:\\Users\\Cris\\Desktop\\okapi.bond\\bubbablox-v2\\Roblox\\Roblox.EconomyChat\\Roblox.EconomyChat.csproj",
+      "filePath": "c:\\Users\\Cris\\Desktop\\okapi.bond\\bubbablox-v2\\Roblox\\Roblox.EconomyChat\\Roblox.EconomyChat.csproj",
       "libraryId": "SixLabors.ImageSharp",
       "targetGraphs": [
         "net6.0"
@@ -160,9 +160,9 @@
       "code": "NU1902",
       "level": "Warning",
       "message": "Package 'SixLabors.ImageSharp' 2.1.3 has a known moderate severity vulnerability, https://github.com/advisories/GHSA-g85r-6x2q-45w7",
-      "projectPath": "C:\\Users\\Cris\\Desktop\\okapi.bond\\bubbablox-v2\\Roblox\\Roblox.EconomyChat\\Roblox.EconomyChat.csproj",
+      "projectPath": "c:\\Users\\Cris\\Desktop\\okapi.bond\\bubbablox-v2\\Roblox\\Roblox.EconomyChat\\Roblox.EconomyChat.csproj",
       "warningLevel": 1,
-      "filePath": "C:\\Users\\Cris\\Desktop\\okapi.bond\\bubbablox-v2\\Roblox\\Roblox.EconomyChat\\Roblox.EconomyChat.csproj",
+      "filePath": "c:\\Users\\Cris\\Desktop\\okapi.bond\\bubbablox-v2\\Roblox\\Roblox.EconomyChat\\Roblox.EconomyChat.csproj",
       "libraryId": "SixLabors.ImageSharp",
       "targetGraphs": [
         "net6.0"
@@ -172,9 +172,9 @@
       "code": "NU1902",
       "level": "Warning",
       "message": "Package 'SixLabors.ImageSharp' 2.1.3 has a known moderate severity vulnerability, https://github.com/advisories/GHSA-qxrv-gp6x-rc23",
-      "projectPath": "C:\\Users\\Cris\\Desktop\\okapi.bond\\bubbablox-v2\\Roblox\\Roblox.EconomyChat\\Roblox.EconomyChat.csproj",
+      "projectPath": "c:\\Users\\Cris\\Desktop\\okapi.bond\\bubbablox-v2\\Roblox\\Roblox.EconomyChat\\Roblox.EconomyChat.csproj",
       "warningLevel": 1,
-      "filePath": "C:\\Users\\Cris\\Desktop\\okapi.bond\\bubbablox-v2\\Roblox\\Roblox.EconomyChat\\Roblox.EconomyChat.csproj",
+      "filePath": "c:\\Users\\Cris\\Desktop\\okapi.bond\\bubbablox-v2\\Roblox\\Roblox.EconomyChat\\Roblox.EconomyChat.csproj",
       "libraryId": "SixLabors.ImageSharp",
       "targetGraphs": [
         "net6.0"
@@ -184,9 +184,9 @@
       "code": "NU1902",
       "level": "Warning",
       "message": "Package 'SixLabors.ImageSharp' 2.1.3 has a known moderate severity vulnerability, https://github.com/advisories/GHSA-rxmq-m78w-7wmc",
-      "projectPath": "C:\\Users\\Cris\\Desktop\\okapi.bond\\bubbablox-v2\\Roblox\\Roblox.EconomyChat\\Roblox.EconomyChat.csproj",
+      "projectPath": "c:\\Users\\Cris\\Desktop\\okapi.bond\\bubbablox-v2\\Roblox\\Roblox.EconomyChat\\Roblox.EconomyChat.csproj",
       "warningLevel": 1,
-      "filePath": "C:\\Users\\Cris\\Desktop\\okapi.bond\\bubbablox-v2\\Roblox\\Roblox.EconomyChat\\Roblox.EconomyChat.csproj",
+      "filePath": "c:\\Users\\Cris\\Desktop\\okapi.bond\\bubbablox-v2\\Roblox\\Roblox.EconomyChat\\Roblox.EconomyChat.csproj",
       "libraryId": "SixLabors.ImageSharp",
       "targetGraphs": [
         "net6.0"

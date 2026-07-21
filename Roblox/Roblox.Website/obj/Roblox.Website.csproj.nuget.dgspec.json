@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\Cris\\Desktop\\okapi.bond\\bubbablox-v2\\Roblox\\Roblox.Website\\Roblox.Website.csproj": {}
+    "c:\\Users\\Cris\\Desktop\\okapi.bond\\bubbablox-v2\\Roblox\\Roblox.Website\\Roblox.Website.csproj": {}
   },
   "projects": {
-    "C:\\Users\\Cris\\Desktop\\okapi.bond\\bubbablox-v2\\Roblox\\Roblox.AbuseDetection\\Roblox.AbuseDetection.csproj": {
+    "c:\\Users\\Cris\\Desktop\\okapi.bond\\bubbablox-v2\\Roblox\\Roblox.AbuseDetection\\Roblox.AbuseDetection.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\Cris\\Desktop\\okapi.bond\\bubbablox-v2\\Roblox\\Roblox.AbuseDetection\\Roblox.AbuseDetection.csproj",
+        "projectUniqueName": "c:\\Users\\Cris\\Desktop\\okapi.bond\\bubbablox-v2\\Roblox\\Roblox.AbuseDetection\\Roblox.AbuseDetection.csproj",
         "projectName": "Roblox.AbuseDetection",
-        "projectPath": "C:\\Users\\Cris\\Desktop\\okapi.bond\\bubbablox-v2\\Roblox\\Roblox.AbuseDetection\\Roblox.AbuseDetection.csproj",
+        "projectPath": "c:\\Users\\Cris\\Desktop\\okapi.bond\\bubbablox-v2\\Roblox\\Roblox.AbuseDetection\\Roblox.AbuseDetection.csproj",
         "packagesPath": "C:\\Users\\Cris\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\Cris\\Desktop\\okapi.bond\\bubbablox-v2\\Roblox\\Roblox.AbuseDetection\\obj\\",
+        "outputPath": "c:\\Users\\Cris\\Desktop\\okapi.bond\\bubbablox-v2\\Roblox\\Roblox.AbuseDetection\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
           "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
@@ -33,8 +33,8 @@
           "net6.0": {
             "targetAlias": "net6.0",
             "projectReferences": {
-              "C:\\Users\\Cris\\Desktop\\okapi.bond\\bubbablox-v2\\Roblox\\Roblox.Services\\Roblox.Services.csproj": {
-                "projectPath": "C:\\Users\\Cris\\Desktop\\okapi.bond\\bubbablox-v2\\Roblox\\Roblox.Services\\Roblox.Services.csproj"
+              "c:\\Users\\Cris\\Desktop\\okapi.bond\\bubbablox-v2\\Roblox\\Roblox.Services\\Roblox.Services.csproj": {
+                "projectPath": "c:\\Users\\Cris\\Desktop\\okapi.bond\\bubbablox-v2\\Roblox\\Roblox.Services\\Roblox.Services.csproj"
               }
             }
           }
@@ -106,14 +106,14 @@
         }
       }
     },
-    "C:\\Users\\Cris\\Desktop\\okapi.bond\\bubbablox-v2\\Roblox\\Roblox.Cache\\Roblox.Cache.csproj": {
+    "c:\\Users\\Cris\\Desktop\\okapi.bond\\bubbablox-v2\\Roblox\\Roblox.Cache\\Roblox.Cache.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\Cris\\Desktop\\okapi.bond\\bubbablox-v2\\Roblox\\Roblox.Cache\\Roblox.Cache.csproj",
+        "projectUniqueName": "c:\\Users\\Cris\\Desktop\\okapi.bond\\bubbablox-v2\\Roblox\\Roblox.Cache\\Roblox.Cache.csproj",
         "projectName": "Roblox.Cache",
-        "projectPath": "C:\\Users\\Cris\\Desktop\\okapi.bond\\bubbablox-v2\\Roblox\\Roblox.Cache\\Roblox.Cache.csproj",
+        "projectPath": "c:\\Users\\Cris\\Desktop\\okapi.bond\\bubbablox-v2\\Roblox\\Roblox.Cache\\Roblox.Cache.csproj",
         "packagesPath": "C:\\Users\\Cris\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\Cris\\Desktop\\okapi.bond\\bubbablox-v2\\Roblox\\Roblox.Cache\\obj\\",
+        "outputPath": "c:\\Users\\Cris\\Desktop\\okapi.bond\\bubbablox-v2\\Roblox\\Roblox.Cache\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
           "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
@@ -208,14 +208,14 @@
         }
       }
     },
-    "C:\\Users\\Cris\\Desktop\\okapi.bond\\bubbablox-v2\\Roblox\\Roblox.Configuration\\Roblox.Configuration.csproj": {
+    "c:\\Users\\Cris\\Desktop\\okapi.bond\\bubbablox-v2\\Roblox\\Roblox.Configuration\\Roblox.Configuration.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\Cris\\Desktop\\okapi.bond\\bubbablox-v2\\Roblox\\Roblox.Configuration\\Roblox.Configuration.csproj",
+        "projectUniqueName": "c:\\Users\\Cris\\Desktop\\okapi.bond\\bubbablox-v2\\Roblox\\Roblox.Configuration\\Roblox.Configuration.csproj",
         "projectName": "Roblox.Configuration",
-        "projectPath": "C:\\Users\\Cris\\Desktop\\okapi.bond\\bubbablox-v2\\Roblox\\Roblox.Configuration\\Roblox.Configuration.csproj",
+        "projectPath": "c:\\Users\\Cris\\Desktop\\okapi.bond\\bubbablox-v2\\Roblox\\Roblox.Configuration\\Roblox.Configuration.csproj",
         "packagesPath": "C:\\Users\\Cris\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\Cris\\Desktop\\okapi.bond\\bubbablox-v2\\Roblox\\Roblox.Configuration\\obj\\",
+        "outputPath": "c:\\Users\\Cris\\Desktop\\okapi.bond\\bubbablox-v2\\Roblox\\Roblox.Configuration\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
           "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
@@ -306,14 +306,14 @@
         }
       }
     },
-    "C:\\Users\\Cris\\Desktop\\okapi.bond\\bubbablox-v2\\Roblox\\Roblox.Dto\\Roblox.Dto.csproj": {
+    "c:\\Users\\Cris\\Desktop\\okapi.bond\\bubbablox-v2\\Roblox\\Roblox.Dto\\Roblox.Dto.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\Cris\\Desktop\\okapi.bond\\bubbablox-v2\\Roblox\\Roblox.Dto\\Roblox.Dto.csproj",
+        "projectUniqueName": "c:\\Users\\Cris\\Desktop\\okapi.bond\\bubbablox-v2\\Roblox\\Roblox.Dto\\Roblox.Dto.csproj",
         "projectName": "Roblox.Dto",
-        "projectPath": "C:\\Users\\Cris\\Desktop\\okapi.bond\\bubbablox-v2\\Roblox\\Roblox.Dto\\Roblox.Dto.csproj",
+        "projectPath": "c:\\Users\\Cris\\Desktop\\okapi.bond\\bubbablox-v2\\Roblox\\Roblox.Dto\\Roblox.Dto.csproj",
         "packagesPath": "C:\\Users\\Cris\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\Cris\\Desktop\\okapi.bond\\bubbablox-v2\\Roblox\\Roblox.Dto\\obj\\",
+        "outputPath": "c:\\Users\\Cris\\Desktop\\okapi.bond\\bubbablox-v2\\Roblox\\Roblox.Dto\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
           "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
@@ -335,11 +335,11 @@
           "net6.0": {
             "targetAlias": "net6.0",
             "projectReferences": {
-              "C:\\Users\\Cris\\Desktop\\okapi.bond\\bubbablox-v2\\Roblox\\Roblox.Logging\\Roblox.Logging.csproj": {
-                "projectPath": "C:\\Users\\Cris\\Desktop\\okapi.bond\\bubbablox-v2\\Roblox\\Roblox.Logging\\Roblox.Logging.csproj"
+              "c:\\Users\\Cris\\Desktop\\okapi.bond\\bubbablox-v2\\Roblox\\Roblox.Logging\\Roblox.Logging.csproj": {
+                "projectPath": "c:\\Users\\Cris\\Desktop\\okapi.bond\\bubbablox-v2\\Roblox\\Roblox.Logging\\Roblox.Logging.csproj"
               },
-              "C:\\Users\\Cris\\Desktop\\okapi.bond\\bubbablox-v2\\Roblox\\Roblox.Models\\Roblox.Models.csproj": {
-                "projectPath": "C:\\Users\\Cris\\Desktop\\okapi.bond\\bubbablox-v2\\Roblox\\Roblox.Models\\Roblox.Models.csproj"
+              "c:\\Users\\Cris\\Desktop\\okapi.bond\\bubbablox-v2\\Roblox\\Roblox.Models\\Roblox.Models.csproj": {
+                "projectPath": "c:\\Users\\Cris\\Desktop\\okapi.bond\\bubbablox-v2\\Roblox\\Roblox.Models\\Roblox.Models.csproj"
               }
             }
           }
@@ -411,14 +411,14 @@
         }
       }
     },
-    "C:\\Users\\Cris\\Desktop\\okapi.bond\\bubbablox-v2\\Roblox\\Roblox.EconomyChat\\Roblox.EconomyChat.csproj": {
+    "c:\\Users\\Cris\\Desktop\\okapi.bond\\bubbablox-v2\\Roblox\\Roblox.EconomyChat\\Roblox.EconomyChat.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\Cris\\Desktop\\okapi.bond\\bubbablox-v2\\Roblox\\Roblox.EconomyChat\\Roblox.EconomyChat.csproj",
+        "projectUniqueName": "c:\\Users\\Cris\\Desktop\\okapi.bond\\bubbablox-v2\\Roblox\\Roblox.EconomyChat\\Roblox.EconomyChat.csproj",
         "projectName": "Roblox.EconomyChat",
-        "projectPath": "C:\\Users\\Cris\\Desktop\\okapi.bond\\bubbablox-v2\\Roblox\\Roblox.EconomyChat\\Roblox.EconomyChat.csproj",
+        "projectPath": "c:\\Users\\Cris\\Desktop\\okapi.bond\\bubbablox-v2\\Roblox\\Roblox.EconomyChat\\Roblox.EconomyChat.csproj",
         "packagesPath": "C:\\Users\\Cris\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\Cris\\Desktop\\okapi.bond\\bubbablox-v2\\Roblox\\Roblox.EconomyChat\\obj\\",
+        "outputPath": "c:\\Users\\Cris\\Desktop\\okapi.bond\\bubbablox-v2\\Roblox\\Roblox.EconomyChat\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
           "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
@@ -440,8 +440,8 @@
           "net6.0": {
             "targetAlias": "net6.0",
             "projectReferences": {
-              "C:\\Users\\Cris\\Desktop\\okapi.bond\\bubbablox-v2\\Roblox\\Roblox.Services\\Roblox.Services.csproj": {
-                "projectPath": "C:\\Users\\Cris\\Desktop\\okapi.bond\\bubbablox-v2\\Roblox\\Roblox.Services\\Roblox.Services.csproj"
+              "c:\\Users\\Cris\\Desktop\\okapi.bond\\bubbablox-v2\\Roblox\\Roblox.Services\\Roblox.Services.csproj": {
+                "projectPath": "c:\\Users\\Cris\\Desktop\\okapi.bond\\bubbablox-v2\\Roblox\\Roblox.Services\\Roblox.Services.csproj"
               }
             }
           }
@@ -513,14 +513,14 @@
         }
       }
     },
-    "C:\\Users\\Cris\\Desktop\\okapi.bond\\bubbablox-v2\\Roblox\\Roblox.Exceptions\\Roblox.Exceptions.csproj": {
+    "c:\\Users\\Cris\\Desktop\\okapi.bond\\bubbablox-v2\\Roblox\\Roblox.Exceptions\\Roblox.Exceptions.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\Cris\\Desktop\\okapi.bond\\bubbablox-v2\\Roblox\\Roblox.Exceptions\\Roblox.Exceptions.csproj",
+        "projectUniqueName": "c:\\Users\\Cris\\Desktop\\okapi.bond\\bubbablox-v2\\Roblox\\Roblox.Exceptions\\Roblox.Exceptions.csproj",
         "projectName": "Roblox.Exceptions",
-        "projectPath": "C:\\Users\\Cris\\Desktop\\okapi.bond\\bubbablox-v2\\Roblox\\Roblox.Exceptions\\Roblox.Exceptions.csproj",
+        "projectPath": "c:\\Users\\Cris\\Desktop\\okapi.bond\\bubbablox-v2\\Roblox\\Roblox.Exceptions\\Roblox.Exceptions.csproj",
         "packagesPath": "C:\\Users\\Cris\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\Cris\\Desktop\\okapi.bond\\bubbablox-v2\\Roblox\\Roblox.Exceptions\\obj\\",
+        "outputPath": "c:\\Users\\Cris\\Desktop\\okapi.bond\\bubbablox-v2\\Roblox\\Roblox.Exceptions\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
           "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
@@ -611,14 +611,14 @@
         }
       }
     },
-    "C:\\Users\\Cris\\Desktop\\okapi.bond\\bubbablox-v2\\Roblox\\Roblox.Libraries\\Roblox.Libraries.csproj": {
+    "c:\\Users\\Cris\\Desktop\\okapi.bond\\bubbablox-v2\\Roblox\\Roblox.Libraries\\Roblox.Libraries.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\Cris\\Desktop\\okapi.bond\\bubbablox-v2\\Roblox\\Roblox.Libraries\\Roblox.Libraries.csproj",
+        "projectUniqueName": "c:\\Users\\Cris\\Desktop\\okapi.bond\\bubbablox-v2\\Roblox\\Roblox.Libraries\\Roblox.Libraries.csproj",
         "projectName": "Roblox.Libraries",
-        "projectPath": "C:\\Users\\Cris\\Desktop\\okapi.bond\\bubbablox-v2\\Roblox\\Roblox.Libraries\\Roblox.Libraries.csproj",
+        "projectPath": "c:\\Users\\Cris\\Desktop\\okapi.bond\\bubbablox-v2\\Roblox\\Roblox.Libraries\\Roblox.Libraries.csproj",
         "packagesPath": "C:\\Users\\Cris\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\Cris\\Desktop\\okapi.bond\\bubbablox-v2\\Roblox\\Roblox.Libraries\\obj\\",
+        "outputPath": "c:\\Users\\Cris\\Desktop\\okapi.bond\\bubbablox-v2\\Roblox\\Roblox.Libraries\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
           "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
@@ -640,11 +640,11 @@
           "net6.0": {
             "targetAlias": "net6.0",
             "projectReferences": {
-              "C:\\Users\\Cris\\Desktop\\okapi.bond\\bubbablox-v2\\Roblox\\Roblox.Logging\\Roblox.Logging.csproj": {
-                "projectPath": "C:\\Users\\Cris\\Desktop\\okapi.bond\\bubbablox-v2\\Roblox\\Roblox.Logging\\Roblox.Logging.csproj"
+              "c:\\Users\\Cris\\Desktop\\okapi.bond\\bubbablox-v2\\Roblox\\Roblox.Logging\\Roblox.Logging.csproj": {
+                "projectPath": "c:\\Users\\Cris\\Desktop\\okapi.bond\\bubbablox-v2\\Roblox\\Roblox.Logging\\Roblox.Logging.csproj"
               },
-              "C:\\Users\\Cris\\Desktop\\okapi.bond\\bubbablox-v2\\Roblox\\Roblox.Models\\Roblox.Models.csproj": {
-                "projectPath": "C:\\Users\\Cris\\Desktop\\okapi.bond\\bubbablox-v2\\Roblox\\Roblox.Models\\Roblox.Models.csproj"
+              "c:\\Users\\Cris\\Desktop\\okapi.bond\\bubbablox-v2\\Roblox\\Roblox.Models\\Roblox.Models.csproj": {
+                "projectPath": "c:\\Users\\Cris\\Desktop\\okapi.bond\\bubbablox-v2\\Roblox\\Roblox.Models\\Roblox.Models.csproj"
               }
             }
           }
@@ -724,14 +724,14 @@
         }
       }
     },
-    "C:\\Users\\Cris\\Desktop\\okapi.bond\\bubbablox-v2\\Roblox\\Roblox.Logging\\Roblox.Logging.csproj": {
+    "c:\\Users\\Cris\\Desktop\\okapi.bond\\bubbablox-v2\\Roblox\\Roblox.Logging\\Roblox.Logging.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\Cris\\Desktop\\okapi.bond\\bubbablox-v2\\Roblox\\Roblox.Logging\\Roblox.Logging.csproj",
+        "projectUniqueName": "c:\\Users\\Cris\\Desktop\\okapi.bond\\bubbablox-v2\\Roblox\\Roblox.Logging\\Roblox.Logging.csproj",
         "projectName": "Roblox.Logging",
-        "projectPath": "C:\\Users\\Cris\\Desktop\\okapi.bond\\bubbablox-v2\\Roblox\\Roblox.Logging\\Roblox.Logging.csproj",
+        "projectPath": "c:\\Users\\Cris\\Desktop\\okapi.bond\\bubbablox-v2\\Roblox\\Roblox.Logging\\Roblox.Logging.csproj",
         "packagesPath": "C:\\Users\\Cris\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\Cris\\Desktop\\okapi.bond\\bubbablox-v2\\Roblox\\Roblox.Logging\\obj\\",
+        "outputPath": "c:\\Users\\Cris\\Desktop\\okapi.bond\\bubbablox-v2\\Roblox\\Roblox.Logging\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
           "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
@@ -822,14 +822,14 @@
         }
       }
     },
-    "C:\\Users\\Cris\\Desktop\\okapi.bond\\bubbablox-v2\\Roblox\\Roblox.Metrics\\Roblox.Metrics.csproj": {
+    "c:\\Users\\Cris\\Desktop\\okapi.bond\\bubbablox-v2\\Roblox\\Roblox.Metrics\\Roblox.Metrics.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\Cris\\Desktop\\okapi.bond\\bubbablox-v2\\Roblox\\Roblox.Metrics\\Roblox.Metrics.csproj",
+        "projectUniqueName": "c:\\Users\\Cris\\Desktop\\okapi.bond\\bubbablox-v2\\Roblox\\Roblox.Metrics\\Roblox.Metrics.csproj",
         "projectName": "Roblox.Metrics",
-        "projectPath": "C:\\Users\\Cris\\Desktop\\okapi.bond\\bubbablox-v2\\Roblox\\Roblox.Metrics\\Roblox.Metrics.csproj",
+        "projectPath": "c:\\Users\\Cris\\Desktop\\okapi.bond\\bubbablox-v2\\Roblox\\Roblox.Metrics\\Roblox.Metrics.csproj",
         "packagesPath": "C:\\Users\\Cris\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\Cris\\Desktop\\okapi.bond\\bubbablox-v2\\Roblox\\Roblox.Metrics\\obj\\",
+        "outputPath": "c:\\Users\\Cris\\Desktop\\okapi.bond\\bubbablox-v2\\Roblox\\Roblox.Metrics\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
           "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
@@ -851,8 +851,8 @@
           "net6.0": {
             "targetAlias": "net6.0",
             "projectReferences": {
-              "C:\\Users\\Cris\\Desktop\\okapi.bond\\bubbablox-v2\\Roblox\\Roblox.Logging\\Roblox.Logging.csproj": {
-                "projectPath": "C:\\Users\\Cris\\Desktop\\okapi.bond\\bubbablox-v2\\Roblox\\Roblox.Logging\\Roblox.Logging.csproj"
+              "c:\\Users\\Cris\\Desktop\\okapi.bond\\bubbablox-v2\\Roblox\\Roblox.Logging\\Roblox.Logging.csproj": {
+                "projectPath": "c:\\Users\\Cris\\Desktop\\okapi.bond\\bubbablox-v2\\Roblox\\Roblox.Logging\\Roblox.Logging.csproj"
               }
             }
           }
@@ -928,14 +928,14 @@
         }
       }
     },
-    "C:\\Users\\Cris\\Desktop\\okapi.bond\\bubbablox-v2\\Roblox\\Roblox.Models\\Roblox.Models.csproj": {
+    "c:\\Users\\Cris\\Desktop\\okapi.bond\\bubbablox-v2\\Roblox\\Roblox.Models\\Roblox.Models.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\Cris\\Desktop\\okapi.bond\\bubbablox-v2\\Roblox\\Roblox.Models\\Roblox.Models.csproj",
+        "projectUniqueName": "c:\\Users\\Cris\\Desktop\\okapi.bond\\bubbablox-v2\\Roblox\\Roblox.Models\\Roblox.Models.csproj",
         "projectName": "Roblox.Models",
-        "projectPath": "C:\\Users\\Cris\\Desktop\\okapi.bond\\bubbablox-v2\\Roblox\\Roblox.Models\\Roblox.Models.csproj",
+        "projectPath": "c:\\Users\\Cris\\Desktop\\okapi.bond\\bubbablox-v2\\Roblox\\Roblox.Models\\Roblox.Models.csproj",
         "packagesPath": "C:\\Users\\Cris\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\Cris\\Desktop\\okapi.bond\\bubbablox-v2\\Roblox\\Roblox.Models\\obj\\",
+        "outputPath": "c:\\Users\\Cris\\Desktop\\okapi.bond\\bubbablox-v2\\Roblox\\Roblox.Models\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
           "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
@@ -957,8 +957,8 @@
           "net6.0": {
             "targetAlias": "net6.0",
             "projectReferences": {
-              "C:\\Users\\Cris\\Desktop\\okapi.bond\\bubbablox-v2\\Roblox\\Roblox.Configuration\\Roblox.Configuration.csproj": {
-                "projectPath": "C:\\Users\\Cris\\Desktop\\okapi.bond\\bubbablox-v2\\Roblox\\Roblox.Configuration\\Roblox.Configuration.csproj"
+              "c:\\Users\\Cris\\Desktop\\okapi.bond\\bubbablox-v2\\Roblox\\Roblox.Configuration\\Roblox.Configuration.csproj": {
+                "projectPath": "c:\\Users\\Cris\\Desktop\\okapi.bond\\bubbablox-v2\\Roblox\\Roblox.Configuration\\Roblox.Configuration.csproj"
               }
             }
           }
@@ -1030,14 +1030,14 @@
         }
       }
     },
-    "C:\\Users\\Cris\\Desktop\\okapi.bond\\bubbablox-v2\\Roblox\\Roblox.Rendering\\Roblox.Rendering.csproj": {
+    "c:\\Users\\Cris\\Desktop\\okapi.bond\\bubbablox-v2\\Roblox\\Roblox.Rendering\\Roblox.Rendering.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\Cris\\Desktop\\okapi.bond\\bubbablox-v2\\Roblox\\Roblox.Rendering\\Roblox.Rendering.csproj",
+        "projectUniqueName": "c:\\Users\\Cris\\Desktop\\okapi.bond\\bubbablox-v2\\Roblox\\Roblox.Rendering\\Roblox.Rendering.csproj",
         "projectName": "Roblox.Rendering",
-        "projectPath": "C:\\Users\\Cris\\Desktop\\okapi.bond\\bubbablox-v2\\Roblox\\Roblox.Rendering\\Roblox.Rendering.csproj",
+        "projectPath": "c:\\Users\\Cris\\Desktop\\okapi.bond\\bubbablox-v2\\Roblox\\Roblox.Rendering\\Roblox.Rendering.csproj",
         "packagesPath": "C:\\Users\\Cris\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\Cris\\Desktop\\okapi.bond\\bubbablox-v2\\Roblox\\Roblox.Rendering\\obj\\",
+        "outputPath": "c:\\Users\\Cris\\Desktop\\okapi.bond\\bubbablox-v2\\Roblox\\Roblox.Rendering\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
           "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
@@ -1059,11 +1059,11 @@
           "net6.0": {
             "targetAlias": "net6.0",
             "projectReferences": {
-              "C:\\Users\\Cris\\Desktop\\okapi.bond\\bubbablox-v2\\Roblox\\Roblox.Configuration\\Roblox.Configuration.csproj": {
-                "projectPath": "C:\\Users\\Cris\\Desktop\\okapi.bond\\bubbablox-v2\\Roblox\\Roblox.Configuration\\Roblox.Configuration.csproj"
+              "c:\\Users\\Cris\\Desktop\\okapi.bond\\bubbablox-v2\\Roblox\\Roblox.Configuration\\Roblox.Configuration.csproj": {
+                "projectPath": "c:\\Users\\Cris\\Desktop\\okapi.bond\\bubbablox-v2\\Roblox\\Roblox.Configuration\\Roblox.Configuration.csproj"
               },
-              "C:\\Users\\Cris\\Desktop\\okapi.bond\\bubbablox-v2\\Roblox\\Roblox.Metrics\\Roblox.Metrics.csproj": {
-                "projectPath": "C:\\Users\\Cris\\Desktop\\okapi.bond\\bubbablox-v2\\Roblox\\Roblox.Metrics\\Roblox.Metrics.csproj"
+              "c:\\Users\\Cris\\Desktop\\okapi.bond\\bubbablox-v2\\Roblox\\Roblox.Metrics\\Roblox.Metrics.csproj": {
+                "projectPath": "c:\\Users\\Cris\\Desktop\\okapi.bond\\bubbablox-v2\\Roblox\\Roblox.Metrics\\Roblox.Metrics.csproj"
               }
             }
           }
@@ -1135,14 +1135,14 @@
         }
       }
     },
-    "C:\\Users\\Cris\\Desktop\\okapi.bond\\bubbablox-v2\\Roblox\\Roblox.Services\\Roblox.Services.csproj": {
+    "c:\\Users\\Cris\\Desktop\\okapi.bond\\bubbablox-v2\\Roblox\\Roblox.Services\\Roblox.Services.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\Cris\\Desktop\\okapi.bond\\bubbablox-v2\\Roblox\\Roblox.Services\\Roblox.Services.csproj",
+        "projectUniqueName": "c:\\Users\\Cris\\Desktop\\okapi.bond\\bubbablox-v2\\Roblox\\Roblox.Services\\Roblox.Services.csproj",
         "projectName": "Roblox.Services",
-        "projectPath": "C:\\Users\\Cris\\Desktop\\okapi.bond\\bubbablox-v2\\Roblox\\Roblox.Services\\Roblox.Services.csproj",
+        "projectPath": "c:\\Users\\Cris\\Desktop\\okapi.bond\\bubbablox-v2\\Roblox\\Roblox.Services\\Roblox.Services.csproj",
         "packagesPath": "C:\\Users\\Cris\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\Cris\\Desktop\\okapi.bond\\bubbablox-v2\\Roblox\\Roblox.Services\\obj\\",
+        "outputPath": "c:\\Users\\Cris\\Desktop\\okapi.bond\\bubbablox-v2\\Roblox\\Roblox.Services\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
           "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
@@ -1164,32 +1164,32 @@
           "net6.0": {
             "targetAlias": "net6.0",
             "projectReferences": {
-              "C:\\Users\\Cris\\Desktop\\okapi.bond\\bubbablox-v2\\Roblox\\Roblox.Cache\\Roblox.Cache.csproj": {
-                "projectPath": "C:\\Users\\Cris\\Desktop\\okapi.bond\\bubbablox-v2\\Roblox\\Roblox.Cache\\Roblox.Cache.csproj"
+              "c:\\Users\\Cris\\Desktop\\okapi.bond\\bubbablox-v2\\Roblox\\Roblox.Cache\\Roblox.Cache.csproj": {
+                "projectPath": "c:\\Users\\Cris\\Desktop\\okapi.bond\\bubbablox-v2\\Roblox\\Roblox.Cache\\Roblox.Cache.csproj"
               },
-              "C:\\Users\\Cris\\Desktop\\okapi.bond\\bubbablox-v2\\Roblox\\Roblox.Configuration\\Roblox.Configuration.csproj": {
-                "projectPath": "C:\\Users\\Cris\\Desktop\\okapi.bond\\bubbablox-v2\\Roblox\\Roblox.Configuration\\Roblox.Configuration.csproj"
+              "c:\\Users\\Cris\\Desktop\\okapi.bond\\bubbablox-v2\\Roblox\\Roblox.Configuration\\Roblox.Configuration.csproj": {
+                "projectPath": "c:\\Users\\Cris\\Desktop\\okapi.bond\\bubbablox-v2\\Roblox\\Roblox.Configuration\\Roblox.Configuration.csproj"
               },
-              "C:\\Users\\Cris\\Desktop\\okapi.bond\\bubbablox-v2\\Roblox\\Roblox.Dto\\Roblox.Dto.csproj": {
-                "projectPath": "C:\\Users\\Cris\\Desktop\\okapi.bond\\bubbablox-v2\\Roblox\\Roblox.Dto\\Roblox.Dto.csproj"
+              "c:\\Users\\Cris\\Desktop\\okapi.bond\\bubbablox-v2\\Roblox\\Roblox.Dto\\Roblox.Dto.csproj": {
+                "projectPath": "c:\\Users\\Cris\\Desktop\\okapi.bond\\bubbablox-v2\\Roblox\\Roblox.Dto\\Roblox.Dto.csproj"
               },
-              "C:\\Users\\Cris\\Desktop\\okapi.bond\\bubbablox-v2\\Roblox\\Roblox.Exceptions\\Roblox.Exceptions.csproj": {
-                "projectPath": "C:\\Users\\Cris\\Desktop\\okapi.bond\\bubbablox-v2\\Roblox\\Roblox.Exceptions\\Roblox.Exceptions.csproj"
+              "c:\\Users\\Cris\\Desktop\\okapi.bond\\bubbablox-v2\\Roblox\\Roblox.Exceptions\\Roblox.Exceptions.csproj": {
+                "projectPath": "c:\\Users\\Cris\\Desktop\\okapi.bond\\bubbablox-v2\\Roblox\\Roblox.Exceptions\\Roblox.Exceptions.csproj"
               },
-              "C:\\Users\\Cris\\Desktop\\okapi.bond\\bubbablox-v2\\Roblox\\Roblox.Libraries\\Roblox.Libraries.csproj": {
-                "projectPath": "C:\\Users\\Cris\\Desktop\\okapi.bond\\bubbablox-v2\\Roblox\\Roblox.Libraries\\Roblox.Libraries.csproj"
+              "c:\\Users\\Cris\\Desktop\\okapi.bond\\bubbablox-v2\\Roblox\\Roblox.Libraries\\Roblox.Libraries.csproj": {
+                "projectPath": "c:\\Users\\Cris\\Desktop\\okapi.bond\\bubbablox-v2\\Roblox\\Roblox.Libraries\\Roblox.Libraries.csproj"
               },
-              "C:\\Users\\Cris\\Desktop\\okapi.bond\\bubbablox-v2\\Roblox\\Roblox.Logging\\Roblox.Logging.csproj": {
-                "projectPath": "C:\\Users\\Cris\\Desktop\\okapi.bond\\bubbablox-v2\\Roblox\\Roblox.Logging\\Roblox.Logging.csproj"
+              "c:\\Users\\Cris\\Desktop\\okapi.bond\\bubbablox-v2\\Roblox\\Roblox.Logging\\Roblox.Logging.csproj": {
+                "projectPath": "c:\\Users\\Cris\\Desktop\\okapi.bond\\bubbablox-v2\\Roblox\\Roblox.Logging\\Roblox.Logging.csproj"
               },
-              "C:\\Users\\Cris\\Desktop\\okapi.bond\\bubbablox-v2\\Roblox\\Roblox.Metrics\\Roblox.Metrics.csproj": {
-                "projectPath": "C:\\Users\\Cris\\Desktop\\okapi.bond\\bubbablox-v2\\Roblox\\Roblox.Metrics\\Roblox.Metrics.csproj"
+              "c:\\Users\\Cris\\Desktop\\okapi.bond\\bubbablox-v2\\Roblox\\Roblox.Metrics\\Roblox.Metrics.csproj": {
+                "projectPath": "c:\\Users\\Cris\\Desktop\\okapi.bond\\bubbablox-v2\\Roblox\\Roblox.Metrics\\Roblox.Metrics.csproj"
               },
-              "C:\\Users\\Cris\\Desktop\\okapi.bond\\bubbablox-v2\\Roblox\\Roblox.Models\\Roblox.Models.csproj": {
-                "projectPath": "C:\\Users\\Cris\\Desktop\\okapi.bond\\bubbablox-v2\\Roblox\\Roblox.Models\\Roblox.Models.csproj"
+              "c:\\Users\\Cris\\Desktop\\okapi.bond\\bubbablox-v2\\Roblox\\Roblox.Models\\Roblox.Models.csproj": {
+                "projectPath": "c:\\Users\\Cris\\Desktop\\okapi.bond\\bubbablox-v2\\Roblox\\Roblox.Models\\Roblox.Models.csproj"
               },
-              "C:\\Users\\Cris\\Desktop\\okapi.bond\\bubbablox-v2\\Roblox\\Roblox.Rendering\\Roblox.Rendering.csproj": {
-                "projectPath": "C:\\Users\\Cris\\Desktop\\okapi.bond\\bubbablox-v2\\Roblox\\Roblox.Rendering\\Roblox.Rendering.csproj"
+              "c:\\Users\\Cris\\Desktop\\okapi.bond\\bubbablox-v2\\Roblox\\Roblox.Rendering\\Roblox.Rendering.csproj": {
+                "projectPath": "c:\\Users\\Cris\\Desktop\\okapi.bond\\bubbablox-v2\\Roblox\\Roblox.Rendering\\Roblox.Rendering.csproj"
               }
             }
           }
@@ -1289,14 +1289,14 @@
         }
       }
     },
-    "C:\\Users\\Cris\\Desktop\\okapi.bond\\bubbablox-v2\\Roblox\\Roblox.Website\\Roblox.Website.csproj": {
+    "c:\\Users\\Cris\\Desktop\\okapi.bond\\bubbablox-v2\\Roblox\\Roblox.Website\\Roblox.Website.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\Cris\\Desktop\\okapi.bond\\bubbablox-v2\\Roblox\\Roblox.Website\\Roblox.Website.csproj",
+        "projectUniqueName": "c:\\Users\\Cris\\Desktop\\okapi.bond\\bubbablox-v2\\Roblox\\Roblox.Website\\Roblox.Website.csproj",
         "projectName": "Roblox.Website",
-        "projectPath": "C:\\Users\\Cris\\Desktop\\okapi.bond\\bubbablox-v2\\Roblox\\Roblox.Website\\Roblox.Website.csproj",
+        "projectPath": "c:\\Users\\Cris\\Desktop\\okapi.bond\\bubbablox-v2\\Roblox\\Roblox.Website\\Roblox.Website.csproj",
         "packagesPath": "C:\\Users\\Cris\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\Cris\\Desktop\\okapi.bond\\bubbablox-v2\\Roblox\\Roblox.Website\\obj\\",
+        "outputPath": "c:\\Users\\Cris\\Desktop\\okapi.bond\\bubbablox-v2\\Roblox\\Roblox.Website\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
           "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
@@ -1318,29 +1318,29 @@
           "net6.0": {
             "targetAlias": "net6.0",
             "projectReferences": {
-              "C:\\Users\\Cris\\Desktop\\okapi.bond\\bubbablox-v2\\Roblox\\Roblox.AbuseDetection\\Roblox.AbuseDetection.csproj": {
-                "projectPath": "C:\\Users\\Cris\\Desktop\\okapi.bond\\bubbablox-v2\\Roblox\\Roblox.AbuseDetection\\Roblox.AbuseDetection.csproj"
+              "c:\\Users\\Cris\\Desktop\\okapi.bond\\bubbablox-v2\\Roblox\\Roblox.AbuseDetection\\Roblox.AbuseDetection.csproj": {
+                "projectPath": "c:\\Users\\Cris\\Desktop\\okapi.bond\\bubbablox-v2\\Roblox\\Roblox.AbuseDetection\\Roblox.AbuseDetection.csproj"
               },
-              "C:\\Users\\Cris\\Desktop\\okapi.bond\\bubbablox-v2\\Roblox\\Roblox.Configuration\\Roblox.Configuration.csproj": {
-                "projectPath": "C:\\Users\\Cris\\Desktop\\okapi.bond\\bubbablox-v2\\Roblox\\Roblox.Configuration\\Roblox.Configuration.csproj"
+              "c:\\Users\\Cris\\Desktop\\okapi.bond\\bubbablox-v2\\Roblox\\Roblox.Configuration\\Roblox.Configuration.csproj": {
+                "projectPath": "c:\\Users\\Cris\\Desktop\\okapi.bond\\bubbablox-v2\\Roblox\\Roblox.Configuration\\Roblox.Configuration.csproj"
               },
-              "C:\\Users\\Cris\\Desktop\\okapi.bond\\bubbablox-v2\\Roblox\\Roblox.Dto\\Roblox.Dto.csproj": {
-                "projectPath": "C:\\Users\\Cris\\Desktop\\okapi.bond\\bubbablox-v2\\Roblox\\Roblox.Dto\\Roblox.Dto.csproj"
+              "c:\\Users\\Cris\\Desktop\\okapi.bond\\bubbablox-v2\\Roblox\\Roblox.Dto\\Roblox.Dto.csproj": {
+                "projectPath": "c:\\Users\\Cris\\Desktop\\okapi.bond\\bubbablox-v2\\Roblox\\Roblox.Dto\\Roblox.Dto.csproj"
               },
-              "C:\\Users\\Cris\\Desktop\\okapi.bond\\bubbablox-v2\\Roblox\\Roblox.EconomyChat\\Roblox.EconomyChat.csproj": {
-                "projectPath": "C:\\Users\\Cris\\Desktop\\okapi.bond\\bubbablox-v2\\Roblox\\Roblox.EconomyChat\\Roblox.EconomyChat.csproj"
+              "c:\\Users\\Cris\\Desktop\\okapi.bond\\bubbablox-v2\\Roblox\\Roblox.EconomyChat\\Roblox.EconomyChat.csproj": {
+                "projectPath": "c:\\Users\\Cris\\Desktop\\okapi.bond\\bubbablox-v2\\Roblox\\Roblox.EconomyChat\\Roblox.EconomyChat.csproj"
               },
-              "C:\\Users\\Cris\\Desktop\\okapi.bond\\bubbablox-v2\\Roblox\\Roblox.Exceptions\\Roblox.Exceptions.csproj": {
-                "projectPath": "C:\\Users\\Cris\\Desktop\\okapi.bond\\bubbablox-v2\\Roblox\\Roblox.Exceptions\\Roblox.Exceptions.csproj"
+              "c:\\Users\\Cris\\Desktop\\okapi.bond\\bubbablox-v2\\Roblox\\Roblox.Exceptions\\Roblox.Exceptions.csproj": {
+                "projectPath": "c:\\Users\\Cris\\Desktop\\okapi.bond\\bubbablox-v2\\Roblox\\Roblox.Exceptions\\Roblox.Exceptions.csproj"
               },
-              "C:\\Users\\Cris\\Desktop\\okapi.bond\\bubbablox-v2\\Roblox\\Roblox.Libraries\\Roblox.Libraries.csproj": {
-                "projectPath": "C:\\Users\\Cris\\Desktop\\okapi.bond\\bubbablox-v2\\Roblox\\Roblox.Libraries\\Roblox.Libraries.csproj"
+              "c:\\Users\\Cris\\Desktop\\okapi.bond\\bubbablox-v2\\Roblox\\Roblox.Libraries\\Roblox.Libraries.csproj": {
+                "projectPath": "c:\\Users\\Cris\\Desktop\\okapi.bond\\bubbablox-v2\\Roblox\\Roblox.Libraries\\Roblox.Libraries.csproj"
               },
-              "C:\\Users\\Cris\\Desktop\\okapi.bond\\bubbablox-v2\\Roblox\\Roblox.Models\\Roblox.Models.csproj": {
-                "projectPath": "C:\\Users\\Cris\\Desktop\\okapi.bond\\bubbablox-v2\\Roblox\\Roblox.Models\\Roblox.Models.csproj"
+              "c:\\Users\\Cris\\Desktop\\okapi.bond\\bubbablox-v2\\Roblox\\Roblox.Models\\Roblox.Models.csproj": {
+                "projectPath": "c:\\Users\\Cris\\Desktop\\okapi.bond\\bubbablox-v2\\Roblox\\Roblox.Models\\Roblox.Models.csproj"
               },
-              "C:\\Users\\Cris\\Desktop\\okapi.bond\\bubbablox-v2\\Roblox\\Roblox.Services\\Roblox.Services.csproj": {
-                "projectPath": "C:\\Users\\Cris\\Desktop\\okapi.bond\\bubbablox-v2\\Roblox\\Roblox.Services\\Roblox.Services.csproj"
+              "c:\\Users\\Cris\\Desktop\\okapi.bond\\bubbablox-v2\\Roblox\\Roblox.Services\\Roblox.Services.csproj": {
+                "projectPath": "c:\\Users\\Cris\\Desktop\\okapi.bond\\bubbablox-v2\\Roblox\\Roblox.Services\\Roblox.Services.csproj"
               }
             }
           }

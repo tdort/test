@@ -65,7 +65,7 @@ local function pollToReportActivity()
 	--while serverOk do
 	while true do
 		local msg ={
-			authorization = "5F7I5sTziCBLBMPhGp7oxX2NEUsURUAe2esDDcXAikiIyylv",
+			authorization = "PQ0KzJxQkW98RgCRrsQ1mFS34oUWHKNErYgmuFHJ5Gph21cr",
 			serverId = game.JobId,
 			placeId = placeId
 		}
@@ -77,7 +77,7 @@ end
 local function shutdown()
 	print("[info] Shutting down server")
 	local msg = {
-		authorization = "5F7I5sTziCBLBMPhGp7oxX2NEUsURUAe2esDDcXAikiIyylv",
+		authorization = "PQ0KzJxQkW98RgCRrsQ1mFS34oUWHKNErYgmuFHJ5Gph21cr",
 		serverId = game.JobId,
 		placeId = placeId
 	}

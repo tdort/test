@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("Roblox.Services")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+ab558974c62cad82af4e8f212df2859de4ce6bf7")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+29a703cc4caa3ec56f313ce8e3248fb741c4327d")]
 [assembly: System.Reflection.AssemblyProductAttribute("Roblox.Services")]
 [assembly: System.Reflection.AssemblyTitleAttribute("Roblox.Services")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

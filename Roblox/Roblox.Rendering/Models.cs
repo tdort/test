@@ -41,6 +41,7 @@ namespace Roblox.Rendering
         public AvatarBodyColors bodyColors { get; set; }
         public string playerAvatarType { get; set; }
         public IEnumerable<AvatarAssetEntry> assets { get; set; }
+        public string format { get; set; }
     }
 }
 

@@ -4121,11 +4121,11 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Users\\Cris\\Desktop\\okapi.bond\\bubbablox-v2\\Roblox\\Roblox.Cache\\Roblox.Cache.csproj",
+      "projectUniqueName": "c:\\Users\\Cris\\Desktop\\okapi.bond\\bubbablox-v2\\Roblox\\Roblox.Cache\\Roblox.Cache.csproj",
       "projectName": "Roblox.Cache",
-      "projectPath": "C:\\Users\\Cris\\Desktop\\okapi.bond\\bubbablox-v2\\Roblox\\Roblox.Cache\\Roblox.Cache.csproj",
+      "projectPath": "c:\\Users\\Cris\\Desktop\\okapi.bond\\bubbablox-v2\\Roblox\\Roblox.Cache\\Roblox.Cache.csproj",
       "packagesPath": "C:\\Users\\Cris\\.nuget\\packages\\",
-      "outputPath": "C:\\Users\\Cris\\Desktop\\okapi.bond\\bubbablox-v2\\Roblox\\Roblox.Cache\\obj\\",
+      "outputPath": "c:\\Users\\Cris\\Desktop\\okapi.bond\\bubbablox-v2\\Roblox\\Roblox.Cache\\obj\\",
       "projectStyle": "PackageReference",
       "fallbackFolders": [
         "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"

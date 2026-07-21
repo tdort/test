@@ -24,7 +24,7 @@ namespace Roblox.Rendering
 		private static Dictionary<int, Process> rccProcesses { get; } = new();
         private static Random random { get; } = new();
         private static object rccLock { get; } = new();
-		private static SemaphoreSlim R15RenderLock { get; } = new(1, 1);
+		private static SemaphoreSlim Rcc2020Lock { get; } = new(1, 1);
 		private static Process? rccProcess;
 		private static int? rccPort;
 
@@ -185,11 +185,9 @@ namespace Roblox.Rendering
             var res = new TaskCompletionSource<RenderResponse<Stream>>();
             var responseMutex = new Mutex();
             
-            // Setup listener
             mux.WaitOne();
             resultListeners[id] = stream =>
             {
-                //Console.WriteLine("[info] SendCommand() over");
                 lock (responseMutex)
                 {
                     res.SetResult(stream);
@@ -198,11 +196,9 @@ namespace Roblox.Rendering
                 return 0; 
             };
             mux.ReleaseMutex();
-            // Send message
             var bits = Encoding.UTF8.GetBytes(JsonSerializer.Serialize(cmd));
             while (ws is not {State: WebSocketState.Open})
             {
-                //Writer.Info(LogGroup.GeneralRender, "Ws not available, retry in a second");
 #if DEBUG 
                 await Task.Delay(TimeSpan.FromSeconds(60), cancellationToken  ?? CancellationToken.None);
 #else
@@ -218,8 +214,6 @@ namespace Roblox.Rendering
                 mux.WaitOne();
                 resultListeners.Remove(id);
                 mux.ReleaseMutex();
-                // TODO: Would be nice if we could send a message to WS telling it to cancel the task
-                // TrySetCanceled instead of SetCanceled due to WEB-35
                 lock (responseMutex)
                 {
                     if (res.TrySetCanceled(cancellationToken.Value) && command != "Cancel")
@@ -265,7 +259,7 @@ namespace Roblox.Rendering
 		
 		private static readonly HttpClient httpClient = new()
 		{
-			Timeout = TimeSpan.FromMinutes(1)
+			Timeout = TimeSpan.FromMinutes(2)
 		};
 		
 		private static async Task<int> StartRccService()
@@ -297,6 +291,34 @@ namespace Roblox.Rendering
 				return rccPort.Value;
 			}
 		}
+
+		private static async Task WaitForRccReady(int port)
+		{
+			var deadline = DateTime.UtcNow.AddSeconds(30);
+			while (DateTime.UtcNow < deadline)
+			{
+				try
+				{
+					var pingXml = $@"<?xml version=""1.0"" encoding=""utf-8""?>
+			<soap:Envelope xmlns:xsi=""http://www.w3.org/2001/XMLSchema-instance""
+			   xmlns:xsd=""http://www.w3.org/2001/XMLSchema""
+			   xmlns:soap=""http://schemas.xmlsoap.org/soap/envelope/"">
+				<soap:Body>
+					<HelloWorld xmlns=""http://roblox.com/"" />
+				</soap:Body>
+			</soap:Envelope>";
+
+					await SendSoapRequest(port, "http://roblox.com/HelloWorld", pingXml);
+					return;
+				}
+				catch
+				{
+					await Task.Delay(500);
+				}
+			}
+
+			throw new Exception($"RCC2020 did not become ready on port {port} within 30 seconds");
+		}
 		
 		private static async Task<string> SendSoapRequest(int port, string soapAction, string xmlBody)
 		{
@@ -311,13 +333,53 @@ namespace Roblox.Rendering
 			return await response.Content.ReadAsStringAsync();
 		}
 
-		private static async Task<Stream> RenderR15(long userId, string renderType, CancellationToken? cancellationToken = null)
+		private static async Task<Stream> RenderRcc2020(long userId, string renderType, string format = "Png", CancellationToken? cancellationToken = null)
 		{
 			var port = await StartRccService();
+			await WaitForRccReady(port);
 			var jobId = Guid.NewGuid().ToString();
 			var baseUrl = Roblox.Configuration.BaseUrl;
-
 			var charApp = $"{baseUrl}/v1.1/avatar-fetch?placeId=0&userId={userId}";
+
+			object[] arguments;
+			if (renderType == "Closeup")
+			{
+				arguments = new object[]
+				{
+					Roblox.Configuration.BaseUrl,
+					charApp,
+					format,
+					840,
+					840,
+					true,   // quadratic
+					30.0,   // baseHatZoom
+					130.0,  // maxHatZoom
+					0.0,    // cameraOffsetX
+					0.0,    // cameraOffsetY
+				};
+			}
+			else if (renderType == "Avatar")
+			{
+				arguments = new object[]
+				{
+					charApp,
+					Roblox.Configuration.BaseUrl,
+					format,
+					840,
+					840,
+				};
+			}
+			else
+			{
+				arguments = new object[]
+				{
+					Roblox.Configuration.BaseUrl,
+					charApp,
+					format,
+					840,
+					840,
+				};
+			}
 
 			var Json = new
 			{
@@ -325,14 +387,7 @@ namespace Roblox.Rendering
 				Settings = new
 				{
 					Type = renderType,
-					Arguments = new object[]
-					{
-						Roblox.Configuration.BaseUrl,
-						charApp,
-						"Png",
-						840,
-						840,
-					}
+					Arguments = arguments,
 				}
 			};
 
@@ -375,22 +430,27 @@ namespace Roblox.Rendering
 				NSManager.AddNamespace("ns1", "http://roblox.com/");
 				
 				var resNodes = xmlDoc.SelectNodes("//soap:Envelope/soap:Body/ns1:OpenJobResponse/ns1:OpenJobResult", NSManager);
-				using var httpClient = new HttpClient();
 				foreach (XmlNode resultNode in resNodes)
 				{
 					var typeNode = resultNode.SelectSingleNode("ns1:type", NSManager);
 					var valueNode = resultNode.SelectSingleNode("ns1:value", NSManager);
 					
-					if (typeNode != null && valueNode != null && 
+					if (typeNode != null && valueNode != null &&
 						// tstring contains the actual b64 render
 						typeNode.InnerText == "LUA_TSTRING" && 
 						!string.IsNullOrEmpty(valueNode.InnerText))
 					{
+						await SendCloseJobRequest(port, jobId);
+						
+						if (format == "Obj")
+						{
+							return new MemoryStream(Encoding.UTF8.GetBytes(valueNode.InnerText));
+						}
+						
 						try
 						{
 							var imgBytes = Convert.FromBase64String(valueNode.InnerText);
-							await SendCloseJobRequest(port, jobId);								
-							return new MemoryStream(imgBytes);						
+							return new MemoryStream(imgBytes);				
 						}
 						catch (FormatException)
 						{
@@ -399,26 +459,224 @@ namespace Roblox.Rendering
 					}
 				}
 				
-				throw new Exception("no b64 found in RCC Response");
+				throw new Exception("no bullshit found in rcc response");
 			}
 			catch (Exception ex)
 			{
-				Console.WriteLine($"R15 {renderType} rendering failed: {ex.Message}");
+				Console.WriteLine($"rcc {renderType} render shit fail here msg {ex.Message}");
+				throw;
+			}
+		}
+
+		private static async Task<Stream> RenderRcc2020Game(long assetId, int x, int y, CancellationToken? cancellationToken = null)
+		{
+			var port = await StartRccService();
+			await WaitForRccReady(port);
+			var jobId = Guid.NewGuid().ToString();
+			var baseUrl = Roblox.Configuration.BaseUrl;
+			var assetUrl = $"{baseUrl}/Asset/?id={assetId}&apikey=rccservislwkeueueeuww39";
+
+			var Json = new
+			{
+				Mode = "Thumbnail",
+				Settings = new
+				{
+					Type = "Place",
+					Arguments = new object[]
+					{
+						assetUrl,
+						"Png",
+						x,
+						y,
+						baseUrl,
+					}
+				}
+			};
+
+			var finalJson = JsonSerializer.Serialize(Json);
+
+			var XML = $@"<?xml version=""1.0"" encoding=""utf-8""?>
+		<soap:Envelope xmlns:xsi=""http://www.w3.org/2001/XMLSchema-instance""
+		   xmlns:xsd=""http://www.w3.org/2001/XMLSchema""
+		   xmlns:soap=""http://schemas.xmlsoap.org/soap/envelope/"">
+			<soap:Body>
+				<OpenJob xmlns=""http://roblox.com/"">
+					<job>
+						<id>{jobId}</id>
+						<expirationInSeconds>120</expirationInSeconds>
+						<category>0</category>
+						<cores>1</cores>
+					</job>
+					<script>
+						<name>GameServer</name>
+						<script>{finalJson}</script>
+					</script>
+					<arguments>
+						<LuaValue>
+							<type>LUA_TNIL</type>
+						</LuaValue>
+					</arguments>
+				</OpenJob>
+			</soap:Body>
+		</soap:Envelope>";
+
+			try
+			{
+				var res = await SendSoapRequest(port, "http://roblox.com/OpenJob", XML);
+
+				var xmlDoc = new XmlDocument();
+				xmlDoc.LoadXml(res);
+
+				var NSManager = new XmlNamespaceManager(xmlDoc.NameTable);
+				NSManager.AddNamespace("soap", "http://schemas.xmlsoap.org/soap/envelope/");
+				NSManager.AddNamespace("ns1", "http://roblox.com/");
+
+				var resNodes = xmlDoc.SelectNodes("//soap:Envelope/soap:Body/ns1:OpenJobResponse/ns1:OpenJobResult", NSManager);
+				foreach (XmlNode resultNode in resNodes)
+				{
+					var typeNode = resultNode.SelectSingleNode("ns1:type", NSManager);
+					var valueNode = resultNode.SelectSingleNode("ns1:value", NSManager);
+
+					if (typeNode != null && valueNode != null &&
+						// tstring contains the actual b64 render
+						typeNode.InnerText == "LUA_TSTRING" &&
+						!string.IsNullOrEmpty(valueNode.InnerText))
+					{
+						try
+						{
+							var imgBytes = Convert.FromBase64String(valueNode.InnerText);
+							await SendCloseJobRequest(port, jobId);
+							return new MemoryStream(imgBytes);
+						}
+						catch (FormatException)
+						{
+							continue;
+						}
+					}
+				}
+
+				throw new Exception("bullshit 64 :heart:");
+			}
+			catch (Exception ex)
+			{
+				Console.WriteLine($" bullshit error {ex.Message}");
+				throw;
+			}
+		}
+
+		private static async Task<Stream> RenderRcc2020Asset(long assetId, string renderType, string format = "Png", CancellationToken? cancellationToken = null)
+		{
+			var port = await StartRccService();
+			await WaitForRccReady(port);
+			var jobId = Guid.NewGuid().ToString();
+			var baseUrl = Roblox.Configuration.BaseUrl;
+			var assetUrl = $"{baseUrl}/Asset/?id={assetId}&apikey=rccservislwkeueueeuww39";
+
+			var Json = new
+			{
+				Mode = "Thumbnail",
+				Settings = new
+				{
+					Type = renderType,
+					Arguments = new object[]
+					{
+						assetUrl,
+						format,
+						840,
+						840,
+						baseUrl,
+					}
+				}
+			};
+
+			var finalJson = JsonSerializer.Serialize(Json);
+
+			var XML = $@"<?xml version=""1.0"" encoding=""utf-8""?>
+		<soap:Envelope xmlns:xsi=""http://www.w3.org/2001/XMLSchema-instance""
+		   xmlns:xsd=""http://www.w3.org/2001/XMLSchema""
+		   xmlns:soap=""http://schemas.xmlsoap.org/soap/envelope/"">
+			<soap:Body>
+				<OpenJob xmlns=""http://roblox.com/"">
+					<job>
+						<id>{jobId}</id>
+						<expirationInSeconds>60</expirationInSeconds>
+						<category>0</category>
+						<cores>1</cores>
+					</job>
+					<script>
+						<name>GameServer</name>
+						<script>{finalJson}</script>
+					</script>
+					<arguments>
+						<LuaValue>
+							<type>LUA_TNIL</type>
+						</LuaValue>
+					</arguments>
+				</OpenJob>
+			</soap:Body>
+		</soap:Envelope>";
+
+			try
+			{
+				var res = await SendSoapRequest(port, "http://roblox.com/OpenJob", XML);
+
+				var xmlDoc = new XmlDocument();
+				xmlDoc.LoadXml(res);
+
+				var NSManager = new XmlNamespaceManager(xmlDoc.NameTable);
+				NSManager.AddNamespace("soap", "http://schemas.xmlsoap.org/soap/envelope/");
+				NSManager.AddNamespace("ns1", "http://roblox.com/");
+
+				var resNodes = xmlDoc.SelectNodes("//soap:Envelope/soap:Body/ns1:OpenJobResponse/ns1:OpenJobResult", NSManager);
+				foreach (XmlNode resultNode in resNodes)
+				{
+					var typeNode = resultNode.SelectSingleNode("ns1:type", NSManager);
+					var valueNode = resultNode.SelectSingleNode("ns1:value", NSManager);
+
+					if (typeNode != null && valueNode != null &&
+						// tstring contains the actual b64 render
+						typeNode.InnerText == "LUA_TSTRING" &&
+						!string.IsNullOrEmpty(valueNode.InnerText))
+					{
+						await SendCloseJobRequest(port, jobId);
+
+						if (format == "Obj")
+						{
+							return new MemoryStream(Encoding.UTF8.GetBytes(valueNode.InnerText));
+						}
+
+						try
+						{
+							var imgBytes = Convert.FromBase64String(valueNode.InnerText);
+							return new MemoryStream(imgBytes);
+						}
+						catch (FormatException)
+						{
+							continue;
+						}
+					}
+				}
+
+				throw new Exception("no bullshit found in rcc response");
+			}
+			catch (Exception ex)
+			{
+				Console.WriteLine($"rcc {renderType} render shit fail here msg {ex.Message}");
 				throw;
 			}
 		}
 
 		public static async Task<Stream> RequestPlayerThumbnailR15(long userId, CancellationToken? cancellationToken = null)
 		{
-			await R15RenderLock.WaitAsync(cancellationToken ?? CancellationToken.None);
+			await Rcc2020Lock.WaitAsync(cancellationToken ?? CancellationToken.None);
 			
 			try
 			{
-				return await RenderR15(userId, "Avatar_R15_Action", cancellationToken);
+				return await RenderRcc2020(userId, "Avatar_R15_Action", cancellationToken: cancellationToken);
 			}
 			finally
 			{
-				R15RenderLock.Release();
+				Rcc2020Lock.Release();
 			}
 		}
 
@@ -426,32 +684,60 @@ namespace Roblox.Rendering
         {
             if (data.playerAvatarType != "R6")
                 throw new Exception("Invalid PlayerAvatarType");
-            
+
             // todo: do we need to get assetTypeId here, or can we just expect caller to get it for us?
             var w = new Stopwatch();
             w.Start();
-            
-            var result = await SendCommand("GenerateThumbnail",
-                new List<dynamic> {data}, cancellationToken);
-            w.Stop();
-            if (result.status != 200 || result.data == null)
+
+            await Rcc2020Lock.WaitAsync(cancellationToken ?? CancellationToken.None);
+
+            try
             {
-                if (result.data == null && result.status == 200)
-                    Roblox.Metrics.RenderMetrics.ReportRenderAvatarThumbnailFailureDueToNullBody(data.userId);
-                Roblox.Metrics.RenderMetrics.ReportRenderAvatarThumbnailFailure(data.userId);
-                throw new Exception("Render failed with status = " + result.status);
+                var result = await RenderRcc2020(data.userId, "Avatar", data.format ?? "Png", cancellationToken);
+                w.Stop();
+                Metrics.RenderMetrics.ReportRenderAvatarThumbnailTime(data.userId, w.ElapsedMilliseconds);
+                return result;
             }
-            Metrics.RenderMetrics.ReportRenderAvatarThumbnailTime(data.userId, w.ElapsedMilliseconds);
-            return result.data;
+            catch
+            {
+                Roblox.Metrics.RenderMetrics.ReportRenderAvatarThumbnailFailure(data.userId);
+                throw;
+            }
+            finally
+            {
+                Rcc2020Lock.Release();
+            }
         }
 
         public static async Task<Stream> RequestPlayerHeadshot(AvatarData data, CancellationToken? cancellationToken = null)
         {
             if (data.playerAvatarType != "R6")
                 throw new Exception("Invalid PlayerAvatarType");
-            
-            // todo: do we need to get assetTypeId here, or can we just expect caller to get it for us?
-            return await SendCmdWithErrHandlingAsync("GenerateThumbnailHeadshot", new List<dynamic> {data}, cancellationToken);
+
+            await Rcc2020Lock.WaitAsync(cancellationToken ?? CancellationToken.None);
+
+            try
+            {
+                return await RenderRcc2020(data.userId, "Closeup", data.format ?? "Png", cancellationToken);
+            }
+            finally
+            {
+                Rcc2020Lock.Release();
+            }
+        }
+
+        public static async Task<Stream> RequestPlayerThumbnail3D(long userId, CancellationToken? cancellationToken = null)
+        {
+            await Rcc2020Lock.WaitAsync(cancellationToken ?? CancellationToken.None);
+
+            try
+            {
+                return await RenderRcc2020(userId, "Avatar_R15_Action", "Obj", cancellationToken);
+            }
+            finally
+            {
+                Rcc2020Lock.Release();
+            }
         }
 
         public static async Task<Stream> RequestTextureThumbnail(long assetId, int assetTypeId, CancellationToken? cancellationToken = null)
@@ -470,7 +756,34 @@ namespace Roblox.Rendering
                 assetId, 
             }, cancellationToken);
         }
-        
+
+        public static async Task<Stream> RequestAssetThumbnailRcc2020(long assetId, string renderType, string format = "Png", CancellationToken? cancellationToken = null)
+        {
+            await Rcc2020Lock.WaitAsync(cancellationToken ?? CancellationToken.None);
+
+            try
+            {
+                return await RenderRcc2020Asset(assetId, renderType, format, cancellationToken);
+            }
+            finally
+            {
+                Rcc2020Lock.Release();
+            }
+        }
+
+        public static async Task<Stream> RequestAssetThumbnail3D(long assetId, CancellationToken? cancellationToken = null)
+        {
+            await Rcc2020Lock.WaitAsync(cancellationToken ?? CancellationToken.None);
+
+            try
+            {
+                return await RenderRcc2020Asset(assetId, "Hat", "Obj", cancellationToken);
+            }
+            finally
+            {
+                Rcc2020Lock.Release();
+            }
+        }
 
         public static async Task<Stream> RequestHeadThumbnail(long assetId, CancellationToken? cancellationToken = null)
         {
@@ -507,12 +820,16 @@ namespace Roblox.Rendering
         
         public static async Task<Stream> RequestAssetGame(long assetId, int x, int y, CancellationToken? cancellationToken = null)
         {
-            return await SendCmdWithErrHandlingAsync("GenerateThumbnailGame", new List<dynamic>
+            await Rcc2020Lock.WaitAsync(cancellationToken ?? CancellationToken.None);
+
+            try
             {
-                assetId,
-                x,
-                y,
-            }, cancellationToken);
+                return await RenderRcc2020Game(assetId, x, y, cancellationToken);
+            }
+            finally
+            {
+                Rcc2020Lock.Release();
+            }
         }
 
         public static async Task<Stream> RequestAssetTeeShirt(long assetId, long contentId, CancellationToken? cancellationToken = null)
@@ -525,4 +842,3 @@ namespace Roblox.Rendering
         }
     }
 }
-

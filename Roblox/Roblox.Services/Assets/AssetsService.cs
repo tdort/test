@@ -575,18 +575,22 @@ public class AssetsService : ServiceBase, IService
 	private async Task CreatePackageThumbnail(long assetId, CancellationToken? cancellationToken = null)
 	{
 		var latestVersion = await GetLatestAssetVersion(assetId);
-		var packageAssets = await GetPackageAssets(assetId);
-		
-		var assets = new List<string>();
-		foreach (var asset in packageAssets)
-		{
-			assets.Add($"{asset}");
-		}
-		
-		assets.Add($"{Configuration.PackageShirtAssetId}");
-		assets.Add($"{Configuration.PackagePantsAssetId}");
-		var charApp = $"{Configuration.BaseUrl}/v1.1/avatar-fetch?placeId=0&userId=0";
+        var packageAssets = await GetPackageAssets(assetId);
 
+		var assets = new List<string>();
+
+        assets.Add($"{Configuration.PackageShirtAssetId}");
+		assets.Add($"{Configuration.PackagePantsAssetId}");
+        foreach (var asset in packageAssets)
+        {
+            assets.Add($"{asset}");
+        }
+
+        var assetUrlsString = string.Join(";", 
+            assets.Select(id => $"{Configuration.BaseUrl}/v1/asset/?id={id}")
+        );
+
+		var charApp = $"{Configuration.BaseUrl}/v1.1/avatar-fetch?placeId=0&userId=0";
 		var port = await StartRccService();
 		var jobId = Guid.NewGuid().ToString();
 
@@ -595,15 +599,16 @@ public class AssetsService : ServiceBase, IService
 			Mode = "Thumbnail",
 			Settings = new
 			{
-				Type = "Avatar_R15_Action_Package",
+				Type = "Package",
 				Arguments = new object[]
 				{
+                    assetUrlsString,
 					Configuration.BaseUrl,
-					charApp,
 					"Png",
 					840,
 					840,
-					assets.ToArray()
+                    $"{Configuration.BaseUrl}/v1/asset?id=1785197",
+                    ""
 				}
 			}
 		};
@@ -690,6 +695,92 @@ public class AssetsService : ServiceBase, IService
         await InsertOrReplaceThumbnail(assetId, latestVersion.assetVersionId, key, ModerationStatus.ReviewApproved);
     }
 
+    private async Task CreateAssetThumbnailRcc2020(long assetId, string renderType, CancellationToken? cancellationToken = null)
+    {
+        var latestVersion = await GetLatestAssetVersion(assetId);
+        var response = await Rendering.CommandHandler.RequestAssetThumbnailRcc2020(assetId, renderType, "Png", cancellationToken);
+        var key = await UploadAssetContent(response, Configuration.ThumbnailsDirectory, "png");
+        await InsertOrReplaceThumbnail(assetId, latestVersion.assetVersionId, key, ModerationStatus.ReviewApproved);
+    }
+
+    public async Task UpdateAsset3DThumbnail(long assetId, string? fileName)
+    {
+        await db.ExecuteAsync("UPDATE asset_thumbnail SET content_3d_url = :url WHERE asset_id = :id", new
+        {
+            id = assetId,
+            url = fileName != null ? "/images/thumbnails/" + fileName : null
+        });
+    }
+	
+	public async Task RenderAsset3DAsync(long assetId, CancellationToken? cancellationToken = null)
+	{
+        var thumbnail3dStream = await CommandHandler.RequestAssetThumbnail3D(assetId, cancellationToken);
+        await SaveAsset3DRender(assetId, thumbnail3dStream);
+	}
+	
+    private async Task SaveAsset3DRender(long assetId, Stream thumbnail3dStream)
+    {
+        try
+        {
+            using var reader = new StreamReader(thumbnail3dStream);
+            var thumbnail3DResult = await reader.ReadToEndAsync();
+            var thumbJson = JsonSerializer.Deserialize<Roblox.Dto.Assets.Thumbnail3DRender>(thumbnail3DResult);
+            if (thumbJson is null)
+                throw new Exception("Renderer returned incorrect 3D thumbnail.");
+
+            string? obj = null;
+            string? mtl = null;
+            var textures = new List<string>();
+            string jsonFileName = $"asset_{assetId}_3d.json";
+            string objFileName = $"asset_{assetId}_scene.obj";
+            string mtlFileName = $"asset_{assetId}_scene.mtl";
+
+            if (thumbJson.files.TryGetValue("scene.obj", out var sceneObj))
+            {
+                byte[] objData = Convert.FromBase64String(sceneObj.content);
+                obj = $"/images/thumbnails/{objFileName}";
+                await File.WriteAllBytesAsync(Path.Combine(Configuration.ThumbnailsDirectory, objFileName), objData);
+            }
+
+            if (thumbJson.files.TryGetValue("scene.mtl", out var sceneMtl))
+            {
+                byte[] mtlData = Convert.FromBase64String(sceneMtl.content);
+                mtl = $"/images/thumbnails/{mtlFileName}";
+                await File.WriteAllBytesAsync(Path.Combine(Configuration.ThumbnailsDirectory, mtlFileName), mtlData);
+            }
+
+            foreach (var kvp in thumbJson.files)
+            {
+                if (kvp.Key.EndsWith(".png"))
+                {
+                    byte[] pngData = Convert.FromBase64String(kvp.Value.content);
+                    string pngFileName = $"asset_{assetId}_{kvp.Key}";
+                    textures.Add($"/images/thumbnails/{pngFileName}");
+                    await File.WriteAllBytesAsync(Path.Combine(Configuration.ThumbnailsDirectory, pngFileName), pngData);
+                }
+            }
+
+            var finalJson = new
+            {
+                camera = thumbJson.camera,
+                aabb = thumbJson.AABB,
+                mtl = mtl,
+                obj = obj,
+                textures = textures
+            };
+
+            var finalJsonBytes = JsonSerializer.SerializeToUtf8Bytes(finalJson);
+            await File.WriteAllBytesAsync(Path.Combine(Configuration.ThumbnailsDirectory, jsonFileName), finalJsonBytes);
+
+            await UpdateAsset3DThumbnail(assetId, jsonFileName);
+        }
+        catch (Exception ex)
+        {
+            Writer.Info(LogGroup.AssetRender, "Error saving 3D asset render: " + ex.Message);
+            await UpdateAsset3DThumbnail(assetId, null);
+        }
+    }
+
     private async Task CreateMeshThumbnail(long assetId, CancellationToken? cancellationToken = null)
     {
         var latestVersion = await GetLatestAssetVersion(assetId);
@@ -707,13 +798,28 @@ public class AssetsService : ServiceBase, IService
     }
 
 
-    private async Task CreateGameThumbnail(long assetId, CancellationToken? cancellationToken = null)
+    public async Task CreateGameThumbnail(long assetId, Stream? thumbnailToUse = null, CancellationToken? cancellationToken = null)
     {
+        if (thumbnailToUse == null)
+        {
+            Writer.Info(LogGroup.GameIconRender, "start game thumbnail render. placeId={0}", assetId);
+            thumbnailToUse = await Rendering.CommandHandler.RequestAssetGame(assetId, 640, 360, cancellationToken);
+            Writer.Info(LogGroup.GameIconRender, "game thumbnail render over. placeId={0}", assetId);
+        }
+        else
+        {
+            thumbnailToUse.Position = 0;
+            var imageData = await Imager.ReadAsync(thumbnailToUse);
+
+            if ((float)imageData.width / imageData.height != 16f / 9f)
+                throw new ArgumentException("Thumbnail must have a 16:9 aspect ratio");
+
+            thumbnailToUse.Position = 0;
+        }
+
+        var key = await UploadAssetContent(thumbnailToUse, Configuration.ThumbnailsDirectory, "png");
         var latestVersion = await GetLatestAssetVersion(assetId);
-        var response = await Rendering.CommandHandler.RequestAssetGame(assetId, 640, 360, cancellationToken);
-        var key = await UploadAssetContent(response, Configuration.ThumbnailsDirectory, "png");
-        await InsertOrReplaceThumbnail(assetId, latestVersion.assetVersionId, key,
-            ModerationStatus.AwaitingApproval);
+        await InsertOrReplaceThumbnail(assetId, latestVersion.assetVersionId, key, ModerationStatus.AwaitingApproval);
     }
 
     /// <summary>
