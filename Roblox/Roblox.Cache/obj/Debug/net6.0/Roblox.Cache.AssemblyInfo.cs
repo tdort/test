@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("Roblox.Cache")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+8aca0dfdb2fca609c82da5864eb7d93318629257")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+ab558974c62cad82af4e8f212df2859de4ce6bf7")]
 [assembly: System.Reflection.AssemblyProductAttribute("Roblox.Cache")]
 [assembly: System.Reflection.AssemblyTitleAttribute("Roblox.Cache")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

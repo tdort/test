@@ -519,18 +519,18 @@ public class UsersService : ServiceBase, IService
         {
             using var ec = ServiceProvider.GetOrCreate<EconomyService>(this);
             var balance = await ec.GetUserBalance(userId);
-            if (balance.robux < 300)
+            if (balance.robux < 1000)
                 throw new NotEnoughRobuxForPurchaseException();
 
             // subtract from balance
-            await ec.DecrementCurrency(userId, CurrencyType.Robux, 300);
+            await ec.DecrementCurrency(userId, CurrencyType.Robux, 1000);
 
             // trans
             await InsertAsync("user_transaction", new
             {
                 type = PurchaseType.Purchase,
                 currency_type = 1,
-                amount = 300,
+                amount = 1000,
                 // details
                 old_username = oldUsername,
                 new_username = newUsername,
@@ -1199,6 +1199,22 @@ public class UsersService : ServiceBase, IService
             }
             else
             {
+                // Get the current max user ID to ensure we generate correctly
+                var maxId = await db.QuerySingleOrDefaultAsync<long?>(
+                    "SELECT coalesce(max(id), 0) FROM \"user\"");
+                var nextId = maxId.Value + 1;
+
+                // Skip reserved IDs
+                if (nextId == 12 || nextId == 2500)
+                    nextId++;
+
+                // Reset sequence to ensure we get the correct next ID
+                var seqName = await db.QuerySingleOrDefaultAsync<string>(
+                    "SELECT pg_get_serial_sequence('user', 'id')");
+                await db.ExecuteAsync(
+                    "SELECT setval(@seq, @next_id, false)",
+                    new { seq = seqName, next_id });
+
                 int retries = 3;
                 while (retries-- > 0)
                 {
@@ -1207,6 +1223,7 @@ public class UsersService : ServiceBase, IService
                         var h = hasher.Hash(password);
                         userId = await InsertAsync("user", new
                         {
+                            id = (long?)nextId,
                             username,
                             password = h,
                             created_at = now,
@@ -1221,12 +1238,11 @@ public class UsersService : ServiceBase, IService
                     }
                     catch (Npgsql.PostgresException ex) when (ex.SqlState == "23505" && retries > 0)
                     {
-                        await db.ExecuteAsync(@"
-							SELECT setval(
-								pg_get_serial_sequence('user', 'id'),
-								(SELECT coalesce(max(id), 0) + 1 FROM ""user""),
-								false
-							)");
+                        // Duplicate key - race condition with another insert. Increment and retry
+                        nextId++;
+                        await db.ExecuteAsync(
+                            "SELECT setval(@seq, @nid, false)",
+                            new { seq = seqName, nid = nextId });
                         await Task.Delay(100 * (3 - retries));
                     }
                 }

@@ -20,7 +20,14 @@
         "gameGenreFilterSupported": true,
         "avatarPageOutfitCreatedAtAvailable": true,
         "catalogDetailsPageOwnersTabEnabled": true,
-        "launchUsingEsURI": true
+        "launchUsingEsURI": true,
+        "downloadGameClients": [
+          {
+            "title": "Windows Launcher",
+            "url": "https://queef.bond/",
+            "imageUrl": "/img/Unofficial/OS/Windows11.svg"
+          }
+        ]
       },
       "baseUrl": "https://queef.bond/",
       "apiFormat": "https://queef.bond/apisite/{0}{1}"
