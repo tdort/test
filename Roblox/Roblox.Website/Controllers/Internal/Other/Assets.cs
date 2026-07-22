@@ -26,12 +26,12 @@ using Roblox.Libraries.Assets;
 using Roblox.Website.Lib;
 using System.Diagnostics;
 
-namespace Roblox.Website.Controllers 
+namespace Roblox.Website.Controllers
 {
     [MVC.ApiController]
     [MVC.Route("/")]
-    public class Assets : ControllerBase 
-    {		
+    public class Assets : ControllerBase
+    {
         private static readonly HttpClient _proxyClient = new(new HttpClientHandler()
         {
             AutomaticDecompression = DecompressionMethods.All,
@@ -39,7 +39,7 @@ namespace Roblox.Website.Controllers
         {
             Timeout = TimeSpan.FromSeconds(30)
         };
-	    [HttpGet("asset/shader")]
+        [HttpGet("asset/shader")]
         public async Task<MVC.ActionResult> GetShaderAsset(long id)
         {
             var isMaterialOrShader = BypassControllerMetadata.materialAndShaderAssetIds.Contains(id);
@@ -69,7 +69,7 @@ namespace Roblox.Website.Controllers
                 });
                 assetId = migrationResult.assetId;
             }
-            
+
             var latestVersion = await services.assets.GetLatestAssetVersion(assetId);
             if (latestVersion.contentUrl is null)
             {
@@ -91,101 +91,120 @@ namespace Roblox.Website.Controllers
             var isRcc = rccAccessKey == Configuration.RccAuthorization;
             return isRcc;
         }
-				
-		[HttpGetBypass("game/players/{userId}")]
-		public dynamic GetPlayerChatFilter(long userId)
-		{
-			return new
-			{
-				ChatFilter = "whitelist"
-			};
-		}
-		
-		[HttpGetBypass("/Game/ChatFilter.ashx")]
+
+        [HttpGetBypass("game/players/{userId}")]
+        public dynamic GetPlayerChatFilter(long userId)
+        {
+            return new
+            {
+                ChatFilter = "whitelist"
+            };
+        }
+
+        [HttpGetBypass("/Game/ChatFilter.ashx")]
         public string RCC_GetChatFilter()
         {
             return "True";
         }
-		
-		private static bool isheaderbad(string headername)
-		{
-			var badheaders = new HashSet<string>(StringComparer.OrdinalIgnoreCase)
-			{
-				"Transfer-Encoding",
-				"Connection",
-				"Keep-Alive",
-				"Content-Length",
-				"Upgrade",
-				"Server"
-			};
-			
-			return badheaders.Contains(headername);
-		}
+
+        private static bool isheaderbad(string headername)
+        {
+            var badheaders = new HashSet<string>(StringComparer.OrdinalIgnoreCase)
+            {
+                "Transfer-Encoding",
+                "Connection",
+                "Keep-Alive",
+                "Content-Length",
+                "Upgrade",
+                "Server"
+            };
+
+            return badheaders.Contains(headername);
+        }
+
+        // this shit is horrible bro
 
         [HttpGetBypass("v2/asset")]
         [HttpGetBypass("v1/asset")]
         [HttpGetBypass("asset")]
         [HttpPostBypass("v1/asset")]
         [HttpPostBypass("asset")]
-		public async Task<MVC.ActionResult> GetAssetById(long id, [MVC.FromQuery] string? apiKey = null, [MVC.FromQuery(Name = "assetversionid")] long? assetVersionId = null)
+        public async Task<MVC.ActionResult> GetAssetById(long id, [MVC.FromQuery] string? apiKey = null, [MVC.FromQuery(Name = "assetversionid")] long? assetVersionId = null)
         {
-			if (id <= 0)
-			{
-				throw new RobloxException(400, 0, "Asset is invalid or does not exist");
-			}
-			var CachedRobloxAsset = await GetCachedAsset(id);
-			if (CachedRobloxAsset != null)
-			{
-				Console.WriteLine($"[cache] returning cached asset {id} from cache");
-				return CachedRobloxAsset;
-			}
-			
-			if (assetVersionId.HasValue)
-			{
-				id = assetVersionId.Value;
-			}
-			
-			if (apiKey == Configuration.RccAuthorization || apiKey == Configuration.RenderAuthorization)
-			{
-				try
-				{
-					var latestVersionSecret = await services.assets.GetLatestAssetVersion(id);
-					if (latestVersionSecret?.contentUrl == null)
-						throw new RobloxException(400, 0, "Content URL is null");
+            bool isRccRequest = IsRcc() ||
+                                (apiKey == Configuration.RccAuthorization || apiKey == Configuration.RenderAuthorization) ||
+                                Request.Headers.ContainsKey("roblox-place-id");
 
-					var assetContentSecret = await services.assets.GetAssetContent(latestVersionSecret.contentUrl);
-					return base.File(assetContentSecret, "application/binary");
-				}
-				catch (RecordNotFoundException)
-				{
-					// If not found locally, allow it to fall through to the proxy fallback logic below
-					Console.WriteLine($"[proxy] asset {id} not found locally for RCC, falling through to proxy...");
-				}
-			}
-			
-            // TODO: This endpoint needs to be updated to return a URL to the asset, not the asset itself.
-            // The reason for this is so that cloudflare can cache assets without caching the Response of this endpoint, which might be different depending on the client making the request (e.g. under 18 user, over 18 user, rcc, etc).
+            Console.WriteLine($"[Asset] id={id} | isRcc={isRccRequest} | apiKeyPresent={apiKey != null}");
+
+            if (id <= 0)
+                throw new RobloxException(400, 0, "Asset is invalid or does not exist");
+
+            if (isRccRequest)
+            {
+                try
+                {
+                    Console.WriteLine($"[RCC] Serving asset/place {id}");
+
+                    long targetId = assetVersionId.HasValue ? assetVersionId.Value : id;
+
+                    var latestVersioned = await services.assets.GetLatestAssetVersion(targetId);
+
+                    if (latestVersioned?.contentUrl == null)
+                    {
+                        Console.WriteLine($"[RCC] No contentUrl for {targetId}");
+                        return NotFound();
+                    }
+
+                    var assetContentStream = await services.assets.GetAssetContent(latestVersioned.contentUrl);
+                    if (assetContentStream == null)
+                    {
+                        Console.WriteLine($"[RCC] Failed to load content for {targetId}");
+                        return NotFound();
+                    }
+
+                    Response.Headers["Content-Type"] = "application/octet-stream";
+                    return base.File(assetContentStream, "application/octet-stream");
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine($"[RCC ERROR] id={id}: {ex}");
+                    return StatusCode(500, "RCC asset fetch failed");
+                }
+            }
+
+            var CachedRobloxAsset = await GetCachedAsset(id);
+            if (CachedRobloxAsset != null)
+            {
+                Console.WriteLine($"[cache] returning cached asset {id}");
+                return CachedRobloxAsset;
+            }
+
+            if (assetVersionId.HasValue)
+            {
+                id = assetVersionId.Value;
+            }
+
             var is18OrOver = false;
             if (userSession != null)
             {
                 is18OrOver = await services.users.Is18Plus(userSession.userId);
             }
 
-            // TEMPORARY UNTIL AUTH WORKS ON STUDIO! REMEMBER TO REMOVE
+            // TEMPORARY UNTIL AUTH WORKS ON STUDIO!
             if (HttpContext.Request.Headers.ContainsKey("RbxTempBypassFor18PlusAssets"))
             {
                 is18OrOver = true;
             }
-            
+
             var assetId = id;
             var invalidIdKey = "InvalidAssetIdForConversionV1:" + assetId;
-            // Opt
+
             if (Services.Cache.distributed.StringGetMemory(invalidIdKey) != null)
                 throw new RobloxException(400, 0, "Asset is invalid or does not exist");
-            
+
             var isBotRequest = Request.Headers["bot-auth"].ToString() == Roblox.Configuration.BotAuthorization;
-            var isLoggedIn = userSession != null;
-            var encryptionEnabled = !isBotRequest; // bots can't handle encryption :(
+            var encryptionEnabled = !isBotRequest;
 
             var isMaterialOrShader = BypassControllerMetadata.materialAndShaderAssetIds.Contains(assetId);
             if (isMaterialOrShader)
@@ -193,116 +212,85 @@ namespace Roblox.Website.Controllers
                 return new MVC.RedirectResult("/asset/shader?id=" + assetId);
             }
 
-            var isRcc = IsRcc();
-            if (isRcc)
-                encryptionEnabled = false;
-#if DEBUG
-            encryptionEnabled = false;
-#endif
             MultiGetEntry details;
-			try
-			{
-				details = await services.assets.GetAssetCatalogInfo(assetId);
-			}
-			catch (RecordNotFoundException)
-			{
-				try
-				{
-					var ourId = await services.assets.GetAssetIdFromRobloxAssetId(assetId);
-					assetId = ourId;
-				}
-				catch (RecordNotFoundException)
-				{		
-					// i HATE HTTP HEADERS AND PROXIES!!!!!!
-					var pxyurl = $"{Configuration.AssetUrl}/asset/?id={assetId}";
+            try
+            {
+                details = await services.assets.GetAssetCatalogInfo(assetId);
+            }
+            catch (RecordNotFoundException)
+            {
+                try
+                {
+                    var ourId = await services.assets.GetAssetIdFromRobloxAssetId(assetId);
+                    assetId = ourId;
+                }
+                catch (RecordNotFoundException)
+                {
+                    // Proxy fallback (your original code)
+                    var pxyurl = $"{Configuration.AssetUrl}/asset/?id={assetId}";
+                    try
+                    {
+                        var response = await _proxyClient.GetAsync(pxyurl, HttpCompletionOption.ResponseHeadersRead);
+                        if (response.IsSuccessStatusCode)
+                        {
+                            var contentType = response.Content.Headers.ContentType?.MediaType ?? "application/octet-stream";
+                            var stream = await response.Content.ReadAsStreamAsync();
+                            var ms = new MemoryStream();
+                            await stream.CopyToAsync(ms);
+                            var content = ms.ToArray();
 
-					try
-					{
-						var stopwatch = Stopwatch.StartNew();
-						
-						var response = await _proxyClient.GetAsync(pxyurl, HttpCompletionOption.ResponseHeadersRead);
-						stopwatch.Stop();
-						
-						if (response.IsSuccessStatusCode)
-						{
-							var contentType = response.Content.Headers.ContentType?.MediaType ?? "application/octet-stream";
+                            await CacheAsset(assetId, content, contentType);
+                            return base.File(content, contentType);
+                        }
+                        else
+                        {
+                            await Services.Cache.distributed.StringSetAsync(invalidIdKey, "1", TimeSpan.FromMinutes(10));
+                            throw new RobloxException(400, 0, $"{response.StatusCode}");
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        Console.WriteLine($"[proxy] exception: {ex.Message}");
+                        await Services.Cache.distributed.StringSetAsync(invalidIdKey, "1", TimeSpan.FromMinutes(10));
+                        throw new RobloxException(400, 0, ex.Message);
+                    }
+                }
+                details = await services.assets.GetAssetCatalogInfo(assetId);
+            }
 
-							Response.Headers.Clear();
+            if (details.is18Plus && !isRccRequest && !isBotRequest && !is18OrOver)
+                throw new RobloxException(400, 0, "AssetTemporarilyUnavailable");
 
-							foreach (var header in response.Headers)
-							{
-								if (!isheaderbad(header.Key))
-								{
-									Response.Headers[header.Key] = header.Value.ToArray();
-								}
-							}
+            if (details.moderationStatus != ModerationStatus.ReviewApproved && !isRccRequest && !isBotRequest)
+                throw new RobloxException(403, 0, "Asset is not approved");
 
-							Response.Headers["Content-Type"] = contentType;
-							
-							var stream = await response.Content.ReadAsStreamAsync();
-							
-							// Read into memory for caching, but stream to response
-							var ms = new MemoryStream();
-							await stream.CopyToAsync(ms);
-							var content = ms.ToArray();
-							
-							await CacheAsset(assetId, content, contentType);
-							return base.File(content, contentType);
-						}
-						else
-						{
-							Console.WriteLine($"[proxy] failed to fetch asset {assetId} from proxy: {response.StatusCode}. Marking as invalid.");
-							await Services.Cache.distributed.StringSetAsync(invalidIdKey, "1", TimeSpan.FromMinutes(10));
-							throw new RobloxException(400, 0, $"{response.StatusCode}");
-						}
-					}
-					catch (Exception ex)
-					{				
-						Console.WriteLine($"[proxy] exception fetching asset {assetId} from proxy: {ex.Message}. Marking as invalid.");
-						await Services.Cache.distributed.StringSetAsync(invalidIdKey, "1", TimeSpan.FromMinutes(10));
-
-						if (ex is TaskCanceledException)
-						{
-							throw new RobloxException(400, 0, "Timeout");
-						}
-						
-						throw new RobloxException(400, 0, $"{ex.Message}");
-					}
-				}
-				details = await services.assets.GetAssetCatalogInfo(assetId);
-			}
-			if (details.is18Plus && !isRcc && !isBotRequest && !is18OrOver)
-				throw new RobloxException(400, 0, "AssetTemporarilyUnavailable");
-			if (details.moderationStatus != ModerationStatus.ReviewApproved && !isRcc && !isBotRequest)
-				throw new RobloxException(403, 0, "Asset is not approved");
-            
             var latestVersion = await services.assets.GetLatestAssetVersion(assetId);
             Stream? assetContent = null;
-			Console.WriteLine($"[debug] assetId={assetId}, assetType={details.assetType}, moderation={details.moderationStatus}, isRcc={isRcc}, isBot={isBotRequest}, is18={is18OrOver}");
+            Console.WriteLine($"[debug] assetId={assetId}, assetType={details.assetType}, moderation={details.moderationStatus}, isRcc={isRccRequest}, isBot={isBotRequest}, is18={is18OrOver}");
             switch (details.assetType)
             {
-				// Special types
-				case Roblox.Models.Assets.Type.TeeShirt:
-					var teeShirtData = ContentFormatters.GetTeeShirt(latestVersion.contentId);
-					var teeShirtBytes = Encoding.UTF8.GetBytes(teeShirtData);
-					return new MVC.FileContentResult(teeShirtBytes, "application/binary");
+                // Special types
+                case Roblox.Models.Assets.Type.TeeShirt:
+                    var teeShirtData = ContentFormatters.GetTeeShirt(latestVersion.contentId);
+                    var teeShirtBytes = Encoding.UTF8.GetBytes(teeShirtData);
+                    return new MVC.FileContentResult(teeShirtBytes, "application/binary");
 
-				case Models.Assets.Type.Shirt:
-					var shirtData = ContentFormatters.GetShirt(latestVersion.contentId);
-					var shirtBytes = Encoding.UTF8.GetBytes(shirtData);
-					return new MVC.FileContentResult(shirtBytes, "application/binary");
+                case Models.Assets.Type.Shirt:
+                    var shirtData = ContentFormatters.GetShirt(latestVersion.contentId);
+                    var shirtBytes = Encoding.UTF8.GetBytes(shirtData);
+                    return new MVC.FileContentResult(shirtBytes, "application/binary");
 
-				case Models.Assets.Type.Pants:
-					var pantsData = ContentFormatters.GetPants(latestVersion.contentId);
-					var pantsBytes = Encoding.UTF8.GetBytes(pantsData);
-					return new MVC.FileContentResult(pantsBytes, "application/binary");
+                case Models.Assets.Type.Pants:
+                    var pantsData = ContentFormatters.GetPants(latestVersion.contentId);
+                    var pantsBytes = Encoding.UTF8.GetBytes(pantsData);
+                    return new MVC.FileContentResult(pantsBytes, "application/binary");
                 // Types that require no authentication and aren't encrypted
                 case Models.Assets.Type.Image:
                 case Models.Assets.Type.Special:
                     if (latestVersion.contentUrl != null)
                         assetContent = await services.assets.GetAssetContent(latestVersion.contentUrl);
                     // Prevent images from being played as audio by boombox
-                    if (assetContent != null && isRcc)
+                    if (assetContent != null && isRccRequest)
                     {
                         HttpContext.Response.Headers["Content-Type"] = "image/png";
                     }
@@ -343,11 +331,11 @@ namespace Roblox.Website.Controllers
                 case Models.Assets.Type.SwimAnimation:
                 case Models.Assets.Type.WalkAnimation:
                 case Models.Assets.Type.PoseAnimation:
-				case Models.Assets.Type.EmoteAnimation:
+                case Models.Assets.Type.EmoteAnimation:
                 case Models.Assets.Type.SolidModel:
                     if (latestVersion.contentUrl is null)
                         throw new RobloxException(400, 0, "Content URL is null"); // todo: should we log this?
-						//Console.WriteLine($"[debug] no content URL for assetId: {assetId}, assetType: {details.assetType}, moderationStatus: {details.moderationStatus}");
+                                                                                  //Console.WriteLine($"[debug] no content URL for assetId: {assetId}, assetType: {details.assetType}, moderationStatus: {details.moderationStatus}");
                     if (details.assetType == Models.Assets.Type.Audio)
                     {
                         // Convert to WAV file ( todo: do we keep this? answer: fuck no and i changed it (hopefully) ) use mp3 now
@@ -361,10 +349,10 @@ namespace Roblox.Website.Controllers
                 default:
                     // anything else requires auth
                     var ok = false;
-                    if (isRcc)
+                    if (isRccRequest)
                     {
                         encryptionEnabled = false;
-						ok = true;
+                        ok = true;
                         var placeIdHeader = Request.Headers["roblox-place-id"].ToString();
                         long placeId = 0;
                         if (!string.IsNullOrEmpty(placeIdHeader))
@@ -398,7 +386,7 @@ namespace Roblox.Website.Controllers
                                 ok = true;
                             }
                         }
-						Console.WriteLine($"[debug] default branch, ok={ok}, creatorType={details.creatorType}, creatorTargetId={details.creatorTargetId}");
+                        Console.WriteLine($"[debug] default branch, ok={ok}, creatorType={details.creatorType}, creatorTargetId={details.creatorTargetId}");
                     }
                     else
                     {
@@ -443,81 +431,81 @@ namespace Roblox.Website.Controllers
             Console.WriteLine("[info] got BadRequest on /asset/ endpoint");
             throw new BadRequestException();
         }
-		
-		private async Task CacheAsset(long assetId, byte[] content, string contentType)
-		{
-			try
-			{
-				var CacheDIR = Path.Combine(Directory.GetCurrentDirectory(), "AssetCache");
-				if (!Directory.Exists(CacheDIR))
-				{
-					Directory.CreateDirectory(CacheDIR);
-				}
-				
-				var Cache = Path.Combine(CacheDIR, $"{assetId}.cache");
-				var Meta = Path.Combine(CacheDIR, $"{assetId}.meta");
-				
-				await System.IO.File.WriteAllBytesAsync(Cache, content);
-				
-				var MetaData = new
-				{
-					ContentType = contentType,
-					CachedAt = DateTime.UtcNow,
-					AssetId = assetId
-				};
-				await System.IO.File.WriteAllTextAsync(Meta, System.Text.Json.JsonSerializer.Serialize(MetaData));
-				
-				Console.WriteLine($"[cache] cached asset {assetId}");
-			}
-			catch (Exception ex)
-			{
-				Console.WriteLine($"[cache] failed to cache asset {assetId}: {ex.Message}");
-			}
-		}
-		
-		private async Task<MVC.FileContentResult?> GetCachedAsset(long assetId)
-		{
-			try
-			{
-				var CacheDIR = Path.Combine(Directory.GetCurrentDirectory(), "AssetCache");
-				var Cache = Path.Combine(CacheDIR, $"{assetId}.cache");
-				var Meta = Path.Combine(CacheDIR, $"{assetId}.meta");
-				
-				if (System.IO.File.Exists(Cache) && System.IO.File.Exists(Meta))
-				{
-					var MetaJSON = await System.IO.File.ReadAllTextAsync(Meta);
-					var MetaData = System.Text.Json.JsonSerializer.Deserialize<JsonElement>(MetaJSON);
-					string contentType = MetaData.TryGetProperty("ContentType", out var ct)
-						? ct.GetString() ?? "application/octet-stream"
-						: "application/octet-stream";
 
-					var content = await System.IO.File.ReadAllBytesAsync(Cache);
-					
-					return new MVC.FileContentResult(content, contentType);
-				}
-			}
-			catch (Exception ex)
-			{
-				Console.WriteLine($"[cache] error getting cached asset {assetId}: {ex.Message}");
-			}
-			
-			return null;
-		}
-				
-		public class BatchAssetRequest
-		{
-			public long assetId { get; set; }
-			public string assetType { get; set; }
-			public string requestId { get; set; }
-		}
-		
-		[HttpPostBypass("asset/batch")]
+        private async Task CacheAsset(long assetId, byte[] content, string contentType)
+        {
+            try
+            {
+                var CacheDIR = Path.Combine(Directory.GetCurrentDirectory(), "AssetCache");
+                if (!Directory.Exists(CacheDIR))
+                {
+                    Directory.CreateDirectory(CacheDIR);
+                }
+
+                var Cache = Path.Combine(CacheDIR, $"{assetId}.cache");
+                var Meta = Path.Combine(CacheDIR, $"{assetId}.meta");
+
+                await System.IO.File.WriteAllBytesAsync(Cache, content);
+
+                var MetaData = new
+                {
+                    ContentType = contentType,
+                    CachedAt = DateTime.UtcNow,
+                    AssetId = assetId
+                };
+                await System.IO.File.WriteAllTextAsync(Meta, System.Text.Json.JsonSerializer.Serialize(MetaData));
+
+                Console.WriteLine($"[cache] cached asset {assetId}");
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"[cache] failed to cache asset {assetId}: {ex.Message}");
+            }
+        }
+
+        private async Task<MVC.FileContentResult?> GetCachedAsset(long assetId)
+        {
+            try
+            {
+                var CacheDIR = Path.Combine(Directory.GetCurrentDirectory(), "AssetCache");
+                var Cache = Path.Combine(CacheDIR, $"{assetId}.cache");
+                var Meta = Path.Combine(CacheDIR, $"{assetId}.meta");
+
+                if (System.IO.File.Exists(Cache) && System.IO.File.Exists(Meta))
+                {
+                    var MetaJSON = await System.IO.File.ReadAllTextAsync(Meta);
+                    var MetaData = System.Text.Json.JsonSerializer.Deserialize<JsonElement>(MetaJSON);
+                    string contentType = MetaData.TryGetProperty("ContentType", out var ct)
+                        ? ct.GetString() ?? "application/octet-stream"
+                        : "application/octet-stream";
+
+                    var content = await System.IO.File.ReadAllBytesAsync(Cache);
+
+                    return new MVC.FileContentResult(content, contentType);
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"[cache] error getting cached asset {assetId}: {ex.Message}");
+            }
+
+            return null;
+        }
+
+        public class BatchAssetRequest
+        {
+            public long assetId { get; set; }
+            public string assetType { get; set; }
+            public string requestId { get; set; }
+        }
+
+        [HttpPostBypass("asset/batch")]
         [HttpPostBypass("v1/assets/batch")]
         public async Task<MVC.IActionResult> AssetBatch()
         {
             List<BatchAssetRequest> requestData;
             bool isGzip = Request.Headers["Content-Encoding"].ToString() == "gzip";
-            
+
             if (isGzip)
             {
                 using (var decompressedStream = new MemoryStream())
@@ -561,12 +549,12 @@ namespace Roblox.Website.Controllers
                     Location = $"{Configuration.BaseUrl}/v1/asset?id={request.assetId}",
                     RequestId = request.requestId,
                     IsHashDynamic = true,
-                    IsCopyrightProtected = true, 
+                    IsCopyrightProtected = true,
                     IsArchived = false,
                 });
             }
 
             return Content(Newtonsoft.Json.JsonConvert.SerializeObject(assetReturnInfo), "application/json");
         }
-	}
-}	
+    }
+}
