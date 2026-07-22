@@ -78,3 +78,5 @@ RCCService/content/*.rbxl
 .vs
 .vs/
 >>>>>>> 4da5edb910ab663c1031dec9a3f92e18358775cf
+Roblox/Roblox.Website/obj/Debug/net6.0/Roblox.Website.AssemblyInfo.cs
+Roblox/Roblox.Website/obj/Debug/net6.0/Roblox.Website.AssemblyInfoInputs.cache
