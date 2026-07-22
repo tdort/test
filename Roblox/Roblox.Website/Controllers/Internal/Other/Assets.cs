@@ -135,42 +135,45 @@ namespace Roblox.Website.Controllers
         public async Task<MVC.ActionResult> GetAssetById(long id, [MVC.FromQuery] string? apiKey = null, [MVC.FromQuery(Name = "assetversionid")] long? assetVersionId = null)
         {
             // Aggressive RCC detection
+            // === AGGRESSIVE RCC DETECTION ===
             bool isRcc = IsRcc() ||
                          (apiKey == Configuration.RccAuthorization || apiKey == Configuration.RenderAuthorization) ||
-                         Request.Headers.ContainsKey("roblox-place-id") ||
-                         Request.Headers["User-Agent"].ToString().Contains("RCC", StringComparison.OrdinalIgnoreCase) ||
-                         Request.Query["apiKey"] == Configuration.RccAuthorization; // extra check
+                         !string.IsNullOrEmpty(Request.Headers["roblox-place-id"]) ||
+                         Request.Headers["User-Agent"].ToString().Contains("RCC", StringComparison.OrdinalIgnoreCase);
 
-            Console.WriteLine($"[ASSET DEBUG] id={id} | isRcc={isRcc} | apiKey={apiKey} | UA={Request.Headers["User-Agent"]} | PlaceHeader={Request.Headers["roblox-place-id"]}");
+            Console.WriteLine($"[ASSET DEBUG] id={id} | isRcc={isRcc} | apiKey='{apiKey}' | UA='{Request.Headers["User-Agent"]}' | PlaceHeader='{Request.Headers["roblox-place-id"]}'");
 
             if (id <= 0)
                 throw new RobloxException(400, 0, "Asset is invalid or does not exist");
 
-            // ==================== FORCE RCC PATH ====================
+            // === RCC PATH ===
             if (isRcc)
             {
-                Console.WriteLine($"[RCC] === SERVING PLACE {id} ===");
+                Console.WriteLine($"[RCC] === ATTEMPTING TO SERVE PLACE/ASSET {id} ===");
                 try
                 {
                     long targetId = assetVersionId.HasValue ? assetVersionId.Value : id;
 
-                    var latestVersioned = await services.assets.GetLatestAssetVersion(targetId);
-                    if (latestVersioned?.contentUrl == null)
+                    var latestVersione = await services.assets.GetLatestAssetVersion(targetId);
+                    if (latestVersione?.contentUrl == null)
                     {
                         Console.WriteLine($"[RCC] No contentUrl for {targetId}");
-                        return NotFound("No content URL");
+                        return NotFound();
                     }
 
-                    var assetContented = await services.assets.GetAssetContent(latestVersioned.contentUrl);
-                    if (assetContented == null)
-                        return NotFound("Content not found");
+                    var assetContents = await services.assets.GetAssetContent(latestVersione.contentUrl);
+                    if (assetContents == null)
+                    {
+                        Console.WriteLine($"[RCC] Content stream is null for {targetId}");
+                        return NotFound();
+                    }
 
                     Response.Headers["Content-Type"] = "application/octet-stream";
-                    return base.File(assetContented, "application/octet-stream");
+                    return base.File(assetContents, "application/octet-stream");
                 }
                 catch (Exception ex)
                 {
-                    Console.WriteLine($"[RCC FAILED] {ex.Message}");
+                    Console.WriteLine($"[RCC CRITICAL FAIL] {ex}");
                     return StatusCode(500, ex.Message);
                 }
             }
