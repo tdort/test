@@ -131,47 +131,46 @@ namespace Roblox.Website.Controllers
         [HttpPostBypass("asset")]
         public async Task<MVC.ActionResult> GetAssetById(long id, [MVC.FromQuery] string? apiKey = null, [MVC.FromQuery(Name = "assetversionid")] long? assetVersionId = null)
         {
-            bool isRccRequest = IsRcc() ||
-                                (apiKey == Configuration.RccAuthorization || apiKey == Configuration.RenderAuthorization) ||
-                                Request.Headers.ContainsKey("roblox-place-id");
+            // Aggressive RCC detection
+    bool isRcc = IsRcc() ||
+                 (apiKey == Configuration.RccAuthorization || apiKey == Configuration.RenderAuthorization) ||
+                 Request.Headers.ContainsKey("roblox-place-id") ||
+                 Request.Headers["User-Agent"].ToString().Contains("RCC", StringComparison.OrdinalIgnoreCase) ||
+                 Request.Query["apiKey"] == Configuration.RccAuthorization; // extra check
 
-            Console.WriteLine($"[Asset] id={id} | isRcc={isRccRequest} | apiKeyPresent={apiKey != null}");
+    Console.WriteLine($"[ASSET DEBUG] id={id} | isRcc={isRcc} | apiKey={apiKey} | UA={Request.Headers["User-Agent"]} | PlaceHeader={Request.Headers["roblox-place-id"]}");
 
-            if (id <= 0)
-                throw new RobloxException(400, 0, "Asset is invalid or does not exist");
+    if (id <= 0)
+        throw new RobloxException(400, 0, "Asset is invalid or does not exist");
 
-            if (isRccRequest)
+    // ==================== FORCE RCC PATH ====================
+    if (isRcc)
+    {
+        Console.WriteLine($"[RCC] === SERVING PLACE {id} ===");
+        try
+        {
+            long targetId = assetVersionId.HasValue ? assetVersionId.Value : id;
+
+            var latestVersioned = await services.assets.GetLatestAssetVersion(targetId);
+            if (latestVersioned?.contentUrl == null)
             {
-                try
-                {
-                    Console.WriteLine($"[RCC] Serving asset/place {id}");
-
-                    long targetId = assetVersionId.HasValue ? assetVersionId.Value : id;
-
-                    var latestVersioned = await services.assets.GetLatestAssetVersion(targetId);
-
-                    if (latestVersioned?.contentUrl == null)
-                    {
-                        Console.WriteLine($"[RCC] No contentUrl for {targetId}");
-                        return NotFound();
-                    }
-
-                    var assetContentStream = await services.assets.GetAssetContent(latestVersioned.contentUrl);
-                    if (assetContentStream == null)
-                    {
-                        Console.WriteLine($"[RCC] Failed to load content for {targetId}");
-                        return NotFound();
-                    }
-
-                    Response.Headers["Content-Type"] = "application/octet-stream";
-                    return base.File(assetContentStream, "application/octet-stream");
-                }
-                catch (Exception ex)
-                {
-                    Console.WriteLine($"[RCC ERROR] id={id}: {ex}");
-                    return StatusCode(500, "RCC asset fetch failed");
-                }
+                Console.WriteLine($"[RCC] No contentUrl for {targetId}");
+                return NotFound("No content URL");
             }
+
+            var assetContented = await services.assets.GetAssetContent(latestVersioned.contentUrl);
+            if (assetContented == null)
+                return NotFound("Content not found");
+
+            Response.Headers["Content-Type"] = "application/octet-stream";
+            return base.File(assetContented, "application/octet-stream");
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"[RCC FAILED] {ex.Message}");
+            return StatusCode(500, ex.Message);
+        }
+    }
 
             var CachedRobloxAsset = await GetCachedAsset(id);
             if (CachedRobloxAsset != null)
@@ -258,15 +257,15 @@ namespace Roblox.Website.Controllers
                 details = await services.assets.GetAssetCatalogInfo(assetId);
             }
 
-            if (details.is18Plus && !isRccRequest && !isBotRequest && !is18OrOver)
+            if (details.is18Plus && !isRcc && !isBotRequest && !is18OrOver)
                 throw new RobloxException(400, 0, "AssetTemporarilyUnavailable");
 
-            if (details.moderationStatus != ModerationStatus.ReviewApproved && !isRccRequest && !isBotRequest)
+            if (details.moderationStatus != ModerationStatus.ReviewApproved && !isRcc && !isBotRequest)
                 throw new RobloxException(403, 0, "Asset is not approved");
 
             var latestVersion = await services.assets.GetLatestAssetVersion(assetId);
             Stream? assetContent = null;
-            Console.WriteLine($"[debug] assetId={assetId}, assetType={details.assetType}, moderation={details.moderationStatus}, isRcc={isRccRequest}, isBot={isBotRequest}, is18={is18OrOver}");
+            Console.WriteLine($"[debug] assetId={assetId}, assetType={details.assetType}, moderation={details.moderationStatus}, isRcc={isRcc}, isBot={isBotRequest}, is18={is18OrOver}");
             switch (details.assetType)
             {
                 // Special types
@@ -290,7 +289,7 @@ namespace Roblox.Website.Controllers
                     if (latestVersion.contentUrl != null)
                         assetContent = await services.assets.GetAssetContent(latestVersion.contentUrl);
                     // Prevent images from being played as audio by boombox
-                    if (assetContent != null && isRccRequest)
+                    if (assetContent != null && isRcc)
                     {
                         HttpContext.Response.Headers["Content-Type"] = "image/png";
                     }
@@ -349,7 +348,7 @@ namespace Roblox.Website.Controllers
                 default:
                     // anything else requires auth
                     var ok = false;
-                    if (isRccRequest)
+                    if (isRcc)
                     {
                         encryptionEnabled = false;
                         ok = true;
