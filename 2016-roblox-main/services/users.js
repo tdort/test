@@ -55,3 +55,16 @@ export const getUserIdByUsername = async (username) => {
     throw new Error('Invalid username');
   return result.data.data[0].id;
 }
+
+
+export const getMyBan = () => {
+  return request('GET', getFullUrl('users', '/v1/users/authenticated/ban')).then(d => d.data)
+}
+
+export const unlockMyBan = () => {
+  return request('POST', getFullUrl('users', '/v1/users/authenticated/ban/unlock')).then(d => d.data)
+}
+
+export const logoutMe = () => {
+  return request('POST', getFullUrl('auth', '/v2/logout')).then(d => d.data)
+}

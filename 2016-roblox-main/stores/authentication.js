@@ -14,6 +14,7 @@ const AuthenticationStore = createContainer(() => {
   const [isPending, setIsPending] = useState(true);
   const [robux, setRobux] = useState(null);
   const [tix, setTix] = useState(null);
+  const [balanceError, setBalanceError] = useState(false);
   const [notificationCount, setNotificationCount] = useState({
     messages: 0,
     trades: 0,
@@ -44,6 +45,7 @@ const AuthenticationStore = createContainer(() => {
     }).catch(e => {
       // what do we do here?
       console.error('[error] robux error', e);
+      setBalanceError(true);
     });
     // Get notifications
     Promise.all([
@@ -56,7 +58,7 @@ const AuthenticationStore = createContainer(() => {
         friendRequests: friendRequestCount,
         trades: inboundTradeCount,
       })
-    })
+    }).catch(() => {})
   }, [userId]);
 
   return {
@@ -67,6 +69,7 @@ const AuthenticationStore = createContainer(() => {
 
     robux,
     tix,
+    balanceError,
 
     notificationCount,
   }

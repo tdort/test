@@ -68,6 +68,7 @@
 	let errorMessage: string | undefined;
 	let expires: string|undefined;
 	let internalReason: string|undefined;
+	let offensiveAssetId: string = '';
 </script>
 
 <svelte:head>
@@ -87,6 +88,10 @@
 		<div class="col-12">
 			<textarea {disabled} class="form-control" placeholder="Ban Reason" id="deletion-reason" />
 			<textarea {disabled} class="form-control mt-2" placeholder="Internal Reason (only visible to staff)" bind:value={internalReason} />
+			<input {disabled} class="form-control mt-2" placeholder="Offensive Asset ID (optional, shown to the user on the ban page)" bind:value={offensiveAssetId} />
+			{#if /^\d+$/.test(offensiveAssetId.trim())}
+				<img class="mt-2 border" style="max-height: 160px;" src={`/thumbs/asset.ashx?assetId=${offensiveAssetId.trim()}&width=420&height=420&format=png`} alt="Offensive asset preview" />
+			{/if}
 			<div class="row mt-4">
 				<div class="col-12 col-lg-3">
 					<select class="form-control" bind:value={expires}>
@@ -138,6 +143,11 @@
 						errorMessage = 'Internal reason is required.';
 						return
 					}
+					const assetIdStr = (offensiveAssetId || '').trim();
+					if (assetIdStr !== '' && !/^\d+$/.test(assetIdStr)) {
+						errorMessage = 'Offensive asset ID must be a number.';
+						return;
+					}
 					disabled = true;
 					request
 						.post('/ban', {
@@ -145,6 +155,7 @@
 							reason,
 							internalReason: internalReason || null,
 							expires: expiresStr,
+							offensiveAssetId: assetIdStr === '' ? null : parseInt(assetIdStr, 10),
 						})
 						.then((d) => {
 							navigate('/admin/manage-user/' + userId);

@@ -1890,7 +1890,8 @@ CREATE TABLE public.moderation_user_ban (
     created_at timestamp with time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
     updated_at timestamp with time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
     expired_at timestamp with time zone,
-    internal_reason text
+    internal_reason text,
+    offensive_asset_id bigint
 );
 
 
@@ -2280,7 +2281,8 @@ CREATE TABLE public.user_ban (
     created_at timestamp with time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
     updated_at timestamp with time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
     expired_at timestamp with time zone,
-    internal_reason character varying(4096) DEFAULT NULL::character varying
+    internal_reason character varying(4096) DEFAULT NULL::character varying,
+    offensive_asset_id bigint
 );
 
 

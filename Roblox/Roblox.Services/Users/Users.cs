@@ -2270,7 +2270,10 @@ public class UsersService : ServiceBase, IService
     {
         var result =
             await db.QuerySingleOrDefaultAsync<UserBanEntry>(
-                "SELECT created_at as createdAt, expired_at as expiredAt, reason FROM user_ban WHERE user_id = :id ORDER BY id DESC LIMIT 1", new { id = userId });
+                "SELECT created_at as createdAt, expired_at as expiredAt, reason, offensive_asset_id as offensiveAssetId, " +
+                "(SELECT asset_type::int FROM asset WHERE asset.id = user_ban.offensive_asset_id) as offensiveAssetType, " +
+                "(SELECT name FROM asset WHERE asset.id = user_ban.offensive_asset_id) as offensiveAssetName " +
+                "FROM user_ban WHERE user_id = :id ORDER BY id DESC LIMIT 1", new { id = userId });
         if (result is null) throw new RecordNotFoundException();
         return result;
     }

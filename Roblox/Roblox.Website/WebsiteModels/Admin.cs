@@ -70,6 +70,8 @@ public class BanUserRequest
     public string reason { get; set; } = string.Empty;
     public string? internalReason { get; set; }
     public string? expires { get; set; }
+    // optional asset (decal, image, shirt...) shown to the user on the ban page
+    public long? offensiveAssetId { get; set; }
 }
 
 public class CreateMessageRequest

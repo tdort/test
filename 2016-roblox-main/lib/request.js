@@ -57,6 +57,11 @@ const request = async (method, url, data) => {
     if (e.response) {
       let resp = e.response;
 
+      // Banned accounts: the server answers every non-whitelisted request with this header, send them to the ban page
+      if (isBrowser && resp.headers && resp.headers['x-account-banned'] && !window.location.pathname.toLowerCase().startsWith('/notapproved')) {
+        window.location.replace('/notapproved');
+      }
+
       // Handle CSRF
       if (resp.status === 403 && resp.headers['x-csrf-token']) {
         _csrf = resp.headers['x-csrf-token'];

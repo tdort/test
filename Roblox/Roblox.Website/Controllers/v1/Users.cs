@@ -64,6 +64,47 @@ public class UsersControllerV1 : ControllerBase
 		return new JsonResult(fb);
 	}
 	
+	[HttpGet("users/authenticated/ban")]
+	public async Task<IActionResult> GetMyBan()
+	{
+		if (userSession is null) return new JsonResult(null);
+		try
+		{
+			var ban = await services.users.GetBanData(userSession.userId);
+			return new JsonResult(new
+			{
+				reason = ban.reason,
+				createdAt = DateTime.SpecifyKind(ban.createdAt, DateTimeKind.Utc),
+				expiredAt = ban.expiredAt == null ? (DateTime?)null : DateTime.SpecifyKind(ban.expiredAt.Value, DateTimeKind.Utc),
+				canUnlock = ban.canUnlock,
+				offensiveAssetId = ban.offensiveAssetId,
+				offensiveAssetName = ban.offensiveAssetName,
+				// only image-like assets get a picture on the ban page: Image, T-Shirt, Shirt, Pants, Decal, Face
+				offensiveAssetIsImage = ban.offensiveAssetType is 1 or 2 or 11 or 12 or 13 or 18,
+			});
+		}
+		catch (RecordNotFoundException)
+		{
+			return new JsonResult(null);
+		}
+	}
+
+	[HttpPost("users/authenticated/ban/unlock")]
+	public async Task<IActionResult> UnlockMyBan()
+	{
+		var session = safeUserSession;
+		var ban = await services.users.GetBanData(session.userId);
+		if (!ban.canUnlock)
+			throw new BadRequestException(0, "This account cannot be reactivated yet");
+		await services.users.DeleteBan(session.userId);
+		// the middleware reads account status from this cache (30s ttl), clear it so the unban applies immediately
+		using (var userCache = Roblox.Services.ServiceProvider.GetOrCreate<Roblox.Services.GetUserByIdCache>())
+		{
+			userCache.Remove(session.userId);
+		}
+		return new JsonResult(new { success = true });
+	}
+
 	[HttpGet("users/{userId:long}")]
     public async Task<dynamic> GetUserById(long userId)
     {

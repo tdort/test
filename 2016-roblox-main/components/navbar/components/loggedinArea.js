@@ -103,22 +103,28 @@ const LoggedInArea = props => {
   const authStore = AuthenticationStore.useContainer();
   const [settingsOpen, setSettingsOpen] = useState(false);
 
-  if (authStore.robux === null || authStore.tix === null) return null;
+  // Balances can't load for banned accounts. Keep the icons and show ? instead of hiding the whole area.
+  const unavailable = authStore.balanceError && (authStore.robux === null || authStore.tix === null);
+  if (!unavailable && (authStore.robux === null || authStore.tix === null)) return null;
+  const robuxLabel = unavailable ? '?' : abbreviateNumber(authStore.robux);
+  const tixLabel = unavailable ? '?' : abbreviateNumber(authStore.tix);
+  const robuxTitle = unavailable ? '?' : authStore.robux.toLocaleString();
+  const tixTitle = unavailable ? '?' : authStore.tix.toLocaleString();
   return <div className={`${s.linkContainerCol} `}>
     <div className='row'>
       <div className={`col-12 ${s.linkContainer}`}>
-        <p className={s.text} title={authStore.robux.toLocaleString()}>
+        <p className={s.text} title={robuxTitle}>
           <Link href='/My/Money.aspx'>
             <a>
               <span className='icon-nav-robux'/>
             </a>
           </Link>
         </p>
-        <p className={s.text + ' ' + s.robuxText} title={authStore.robux.toLocaleString()}>
-          <span>{abbreviateNumber(authStore.robux)}</span>
+        <p className={s.text + ' ' + s.robuxText} title={robuxTitle}>
+          <span>{robuxLabel}</span>
         </p>
         <>
-          <p className={s.text} title={authStore.tix.toLocaleString()}>
+          <p className={s.text} title={tixTitle}>
             <Link href='/My/Money.aspx'>
               <a>
                 <span className='icon-nav-tix'/>
@@ -126,7 +132,7 @@ const LoggedInArea = props => {
             </Link>
           </p>
           <p className={s.text + ' ' + s.robuxText}>
-            <span title={authStore.tix.toLocaleString()}>{abbreviateNumber(authStore.tix)}</span>
+            <span title={tixTitle}>{tixLabel}</span>
           </p>
         </>
         <p className={s.text}>

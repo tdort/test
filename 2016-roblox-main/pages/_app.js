@@ -18,6 +18,8 @@ import GlobalAlert from '../components/globalAlert';
 import ThumbnailStore from "../stores/thumbnailStore";
 import getFlag from "../lib/getFlag";
 import Chat from "../components/chat";
+import Router from 'next/router';
+import { getMyBan } from '../services/users';
 
 if (typeof window !== 'undefined') {
   console.log(String.raw`
@@ -41,6 +43,46 @@ if (typeof window !== 'undefined') {
 }
 
 function RobloxApp({ Component, pageProps }) {
+  // Banned users get sent to /notapproved no matter which page they open or navigate to client-side.
+  // The page stays covered until the first ban check finishes (fails open after 5s so an API outage doesn't lock everyone out).
+  const [verified, setVerified] = useState(false);
+  useEffect(() => {
+    let inflight = false;
+    const onBanPage = () => window.location.pathname.toLowerCase().startsWith('/notapproved');
+    const check = () => {
+      if (onBanPage()) { setVerified(true); return; }
+      if (inflight) return;
+      inflight = true;
+      getMyBan().then(ban => {
+        if (ban) { window.location.replace('/notapproved'); return; }
+        setVerified(true);
+      }).catch(() => setVerified(true)).finally(() => { inflight = false; });
+    };
+    check();
+    const failOpen = setTimeout(() => setVerified(true), 5000);
+    const interval = setInterval(check, 20000);
+    const onRouteStart = (url) => {
+      const target = String(url || '').split('?')[0].split('#')[0].toLowerCase();
+      if (target.startsWith('/notapproved')) return;
+      if (onBanPage()) {
+        // nobody leaves the ban page client-side; the server decides if they may go anywhere else
+        Router.events.emit('routeChangeError');
+        throw new Error('Route change aborted');
+      }
+      check();
+    };
+    Router.events.on('routeChangeStart', onRouteStart);
+    window.addEventListener('focus', check);
+    document.addEventListener('visibilitychange', check);
+    return () => {
+      clearTimeout(failOpen);
+      clearInterval(interval);
+      Router.events.off('routeChangeStart', onRouteStart);
+      window.removeEventListener('focus', check);
+      document.removeEventListener('visibilitychange', check);
+    };
+  }, []);
+
   // set theme:
   // jss globals apparently don't support parameters/props, so the only way to do a dynamic global style is to either append a <style> element, use setAttribute(), or append a css file.
   // @ts-ignore
@@ -54,6 +96,7 @@ function RobloxApp({ Component, pageProps }) {
   }, [pageProps]);
 
   return <div>
+    {!verified ? <div style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, zIndex: 2147483647, background: '#e3e3e3' }} /> : null}
     <Head>
       <link rel="preconnect" href="https://fonts.googleapis.com" />
       <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin={''} />

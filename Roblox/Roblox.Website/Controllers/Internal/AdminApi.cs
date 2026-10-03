@@ -1477,10 +1477,15 @@ public class AdminApiController : ControllerBase
 			throw new StaffException("You cannot ban this user. Current status is " + info.accountStatus);
 		if (await IsStaff(request.userId) && !StaffFilter.IsOwner(userSession.userId))
 			throw new StaffException("You cannot ban this user.");
+		if (request.offensiveAssetId is <= 0)
+			request.offensiveAssetId = null;
+		if (request.offensiveAssetId != null && !await services.assets.DoesAssetExist(request.offensiveAssetId.Value))
+			throw new StaffException("Offensive asset " + request.offensiveAssetId + " does not exist");
 		// insert ban
 		await db.ExecuteAsync(
-			"INSERT INTO user_ban (user_id, reason, author_user_id, expired_at, internal_reason) VALUES (:user_id, :reason, :author, :expires, :internal_reason)", new
+			"INSERT INTO user_ban (user_id, reason, author_user_id, expired_at, internal_reason, offensive_asset_id) VALUES (:user_id, :reason, :author, :expires, :internal_reason, :offensive_asset_id)", new
 			{
+				offensive_asset_id = request.offensiveAssetId,
 				internal_reason = request.internalReason,
 				user_id = request.userId,
 				request.reason,
@@ -1489,8 +1494,9 @@ public class AdminApiController : ControllerBase
 			});
 		// insert into user ban history
 		await db.ExecuteAsync(
-			"INSERT INTO moderation_user_ban (user_id, reason, author_user_id, expired_at, internal_reason) VALUES (:user_id, :reason, :author, :expires, :internal_reason)", new
+			"INSERT INTO moderation_user_ban (user_id, reason, author_user_id, expired_at, internal_reason, offensive_asset_id) VALUES (:user_id, :reason, :author, :expires, :internal_reason, :offensive_asset_id)", new
 			{
+				offensive_asset_id = request.offensiveAssetId,
 				internal_reason = request.internalReason,
 				user_id = request.userId,
 				request.reason,

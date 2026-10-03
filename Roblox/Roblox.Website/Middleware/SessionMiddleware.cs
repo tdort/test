@@ -208,6 +208,27 @@ public class SessionMiddleware
         return hashedIP;
     }
 	
+	// Everything a banned account may still reach: the ban page itself, what that page needs to work, and static files.
+	// Every other path (pages, api, internal tools, auth pages...) is redirected to /notapproved.
+	private static readonly HashSet<string> allowedWhileBanned = new()
+	{
+		"/notapproved",
+		"/favicon.ico",
+		"/thumbs/asset.ashx", // offensive item preview on the ban page
+		"/apisite/auth/v2/logout",
+		"/apisite/users/v1/users/authenticated",
+		"/apisite/users/v1/users/authenticated/ban",
+		"/apisite/users/v1/users/authenticated/ban/unlock",
+	};
+
+	private static bool IsAllowedWhileBanned(string lowerPath)
+	{
+		var path = lowerPath.Length > 1 ? lowerPath.TrimEnd('/') : lowerPath;
+		return allowedWhileBanned.Contains(path)
+			|| path.StartsWith("/_next/static/")
+			|| path.StartsWith("/img/");
+	}
+
 	public async Task InvokeAsync(HttpContext ctx)
 	{
 		var authTimer = new MiddlewareTimer(ctx, "au");
@@ -284,11 +305,25 @@ public class SessionMiddleware
 
 						if (userInfo.accountStatus is AccountStatus.Suppressed or AccountStatus.Poisoned or AccountStatus.Deleted)
 						{
-							if (!currentPath.StartsWith("/auth/") && currentPath != "/notapproved")
+							if (!IsAllowedWhileBanned(currentPath))
 							{
 								authTimer.Stop();
-								ctx.Response.StatusCode = 302;
-								ctx.Response.Headers.Add("location", "/notapproved");
+								ctx.Response.Headers["Cache-Control"] = "no-store";
+								ctx.Response.Headers["x-account-banned"] = "true";
+								var accept = ctx.Request.Headers["Accept"].ToString();
+								if (accept.Contains("text/html", StringComparison.OrdinalIgnoreCase))
+								{
+									// normal page navigation
+									ctx.Response.StatusCode = 302;
+									ctx.Response.Headers["location"] = "/notapproved";
+								}
+								else
+								{
+									// api calls, fetch/xhr, next.js data requests, images, etc. A redirect here would "succeed" with the ban page's html, so hard fail instead.
+									ctx.Response.StatusCode = 403;
+									ctx.Response.ContentType = "application/json";
+									await ctx.Response.WriteAsync("{\"errors\":[{\"code\":0,\"message\":\"AccountBanned\"}]}");
+								}
 								return;
 							}
 						}
