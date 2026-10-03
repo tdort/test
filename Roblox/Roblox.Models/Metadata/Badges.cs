@@ -32,5 +32,6 @@ public class BadgesMetadata
         new BadgeEntry(5, "Bloxxer", "This badge was granted when a player scored at least 250 victories, and fewer than 250 wipeouts, in games that use classic combat scripts. It was retired Summer 2015 and is no longer attainable."),
 		new BadgeEntry(6, "Homestead", "The homestead badge is earned by having your personal place visited 100 times. People who achieve this have demonstrated their ability to build cool things that other Okapians were interested enough in to check out. Get a jump-start on earning this reward by inviting people to come visit your place."),
         new BadgeEntry(7, "Bricksmith", "The Bricksmith badge is earned by having a popular personal place. Once your place has been visited 1000 times, you will receive this award. Okapians with Bricksmith badges are accomplished builders who were able to create a place that people wanted to explore a thousand times. They no doubt know a thing or two about putting bricks together."),
+        new BadgeEntry(19, "Early Supporter", "This badge is awarded to the players who supported the site in its early days. It is given out by staff and cannot be earned any other way."),
     };
 }

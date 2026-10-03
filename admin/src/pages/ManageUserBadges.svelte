@@ -38,6 +38,7 @@
 		16: "Outrageous Builders Club",
 		17: "Official Model Maker",
 		18: "Welcome To The Club",
+		19: "Early Supporter",
 		// 33: 'Official Model Maker', // ST1 RobloxBadges.BadgeTypes table set 33 instead of 17
 		// 34: 'Welcome To The Club' // ST1 RobloxBadges.BadgeTypes table set 34 instead of 18
 	};

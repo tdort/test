@@ -1559,3 +1559,14 @@ span.game-privacy-symbol.gps-active {
 	margin-left: 5px;
 	top: 2px;
 }
+
+/* custom badge: Early Supporter (id 19), own texture instead of the shared sprite */
+.icon-early-supporter {
+	background-image: url(/img/badges/early-supporter.png);
+	background-repeat: no-repeat;
+	background-size: 140px 140px;
+	width: 140px;
+	height: 140px;
+	display: inline-block;
+	vertical-align: middle;
+}
