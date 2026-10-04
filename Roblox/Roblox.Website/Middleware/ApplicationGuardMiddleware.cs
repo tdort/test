@@ -141,6 +141,11 @@ public class ApplicationGuardMiddleware
         // similar services) from crawling our site
         ua = ua.ToLower().Trim();
         if (string.IsNullOrWhiteSpace(ua)) return true;
+        // Roblox Studio / game client embedded browsers (old Qt WebKit / IE-based) must never be treated as bots
+        if (ua.IndexOf("qtwebkit") != -1 || ua.IndexOf("qt/") != -1 || ua.IndexOf("trident/") != -1 ||
+            ua.IndexOf("msie ") != -1 || ua.IndexOf("robloxstudio") != -1 || ua.IndexOf("rbxstudio") != -1 ||
+            ua.IndexOf("roblox/") != -1 || ua.IndexOf("robloxapp") != -1)
+            return false;
         // Google Crawlers
         // please keep this up-to-date with https://developers.google.com/search/docs/advanced/crawling/overview-google-crawlers
         if (ua.IndexOf("apis-google") != -1) return true;
