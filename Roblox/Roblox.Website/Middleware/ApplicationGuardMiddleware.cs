@@ -259,6 +259,12 @@ public class ApplicationGuardMiddleware
         "",
         "/auth/home",
         "/auth/captcha",
+        // RCC / game clients fetch assets (animations, meshes, etc.) with unusual or empty user agents,
+        // and must never receive the "InternalAGMError" page in place of the asset
+        "/asset",
+        "/v1/asset",
+        "/v2/asset",
+        "/asset/shader",
     };
 
     private async Task Redirect(HttpContext ctx, string dest)
