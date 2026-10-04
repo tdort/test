@@ -111,5 +111,6 @@ public static class Configuration
         }
     }
 
-    public static string GameServerDomain => "games.queef.bond"; // set to your game server's domain
+    // set "GameServerDomain" in appsettings to your game server's domain (must NOT be proxied by Cloudflare)
+    public static string GameServerDomain { get; set; } = "games.queef.bond";
 }

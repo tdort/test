@@ -673,7 +673,7 @@ public class GameServerService : ServiceBase
 			{
 				id = jobId,
 				asset_id = placeId,
-				ip = "games.queef.bond",
+				ip = Configuration.GameServerDomain,
 				port = NSPort,
 				RCCConnection = $"127.0.0.1:{RCCPort}",
 			});
@@ -769,7 +769,7 @@ public class GameServerService : ServiceBase
 			{
 				id = jobId,
 				asset_id = placeId,
-				ip = "games.queef.bond",
+				ip = Configuration.GameServerDomain,
 				port = NSPort,
 				RCCConnection = $"127.0.0.1:{RCCPort}",
 			});
@@ -865,7 +865,7 @@ public class GameServerService : ServiceBase
 			{
 				id = jobId,
 				asset_id = placeId,
-				ip = "games.queef.bond",
+				ip = Configuration.GameServerDomain,
 				port = NSPort,
 				RCCConnection = $"127.0.0.1:{RCCPort}",
 			});
@@ -962,7 +962,7 @@ public class GameServerService : ServiceBase
 			{
 				id = jobId,
 				asset_id = placeId,
-				ip = "games.queef.bond",
+				ip = Configuration.GameServerDomain,
 				port = NSPort,
 				RCCConnection = $"127.0.0.1:{RCCPort}",
 			});
@@ -992,7 +992,7 @@ public class GameServerService : ServiceBase
 				""SessionId"": ""{Guid.NewGuid()}"",
 				""CreatorId"": {AssetCatalogInfo.creatorTargetId},
 				""GameId"": ""{jobId}"",
-				""MachineAddress"": ""games.queef.bond"",
+				""MachineAddress"": ""{Configuration.GameServerDomain}"",
 				""GsmInterval"": 5,
 				""MaxPlayers"": {MaxPlayers},
 				""MaxGameInstances"": 1,
@@ -1099,7 +1099,7 @@ public class GameServerService : ServiceBase
 			{
 				id = jobId,
 				asset_id = placeId,
-				ip = "games.queef.bond",
+				ip = Configuration.GameServerDomain,
 				port = NSPort,
 				RCCConnection = $"127.0.0.1:{RCCPort}",
 			});
@@ -1128,7 +1128,7 @@ public class GameServerService : ServiceBase
 				""SessionId"": ""{Guid.NewGuid()}"",
 				""CreatorId"": {AssetCatalogInfo.creatorTargetId},
 				""GameId"": ""{jobId}"",
-				""MachineAddress"": ""games.queef.bond"",
+				""MachineAddress"": ""{Configuration.GameServerDomain}"",
 				""GsmInterval"": 5,
 				""MaxPlayers"": {MaxPlayers},
 				""MaxGameInstances"": 1,
