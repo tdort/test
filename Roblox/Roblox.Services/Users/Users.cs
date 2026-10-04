@@ -1200,12 +1200,13 @@ public class UsersService : ServiceBase, IService
             else
             {
                 // Get the current max user ID to ensure we generate correctly
+                // Reserved system accounts (12, 2500 = UGC) must not push the counter up, so they are excluded here
                 var maxId = await db.QuerySingleOrDefaultAsync<long?>(
-                    "SELECT coalesce(max(id), 0) FROM \"user\"");
+                    "SELECT coalesce(max(id), 0) FROM \"user\" WHERE id NOT IN (12, 2500)");
                 var nextId = maxId.Value + 1;
 
                 // Skip reserved IDs
-                if (nextId == 12 || nextId == 2500)
+                while (nextId == 12 || nextId == 2500)
                     nextId++;
 
                 // Reset sequence to ensure we get the correct next ID
