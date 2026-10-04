@@ -1214,7 +1214,7 @@ public class UsersService : ServiceBase, IService
                     "SELECT pg_get_serial_sequence('user', 'id')");
                 await db.ExecuteAsync(
                     "SELECT setval(@seq, @next_id, false)",
-                    new { seq = seqName, next_id });
+                    new { seq = seqName, next_id = nextId });
 
                 int retries = 3;
                 while (retries-- > 0)
