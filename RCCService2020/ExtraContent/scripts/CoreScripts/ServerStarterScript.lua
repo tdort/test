@@ -36,41 +36,47 @@ local placeId = game.PlaceId
 local serverOk = true
 local playersJoin = 0
 
-local function getBaseUrl()
+local GS_CALLBACK_URL = "http://127.0.0.1"
+
+-- rewritten by the website at server start (Configuration.GameServerCallbackUrl); RCC runs on the same machine as the site,
+-- so talking to it directly avoids Cloudflare and RCC's https trust problems
+local GS_CALLBACK_BASE = "http://127.0.0.1"
+
+local function getBaseUrls()
+    local list = {}
+    if GS_CALLBACK_BASE ~= "" then table.insert(list, (string.gsub(GS_CALLBACK_BASE, "/+$", ""))) end
     local ok, base = pcall(function() return game:GetService("ContentProvider").BaseUrl end)
     if ok and type(base) == "string" and #base > 0 then
         base = string.gsub(base, "^https://", "http://")
         base = string.gsub(base, "^http://www%.", "http://")
         base = string.gsub(base, "/+$", "")
-        return base
+        table.insert(list, base)
     end
-    return nil
+    return list
 end
 
 local function post(endpoint, payloadTable)
     local json = http:JSONEncode(payloadTable)
+    pcall(function() http.HttpEnabled = true end)
 
-    -- plain http first: RCC's https often fails on the server machine (cert trust), which silently kills pings
-    local base = getBaseUrl()
-    local errPlain = "no base url"
-    if base then
-        local okPlain
-        okPlain, errPlain = pcall(function()
-            -- HttpService may call any domain; HttpRbxApiService (and the old game:HttpPost) cannot on 2020
-            pcall(function() http.HttpEnabled = true end)
+    local lastErr = "no base url"
+    for _, base in ipairs(getBaseUrls()) do
+        local ok, err = pcall(function()
             return http:PostAsync(base .. endpoint, json, Enum.HttpContentType.ApplicationJson, false)
         end)
-        if okPlain then
+        if ok then
             if endpoint == "/gs/ping" then print("[gs] ping ok via HttpService " .. base) end
             return true
         end
+        lastErr = tostring(err)
+        if endpoint == "/gs/ping" then print("[gs] ping failed via " .. base .. ": " .. lastErr) end
     end
 
     local success, result = pcall(function()
         return HttpRbxApiService:PostAsync(endpoint, json)
     end)
     if endpoint == "/gs/ping" then
-        print("[gs] ping http failed (" .. tostring(errPlain) .. "); rbxapi " .. tostring(success) .. " " .. tostring(result))
+        print("[gs] ping fallback rbxapi " .. tostring(success) .. " " .. tostring(result))
     end
     return success
 end

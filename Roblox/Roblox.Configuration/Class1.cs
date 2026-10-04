@@ -40,6 +40,10 @@ public static class Configuration
     public static IEnumerable<GameServerConfigEntry> GameServerIpAddresses { get; set; }
 	public static IEnumerable<int> AllowedNetworkPorts { get; set; } = Array.Empty<int>();
     public static string GameServerAuthorization { get; set; }
+    // where RCC (same machine) should send /gs/* callbacks; bypasses Cloudflare. set "GameServerCallbackUrl" in appsettings
+    public static string GameServerCallbackUrl { get; set; } = "http://127.0.0.1";
+    // where game servers (RCC) send /gs/ping etc. Same machine => plain local http, no Cloudflare/TLS
+    public static string GameServerCallbackUrl { get; set; } = "http://127.0.0.1";
     public static string RobloxAppPrefix { get; set; } = "bbclient://";
     public static string AssetValidationServiceUrl { get; set; }
     public static string AssetValidationServiceAuthorization { get; set; }

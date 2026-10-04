@@ -78,6 +78,10 @@ Roblox.Configuration.HCaptchaPublicKey = configuration.GetSection("HCaptcha:Publ
 Roblox.Configuration.HCaptchaPrivateKey = configuration.GetSection("HCaptcha:Private").Value;
 Roblox.Configuration.AllowedNetworkPorts = configuration.GetSection("GameServer:AllowedNetworkPorts").GetChildren().Select(c => int.Parse(c.Value));
 Roblox.Configuration.GameServerAuthorization = configuration.GetSection("GameServerAuthorization").Value;
+if (!string.IsNullOrWhiteSpace(configuration.GetSection("GameServerCallbackUrl").Value))
+    Roblox.Configuration.GameServerCallbackUrl = configuration.GetSection("GameServerCallbackUrl").Value;
+if (!string.IsNullOrWhiteSpace(configuration.GetSection("GameServerCallbackUrl").Value))
+    Roblox.Configuration.GameServerCallbackUrl = configuration.GetSection("GameServerCallbackUrl").Value;
 if (!string.IsNullOrWhiteSpace(configuration.GetSection("GameServerDomain").Value))
     Roblox.Configuration.GameServerDomain = configuration.GetSection("GameServerDomain").Value;
 Roblox.Configuration.RenderAuthorization = configuration.GetSection("Render:Authorization").Value;
