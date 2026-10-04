@@ -551,6 +551,20 @@ public class GameServerService : ServiceBase
 			
 			if (!ServerReady)
 			{
+				// Some RCC builds (2020) refuse every outgoing http call ("Trust check failed"), so the server can never ping us.
+				// If it has been starting for a few seconds, treat it as ready ourselves and record a ping.
+				var ageSeconds = await db.QueryFirstOrDefaultAsync<double>(
+					"SELECT extract(epoch from (now()::timestamp - created_at)) FROM asset_server WHERE id = :id::uuid",
+					new { id = AvailableServer.id });
+				if (ageSeconds >= 8)
+				{
+					await SetServerPing(AvailableServer.id);
+					ServerReady = true;
+				}
+			}
+
+			if (!ServerReady)
+			{
 				// if server hasn't pinged yet, return Loading until it has
 				return new GameServerGetOrCreateResponse() 
 				{ 
