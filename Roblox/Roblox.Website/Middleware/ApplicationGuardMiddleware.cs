@@ -270,6 +270,13 @@ public class ApplicationGuardMiddleware
         "/v1/asset",
         "/v2/asset",
         "/asset/shader",
+        // game server -> website callbacks (RCC often sends an empty/unusual user agent; these are key-authenticated anyway)
+        "/gs/ping",
+        "/gs/shutdown",
+        "/gs/players/report",
+        "/gs/activity",
+        "/gs/delete",
+        "/gs/a",
     };
 
     private async Task Redirect(HttpContext ctx, string dest)
