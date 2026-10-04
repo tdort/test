@@ -115,6 +115,9 @@ public class DevelopControllerV1 : ControllerBase
 	{
 		var place = await services.games.GetRootPlaceId(universeId);
 		await services.assets.ValidatePermissions(place, safeUserSession.userId);
+		// only user id 1 may choose a year; everyone else is locked to 2016
+		if (safeUserSession.userId != 1 && request.year != 2016)
+			throw new RobloxException(403, 0, "Only 2016 is available");
 		await services.games.SetPlaceYear(place, request.year);
     }
 	

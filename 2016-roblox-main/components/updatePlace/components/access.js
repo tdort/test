@@ -3,20 +3,25 @@ import {useEffect, useState} from "react";
 import ActionButton from "../../actionButton";
 import useButtonStyles from "../../../styles/buttonStyles";
 import {setUniverseMaxPlayers, setPlaceYear, setRigType} from "../../../services/develop";
+import AuthenticationStore from "../../../stores/authentication";
 
 const Access = props => {
   const s = useButtonStyles();
   const store = updatePlaceStore.useContainer();
   const [maxPlayers, setMaxPlayers] = useState(10);
   const [rigTypeValue, setRigTypeValue] = useState("playerChoice");
-  // the year is locked to 2016
-  const year = 2016;
+  const auth = AuthenticationStore.useContainer();
+  // the year dropdown is only enabled for user id 1; everyone else is locked to 2016
+  const canPickYear = auth.userId === 1;
+  const [yearValue, setYearValue] = useState(2016);
+  const year = canPickYear ? yearValue : 2016;
   const [feedback, setFeedback] = useState(null);
 
   const resetForm = () => {
     setFeedback(null);
     setMaxPlayers(store.details.maxPlayerCount);
 	setRigTypeValue(store.details.rigType || "playerChoice");
+    setYearValue(store.details.year || 2016);
   }
 
   const save = () => {
@@ -66,9 +71,15 @@ const Access = props => {
 
       <div className='mt-3'>
         <p className='fw-bold'>Year:</p>
-        <select value={2016} disabled title='The year is locked to 2016' className='br-none border-1 border-secondary pe-2' style={{ background: '#e9ecef', color: '#6c757d', cursor: 'not-allowed' }}>
+        {canPickYear ? <select value={yearValue} className='br-none border-1 border-secondary pe-2' onChange={v => {
+          setYearValue(parseInt(v.currentTarget.value, 10));
+        }}>
           <option value={2016}>2016</option>
-        </select>
+          <option value={2018}>2018</option>
+          <option value={2020}>2020</option>
+        </select> : <select value={2016} disabled title='The year is locked to 2016' className='br-none border-1 border-secondary pe-2' style={{ background: '#e9ecef', color: '#6c757d', cursor: 'not-allowed' }}>
+          <option value={2016}>2016</option>
+        </select>}
       </div>
 	  
 	  <div className='mt-3'>
