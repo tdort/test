@@ -56,10 +56,12 @@ local function post(endpoint, payloadTable)
     if base then
         local okPlain
         okPlain, errPlain = pcall(function()
-            return game:HttpPost(base .. endpoint, json, false, "application/json")
+            -- HttpService may call any domain; HttpRbxApiService (and the old game:HttpPost) cannot on 2020
+            pcall(function() http.HttpEnabled = true end)
+            return http:PostAsync(base .. endpoint, json, Enum.HttpContentType.ApplicationJson, false)
         end)
         if okPlain then
-            if endpoint == "/gs/ping" then print("[gs] ping ok via http " .. base) end
+            if endpoint == "/gs/ping" then print("[gs] ping ok via HttpService " .. base) end
             return true
         end
     end
