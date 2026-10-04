@@ -196,7 +196,10 @@ namespace Roblox.Website.Controllers
 					// i HATE HTTP HEADERS AND PROXIES!!!!!!
 					var pxyurl = $"{Configuration.AssetUrl}/asset/?id={assetId}";
 
-					using var httpClient = new HttpClient();
+					using var httpClient = new HttpClient(new HttpClientHandler
+					{
+						AutomaticDecompression = System.Net.DecompressionMethods.All
+					});
 					httpClient.Timeout = TimeSpan.FromSeconds(10);
 					
 					try
@@ -462,6 +465,19 @@ namespace Roblox.Website.Controllers
 						: "application/octet-stream";
 
 					var content = await System.IO.File.ReadAllBytesAsync(Cache);
+					// older cache entries may hold raw gzip bytes (upstream compressed, not decompressed) - fix them up
+					if (content.Length > 2 && content[0] == 0x1F && content[1] == 0x8B)
+					{
+						try
+						{
+							using var gz = new System.IO.Compression.GZipStream(new MemoryStream(content), System.IO.Compression.CompressionMode.Decompress);
+							using var ms = new MemoryStream();
+							await gz.CopyToAsync(ms);
+							content = ms.ToArray();
+							await System.IO.File.WriteAllBytesAsync(Cache, content);
+						}
+						catch { /* not actually gzip, serve as-is */ }
+					}
 					
 					return new MVC.FileContentResult(content, contentType);
 				}
