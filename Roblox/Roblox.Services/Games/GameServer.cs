@@ -1240,6 +1240,8 @@ public class GameServerService : ServiceBase
 				string Replacement = $"authorization = \"{Configuration.GameServerAuthorization}\"";
 				
 				string Modified = Regex.Replace(ScriptContent, Pattern, Replacement, RegexOptions.IgnoreCase);
+				Modified = Regex.Replace(Modified, @"GS_GAME_HOST\s*=\s*""[^""]*""",
+					$"GS_GAME_HOST = \"{Configuration.GameServerDomain}\"");
 				Modified = Regex.Replace(Modified, @"GS_CALLBACK_BASE\s*=\s*""[^""]*""",
 					$"GS_CALLBACK_BASE = \"{Configuration.GameServerCallbackUrl}\"");
 				Modified = Regex.Replace(Modified, @"GS_CALLBACK_URL\s*=\s*""[^""]*""", $"GS_CALLBACK_URL = \"{Configuration.GameServerCallbackUrl}\"");

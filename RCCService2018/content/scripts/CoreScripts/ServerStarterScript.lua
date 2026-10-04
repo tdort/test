@@ -41,9 +41,12 @@ local GS_CALLBACK_URL = "http://127.0.0.1"
 -- rewritten by the website at server start (Configuration.GameServerCallbackUrl); RCC runs on the same machine as the site,
 -- so talking to it directly avoids Cloudflare and RCC's https trust problems
 local GS_CALLBACK_BASE = "http://127.0.0.1"
+-- public name of this machine (DNS only, not proxied); the engine blocks loopback addresses, so this is tried too
+local GS_GAME_HOST = ""
 
 local function getBaseUrls()
     local list = {}
+    if GS_GAME_HOST ~= "" then table.insert(list, "http://" .. GS_GAME_HOST) end
     if GS_CALLBACK_BASE ~= "" then table.insert(list, (string.gsub(GS_CALLBACK_BASE, "/+$", ""))) end
     local ok, base = pcall(function() return game:GetService("ContentProvider").BaseUrl end)
     if ok and type(base) == "string" and #base > 0 then
