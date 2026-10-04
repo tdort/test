@@ -52,16 +52,25 @@ local function post(endpoint, payloadTable)
 
     -- plain http first: RCC's https often fails on the server machine (cert trust), which silently kills pings
     local base = getBaseUrl()
+    local errPlain = "no base url"
     if base then
-        local okPlain = pcall(function()
-            game:HttpPost(base .. endpoint, json, false, "application/json")
+        local okPlain
+        okPlain, errPlain = pcall(function()
+            return game:HttpPost(base .. endpoint, json, false, "application/json")
         end)
-        if okPlain then return end
+        if okPlain then
+            if endpoint == "/gs/ping" then print("[gs] ping ok via http " .. base) end
+            return true
+        end
     end
 
     local success, result = pcall(function()
         return HttpRbxApiService:PostAsync(endpoint, json)
     end)
+    if endpoint == "/gs/ping" then
+        print("[gs] ping http failed (" .. tostring(errPlain) .. "); rbxapi " .. tostring(success) .. " " .. tostring(result))
+    end
+    return success
 end
 
 local function reportplayer(userId, eventType)
@@ -75,6 +84,7 @@ local function reportplayer(userId, eventType)
 	post("/gs/players/report", msg)
 end
 
+print("[gs] ServerStarterScript running, JobId " .. tostring(game.JobId))
 local function pollToReportActivity()
 	--while serverOk do
 	while true do
