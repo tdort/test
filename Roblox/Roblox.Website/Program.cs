@@ -80,8 +80,6 @@ Roblox.Configuration.AllowedNetworkPorts = configuration.GetSection("GameServer:
 Roblox.Configuration.GameServerAuthorization = configuration.GetSection("GameServerAuthorization").Value;
 if (!string.IsNullOrWhiteSpace(configuration.GetSection("GameServerCallbackUrl").Value))
     Roblox.Configuration.GameServerCallbackUrl = configuration.GetSection("GameServerCallbackUrl").Value;
-if (!string.IsNullOrWhiteSpace(configuration.GetSection("GameServerCallbackUrl").Value))
-    Roblox.Configuration.GameServerCallbackUrl = configuration.GetSection("GameServerCallbackUrl").Value;
 if (!string.IsNullOrWhiteSpace(configuration.GetSection("GameServerDomain").Value))
     Roblox.Configuration.GameServerDomain = configuration.GetSection("GameServerDomain").Value;
 Roblox.Configuration.RenderAuthorization = configuration.GetSection("Render:Authorization").Value;
