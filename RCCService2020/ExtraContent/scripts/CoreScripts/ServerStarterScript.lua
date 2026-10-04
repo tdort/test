@@ -36,18 +36,32 @@ local placeId = game.PlaceId
 local serverOk = true
 local playersJoin = 0
 
+local function getBaseUrl()
+    local ok, base = pcall(function() return game:GetService("ContentProvider").BaseUrl end)
+    if ok and type(base) == "string" and #base > 0 then
+        base = string.gsub(base, "^https://", "http://")
+        base = string.gsub(base, "^http://www%.", "http://")
+        base = string.gsub(base, "/+$", "")
+        return base
+    end
+    return nil
+end
+
 local function post(endpoint, payloadTable)
     local json = http:JSONEncode(payloadTable)
+
+    -- plain http first: RCC's https often fails on the server machine (cert trust), which silently kills pings
+    local base = getBaseUrl()
+    if base then
+        local okPlain = pcall(function()
+            game:HttpPost(base .. endpoint, json, false, "application/json")
+        end)
+        if okPlain then return end
+    end
 
     local success, result = pcall(function()
         return HttpRbxApiService:PostAsync(endpoint, json)
     end)
-
-    if success then
-        --print("post success to " .. endpoint .. ": " .. tostring(result))
-    else
-        --warn("post failed to " .. endpoint .. ": " .. tostring(result))
-    end
 end
 
 local function reportplayer(userId, eventType)
