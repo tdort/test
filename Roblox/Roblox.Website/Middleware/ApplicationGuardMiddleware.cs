@@ -45,7 +45,7 @@ public class ApplicationGuardMiddleware
         "/gs/delete",
         "/gs/shutdown",
         "/gs/players/report",
-        "/gs/a",
+        "/gs/a", "/universes/validate-place-join", "/game/validate-machine",
         // other
         "/game/validate-machine",
         "/game/validateticket.ashx",
@@ -276,7 +276,7 @@ public class ApplicationGuardMiddleware
         "/gs/players/report",
         "/gs/activity",
         "/gs/delete",
-        "/gs/a",
+        "/gs/a", "/universes/validate-place-join", "/game/validate-machine",
     };
 
     private async Task Redirect(HttpContext ctx, string dest)
