@@ -296,6 +296,15 @@ public class ApplicationGuardMiddleware
             normalizedPath = normalizedPath.Substring(0, normalizedPath.Length - 1);
         }
 
+        // TEMP DEBUG: log requests from game clients/servers so we can see what the client asks for during a join
+        var dbgUa = ctx.Request.Headers.UserAgent.ToString();
+        if (!normalizedPath.StartsWith("/_next") && !normalizedPath.StartsWith("/asset") && !normalizedPath.StartsWith("/static")
+            && !normalizedPath.StartsWith("/thumbs") && !normalizedPath.StartsWith("/images")
+            && (dbgUa.Length == 0 || dbgUa.Contains("oblox", StringComparison.OrdinalIgnoreCase) || normalizedPath.StartsWith("/game") || normalizedPath.StartsWith("/universes") || normalizedPath.StartsWith("/gs")))
+        {
+            Console.WriteLine("[req] {0} {1}{2} UA={3}", ctx.Request.Method, ctx.Request.Path, ctx.Request.QueryString, dbgUa);
+        }
+
         if (normalizedPath == "/robots.txt")
         {
             var created = DateTime.UtcNow.ToString("O");
