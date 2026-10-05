@@ -114,6 +114,7 @@ namespace Roblox.Services
                 SessionId = $"a3cc25b0-099b-4066-be70-e915de21e3d3|{jobId}|0|127.0.0.1|8|{DateTime.Now:MM/dd/yyyy HH:mm:ss}|0|null|{Ticket}|null|null|null",
                 DataCenterId = 0,
                 UniID = UniID,
+                UniverseId = UniID,
                 BrowserTrackerId = 0,
                 UsePortraitMode = false,
                 FollowUserId = 0,
