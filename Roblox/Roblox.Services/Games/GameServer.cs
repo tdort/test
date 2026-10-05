@@ -1411,7 +1411,7 @@ public class GameServerService : ServiceBase
         // first part, do game servers
         var serversToDelete = (await db.QueryAsync<GameServerEntry>("SELECT id::text, asset_id as assetId FROM asset_server WHERE updated_at <= :t", new
         {
-            t = DateTime.UtcNow.Subtract(TimeSpan.FromMinutes(2)),
+            t = DateTime.UtcNow.Subtract(TimeSpan.FromMinutes(30)), // 2020 RCC cannot ping, so servers are only culled after 30 min
         })).ToList();
         Console.WriteLine("[info] there are {0} bad servers", serversToDelete.Count);
         foreach (var server in serversToDelete)

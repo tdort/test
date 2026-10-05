@@ -44,6 +44,10 @@ local GS_CALLBACK_BASE = "http://127.0.0.1"
 -- public name of this machine (DNS only, not proxied); the engine blocks loopback addresses, so this is tried too
 local GS_GAME_HOST = ""
 
+-- 2020 RCC cannot make these calls ("Trust check failed") and every attempt blocks the server for many seconds,
+-- which delays join tickets until they fail with error 257. The website marks servers ready/alive on its own.
+local GS_HTTP_ENABLED = false
+
 local function getBaseUrls()
     local list = {}
     if GS_GAME_HOST ~= "" then table.insert(list, "http://" .. GS_GAME_HOST) end
@@ -59,6 +63,7 @@ local function getBaseUrls()
 end
 
 local function post(endpoint, payloadTable)
+    if not GS_HTTP_ENABLED then return false end
     local json = http:JSONEncode(payloadTable)
     pcall(function() http.HttpEnabled = true end)
 
@@ -125,6 +130,7 @@ local adminsList = nil
 spawn(pollToReportActivity)
 spawn(function()
 	local ok, newList = pcall(function()
+		if not GS_HTTP_ENABLED then error("disabled") end
 		local result = game:GetService('HttpRbxApiService'):GetAsync("Users/ListStaff.ashx", true)
 		return game:GetService('HttpService'):JSONDecode(result)
 	end)
@@ -173,6 +179,7 @@ local function getBannedUsersAsync(playersTable)
 	if csv == "" then return end
 	csv = string.sub(csv, 2)
 
+	if not GS_HTTP_ENABLED then return end
 	local ok, newList = pcall(function()
 		local result = game:GetService('HttpRbxApiService'):GetAsync("Users/GetBanStatus.ashx?userIds=" .. csv, true)
 		return http:JSONDecode(result)
