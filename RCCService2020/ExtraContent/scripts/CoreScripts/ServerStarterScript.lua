@@ -33,6 +33,7 @@ RemoteFunction_GetServerVersion.Parent = RobloxReplicatedStorage
 --[[ Event Connections ]]--
 local playerDialogMap = {}
 local placeId = game.PlaceId
+print("[gs] server ids: PlaceId=" .. tostring(game.PlaceId) .. " GameId=" .. tostring(game.GameId) .. " JobId=" .. tostring(game.JobId) .. " CreatorId=" .. tostring(game.CreatorId) .. " PlaceVersion=" .. tostring(game.PlaceVersion))
 local serverOk = true
 local playersJoin = 0
 
