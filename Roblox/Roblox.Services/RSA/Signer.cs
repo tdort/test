@@ -43,7 +43,7 @@ namespace Roblox.Services
 
         public string GenerateClientTicket2020(UserInfo user, string membershipType, int accountAgeDays, string jobId, long placeId)
         {
-            var DateTimeStr = DateTime.Now.ToString("M/d/yyyy h:mm:ss tt");
+            var DateTimeStr = DateTime.Now.ToString("M/d/yyyy h:mm:ss tt", System.Globalization.CultureInfo.InvariantCulture);
             var CharApp = $"{Configuration.BaseUrl}/v1.1/avatar-fetch?userId={user.userId}&placeId={placeId}";
 
             var FirstUnsigned = $"{user.userId}\n{user.username}\n{CharApp}\n{jobId}\n{DateTimeStr}";
