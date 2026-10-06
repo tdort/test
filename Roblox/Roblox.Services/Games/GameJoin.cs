@@ -123,7 +123,6 @@ namespace Roblox.Services
                 UsePortraitMode = false,
                 FollowUserId = 0,
                 characterAppearanceId = UserInfo.userId,
-                CharacterAppearanceId = UserInfo.userId,
                 MeasurementUrl = "",
                 CountryCode = "US"
             });
