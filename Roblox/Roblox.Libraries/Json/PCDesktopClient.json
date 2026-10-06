@@ -296,7 +296,7 @@
 	   "DFFlagEnableSoapMicroprofiles":true,
 	   "DFFlagEnableStrictRiffParsing":true,
 	   "DFFlagEnableTelegrafPriorityTag":true,
-	   "DFFlagEnableThirdPartyTeleportProtection":true,
+	   "DFFlagEnableThirdPartyTeleportProtection":false,
 	   "DFFlagEnableUsersEndpoint":true,
 	   "DFFlagEphemeralCounterInfluxReportingEnabled":true,
 	   "DFFlagEphemeralStatsInfluxReportingEnabled":true,

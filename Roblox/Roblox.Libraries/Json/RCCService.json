@@ -222,7 +222,7 @@
       "DFFlagEnableSoapMicroprofiles":"True",
       "DFFlagEnableStrictRiffParsing":"True",
       "DFFlagEnableTelegrafPriorityTag":"True",
-      "DFFlagEnableThirdPartyTeleportProtection":"True",
+      "DFFlagEnableThirdPartyTeleportProtection":false,
       "DFFlagEnableUsersEndpoint":"True",
       "DFFlagEphemeralCounterInfluxReportingEnabled":"True",
       "DFFlagEphemeralStatsInfluxReportingEnabled":"True",
