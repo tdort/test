@@ -80,7 +80,11 @@ namespace Roblox.Services
                 ClientPort = 0,
                 MachineAddress = $"{Configuration.GSIPAddress}",
                 ServerPort = serverPort,
+                ServerConnections = new[] { new { Address = Configuration.GSIPAddress, Port = serverPort } },
                 DirectServerReturn = true,
+                TokenGenAlgorithm = 0,
+                PepperId = 0,
+                TokenValue = "",
                 PingUrl = "",
                 PingInterval = 0,
                 UserName = UserInfo.username,
@@ -111,7 +115,7 @@ namespace Roblox.Services
                 CookieStoreEnabled = true,
                 IsRobloxPlace = PlaceDetails.creatorTargetId == 1,
                 IsUnknownOrUnder13 = false,
-                SessionId = $"a3cc25b0-099b-4066-be70-e915de21e3d3|{jobId}|0|127.0.0.1|8|{DateTime.Now:MM/dd/yyyy HH:mm:ss}|0|null|{Ticket}|null|null|null",
+                SessionId = $"a3cc25b0-099b-4066-be70-e915de21e3d3|{jobId}|{UserInfo.userId}|127.0.0.1|8|{DateTime.Now.ToString("MM/dd/yyyy HH:mm:ss", System.Globalization.CultureInfo.InvariantCulture)}|0|null|{Ticket}|null|null|null",
                 DataCenterId = 0,
                 UniID = UniID,
                 UniverseId = UniID,
@@ -119,6 +123,8 @@ namespace Roblox.Services
                 UsePortraitMode = false,
                 FollowUserId = 0,
                 characterAppearanceId = UserInfo.userId,
+                CharacterAppearanceId = UserInfo.userId,
+                MeasurementUrl = "",
                 CountryCode = "US"
             });
         }
