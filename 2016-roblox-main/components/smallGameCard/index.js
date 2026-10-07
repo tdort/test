@@ -180,10 +180,10 @@ const SmallGameCard = props => {
   }} onMouseLeave={() => {
     setShowCreator(false);
   }}>
-    <div className={cardStyles.card + ' '} ref={colRef}>
+    <div className={cardStyles.card + ' rbx-gamecard'} ref={colRef}>
       <Link href={url}>
         <a>
-          <div className={s.imageWrapper}>
+          <div className={s.imageWrapper + ' rbx-gamecard-img'}>
             <img className={s.image} src={iconUrl} alt={props.name} onLoad={(e) => {
             }} onError={(e) => {
               if (!iconUrl || iconUrl.indexOf('empty.png') !== -1) return;

@@ -12,7 +12,7 @@ const useSubtitleStyles = createUseStyles({
 
 const Subtitle = props => {
   const s = useSubtitleStyles();
-  return <h3 className={s.header}>{props.children}</h3>
+  return <h3 className={s.header + ' rbx-subtitle'}>{props.children}</h3>
 }
 
 export default Subtitle;

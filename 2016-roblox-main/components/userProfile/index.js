@@ -46,7 +46,7 @@ const UserProfile = props => {
   }
   return <div className='container'>
     <AdBanner/>
-    <div className={s.profileContainer}>
+    <div className={s.profileContainer + ' rbx-profile'}>
       <ProfileHeader/>
       <Tabs/>
       <TabSection tab="About">

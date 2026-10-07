@@ -110,12 +110,12 @@ const GameRow = props => {
 
   const remainingGames = props.games.length - (offset-offsetComp);
   const showForward = remainingGames >= limit;
-  return <div className='row'>
+  return <div className='row rbx-gamerow'>
     <div className='col-12'>
-      <h3 className={s.title}>{props.title.toUpperCase()}</h3>
+      <h3 className={s.title + ' rbx-gamerow-title'}>{props.title.toUpperCase()}</h3>
     </div>
     <div className={props.ads ? 'col-12 col-lg-9' : 'col-12'} ref={rowRef}>
-      <div className={s.goBack + ' ' + s.pagerButton + ' ' + (offset === 0 ? 'opacity-25' : '')} onClick={() => {
+      <div className={'rbx-pager ' + s.goBack + ' ' + s.pagerButton + ' ' + (offset === 0 ? 'opacity-25' : '')} onClick={() => {
         if (offset === 0)
           return;
 
@@ -124,7 +124,7 @@ const GameRow = props => {
         <p className={s.pagerCaret}><span className={s.caretRight}>^</span></p>
       </div>
 
-      {showForward ? <div className={s.goForward + ' ' + s.pagerButton} onClick={() => {
+      {showForward ? <div className={'rbx-pager ' + s.goForward + ' ' + s.pagerButton} onClick={() => {
         let newOffset = ((offset) + (limit));
         setOffset(newOffset);
       }} style={{height: rowHeight}}>

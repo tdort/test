@@ -1,4 +1,5 @@
 import '../styles/globals.css';
+import '../styles/site2020.css';
 import '../styles/helpers/textHelpers.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
 // Roblox CSS
@@ -20,6 +21,7 @@ import getFlag from "../lib/getFlag";
 import Chat from "../components/chat";
 import Router from 'next/router';
 import { getMyBan } from '../services/users';
+import { getSite2020, applySite2020 } from '../services/site2020';
 
 if (typeof window !== 'undefined') {
   console.log(String.raw`
@@ -91,7 +93,8 @@ function RobloxApp({ Component, pageProps }) {
     if (el && el.length) {
       const theme = getTheme();
       const divBackground = theme === themeType.obc2016 ? 'url(/img/Unofficial/obc_theme_2016_bg.png) repeat-x #222224' : document.getElementById('theme-2016-enabled') ? '#e3e3e3' : '#fff';
-      el[0].setAttribute('style', 'background: ' + divBackground);
+      if (document.documentElement.classList.contains('site2020')) el[0].removeAttribute('style');
+      else el[0].setAttribute('style', 'background: ' + divBackground);
     }
   }, [pageProps]);
 

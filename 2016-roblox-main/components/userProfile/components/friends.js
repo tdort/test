@@ -93,7 +93,7 @@ const Friends = props => {
       </div>
     </div>
     <div className='col-12'>
-      <div className={cardStyles.card}>
+      <div className={cardStyles.card + ' rbx-friends'}>
         <div className={'row pt-3 pb-3 pe-3 ps-3 me-0 ms-0 ' + s.sideRow}>
           {
             store.friends.slice(0, 10).map(v => {
@@ -101,7 +101,7 @@ const Friends = props => {
                 <div className={s.cardWrapper}>
                   <Link href={`/users/${v.id}/profile`}>
                     <a>
-                      <div className={s.imageWrapper}>
+                      <div className={s.imageWrapper + ' rbx-friend-img'}>
                         <PlayerImage id={v.id} width={90} height={90} useHeadshot={true} />
                       </div>
 					  <p className={s.username}>

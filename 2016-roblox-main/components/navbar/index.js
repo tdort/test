@@ -1,4 +1,4 @@
-import React, { useRef } from "react";
+import React, { useRef, useEffect } from "react";
 import { createUseStyles } from "react-jss";
 import { getTheme, themeType } from "../../services/theme";
 import AuthenticationStore from "../../stores/authentication";
@@ -10,6 +10,7 @@ import LoginArea from "./components/loginArea";
 import Logo from "./components/logo";
 import NavigationLinks from "./components/navigationLinks";
 import Search from "./components/search";
+import { getSite2020, applySite2020 } from "../../services/site2020";
 
 const useNavBarStyles = createUseStyles({
   navbar: {
@@ -44,6 +45,12 @@ const Navbar = () => {
   });
   const authStore = AuthenticationStore.useContainer();
   const mainNavBarRef = useRef(null);
+
+  // 2020 look: owner only (user id 1)
+  useEffect(() => {
+    if (authStore.isPending) return;
+    applySite2020(getSite2020(), authStore.userId === 1);
+  }, [authStore.isPending, authStore.userId]);
 
   return <div className={s.wrapper + ' navbar-wrapper-main'}>
     <nav className={`navbar fixed-top navbar-expand-lg ${s.navbar}`} ref={mainNavBarRef}>

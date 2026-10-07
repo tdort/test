@@ -1,0 +1,150 @@
+/* Owner-only 2020 look. Everything is scoped to html.site2020 so the 2016 site is untouched. */
+html.site2020 {
+  --s20-bg: #f2f4f5;
+  --s20-card: #ffffff;
+  --s20-text: #393b3d;
+  --s20-sub: #6e7071;
+  --s20-line: #e3e3e3;
+  --s20-nav: #ffffff;
+  --s20-navtext: #393b3d;
+  --s20-accent: #335fff;
+  --s20-hover: #e3e5e7;
+}
+html.site2020.site2020-dark {
+  --s20-bg: #121212;
+  --s20-card: #232527;
+  --s20-text: #ffffff;
+  --s20-sub: #bdbebe;
+  --s20-line: #393b3d;
+  --s20-nav: #232527;
+  --s20-navtext: #ffffff;
+  --s20-hover: #393b3d;
+}
+
+html.site2020 body,
+html.site2020 #__next,
+html.site2020 #__next > div {
+  background: var(--s20-bg) !important;
+  color: var(--s20-text);
+  font-family: "Builder Sans", "Source Sans Pro", "Helvetica Neue", Helvetica, Arial, sans-serif;
+}
+
+/* ---------- navbar ---------- */
+html.site2020 .navbar-wrapper-main nav.navbar {
+  background: var(--s20-nav) !important;
+  border-bottom: 1px solid var(--s20-line);
+  box-shadow: none;
+  height: 48px;
+  padding: 0;
+}
+html.site2020 .navbar-wrapper-main { margin-bottom: 48px; }
+html.site2020 .navbar-wrapper-main nav.navbar a,
+html.site2020 .navbar-wrapper-main nav.navbar p,
+html.site2020 .navbar-wrapper-main nav.navbar span {
+  color: var(--s20-navtext) !important;
+  font-weight: 600;
+  font-size: 16px;
+}
+html.site2020 .navbar-wrapper-main nav.navbar a:hover {
+  background: var(--s20-hover) !important;
+  border-radius: 6px;
+}
+html.site2020 .navbar-wrapper-main nav.navbar input {
+  background: var(--s20-bg) !important;
+  color: var(--s20-text) !important;
+  border: 1px solid var(--s20-line) !important;
+  border-radius: 6px !important;
+  height: 32px;
+}
+/* square 2020 logo on desktop */
+html.site2020 .navbar-wrapper-main nav.navbar [class*="imgDesktop"] {
+  background-image: url(/img/roblox_logo.svg) !important;
+  background-repeat: no-repeat;
+  background-size: contain !important;
+  width: 100px !important;
+  height: 28px !important;
+  filter: var(--s20-logo-filter, none);
+}
+html.site2020.site2020-dark .navbar-wrapper-main nav.navbar [class*="imgDesktop"] { filter: invert(1); }
+
+/* ---------- cards ---------- */
+html.site2020 .rbx-gamecard,
+html.site2020 .rbx-friends,
+html.site2020 .rbx-profile-header,
+html.site2020 .rbx-profile [class*="card-"] {
+  background: transparent !important;
+  box-shadow: none !important;
+  border: 0 !important;
+  border-radius: 8px !important;
+  color: var(--s20-text);
+}
+html.site2020 .rbx-profile,
+html.site2020 .rbx-games { background: transparent !important; }
+
+/* ---------- games page ---------- */
+html.site2020 .rbx-gamerow-title {
+  text-transform: none;
+  font-weight: 700;
+  font-size: 22px;
+  color: var(--s20-text) !important;
+  margin: 18px 0 8px 4px;
+}
+html.site2020 .rbx-gamecard-img { padding: 0 !important; }
+html.site2020 .rbx-gamecard-img img {
+  border-radius: 8px;
+  aspect-ratio: 1 / 1;
+  object-fit: cover;
+}
+html.site2020 .rbx-gamecard p { color: var(--s20-text) !important; }
+html.site2020 .rbx-gamecard p:last-of-type { color: var(--s20-sub) !important; }
+html.site2020 .rbx-gamecard .pe-2 { padding-left: 0 !important; padding-top: 6px !important; }
+html.site2020 .rbx-gamecard p[class*="label-"] { font-weight: 600; font-size: 16px; }
+html.site2020 .rbx-pager {
+  background: var(--s20-card) !important;
+  border: 1px solid var(--s20-line) !important;
+  border-radius: 50%;
+  width: 36px !important;
+  height: 36px !important;
+  top: 70px;
+  color: var(--s20-text) !important;
+  z-index: 2;
+}
+html.site2020 .rbx-pager p { margin-top: 0 !important; line-height: 34px; font-size: 22px !important; }
+
+/* ---------- profile page ---------- */
+html.site2020 .rbx-profile-header .card-body { padding: 24px 12px; text-align: left; }
+html.site2020 .rbx-profile-avatar {
+  width: 150px !important;
+  height: 150px !important;
+  max-width: 150px !important;
+  border: 0 !important;
+  background: var(--s20-card);
+}
+html.site2020 .rbx-profile-name {
+  font-size: 32px !important;
+  font-weight: 800 !important;
+  color: var(--s20-text) !important;
+}
+html.site2020 .rbx-profile-header p,
+html.site2020 .rbx-profile-header a { color: var(--s20-sub); }
+html.site2020 .rbx-subtitle {
+  font-size: 22px !important;
+  font-weight: 700 !important;
+  color: var(--s20-text) !important;
+  margin-top: 18px !important;
+}
+html.site2020 .rbx-friends { background: transparent !important; }
+html.site2020 .rbx-friend-img { border: 0 !important; width: 100px !important; height: 100px !important; }
+html.site2020 .rbx-friend-img img { width: 100%; height: 100%; }
+html.site2020 .rbx-friends p { color: var(--s20-text) !important; font-weight: 600; font-size: 14px !important; }
+html.site2020 .rbx-profile .row p { color: var(--s20-text); }
+html.site2020 .rbx-profile a { color: var(--s20-accent); }
+html.site2020.site2020-dark .rbx-profile a { color: #7a9cff; }
+html.site2020 .rbx-profile [class*="entry-"] { color: var(--s20-text); font-weight: 600; }
+html.site2020 .rbx-profile [class*="entry-"]:hover,
+html.site2020 .rbx-profile [class*="entryActive-"] { box-shadow: 0 -3px 0 0 var(--s20-text) inset !important; }
+html.site2020 .rbx-profile [class*="card-"] .col-6,
+html.site2020 .rbx-profile [class*="card-"] .col-12 { color: var(--s20-text); }
+html.site2020 .rbx-profile [class*="card-"] { background: var(--s20-card) !important; }
+html.site2020 .rbx-profile .rbx-friends,
+html.site2020 .rbx-profile .rbx-profile-header { background: transparent !important; }

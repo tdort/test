@@ -177,17 +177,17 @@ const ProfileHeader = props => {
 
   return <div className='row mt-2'>
     <div className='col-12'>
-      <div className={'card ' + cardStyles.card}>
+      <div className={'card rbx-profile-header ' + cardStyles.card}>
         <div className='card-body'>
           <div className='row'>
             <div className='col-12 col-lg-2 pe-0'>
-              <div className={s.iconWrapper}>
+              <div className={s.iconWrapper + ' rbx-profile-avatar'}>
                 <PlayerHeadshot id={store.userId} name={store.username}/>
                 {status && <div className={s.activityWrapper}><Activity relative={false} {...status}></Activity></div>}
               </div>
             </div>
             <div className='col-12 col-lg-10 ps-0'>
-              <h2 className={s.username}>{store.username} {<BcIcon />} <div className={s.dropdown}>
+              <h2 className={s.username + ' rbx-profile-name'}>{store.username} {<BcIcon />} <div className={s.dropdown}>
                 {dropdownOptions && <Dropdown2016 options={dropdownOptions}/>}
               </div></h2>
               {editStatus ? <div>

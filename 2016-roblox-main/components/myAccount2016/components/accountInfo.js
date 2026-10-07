@@ -3,6 +3,7 @@ import { createUseStyles } from "react-jss";
 import getFlag from "../../../lib/getFlag";
 import { setUserDescription } from "../../../services/accountInformation";
 import { getTheme, setTheme } from "../../../services/theme";
+import { getSite2020, setSite2020, applySite2020 } from "../../../services/site2020";
 import { getAvatarMenu, setAvatarYear } from "../../../services/avatarmenu";
 import { get2020Menu, set2020Menu } from "../../../services/develop";
 import AuthenticationStore from "../../../stores/authentication";
@@ -145,6 +146,32 @@ const AccountInfo = props => {
         <div className='mt-4 mb-4'>&emsp;</div>
       </div>
     </div>
+	{auth.userId === 1 && (
+	  <div className="col-12 mt-2">
+		<Subtitle>Site Look (Owner)</Subtitle>
+		<div className={cardStyles.card + " p-3"}>
+		  <div className="row mt-1">
+			<div className="col pe-0">
+			  <input className={"form-control " + s.select + " " + s.disabled} value="2020 Look" readOnly type="text" />
+			</div>
+			<div className="col ps-0 pe-0">
+			  <select
+				className={"form-control " + s.select}
+				defaultValue={getSite2020()}
+				onChange={(ev) => {
+				  setSite2020(ev.currentTarget.value);
+				  applySite2020(ev.currentTarget.value, true);
+				}}
+			  >
+				<option value="off">Off (2016)</option>
+				<option value="light">2020 Light</option>
+				<option value="dark">2020 Dark</option>
+			  </select>
+			</div>
+		  </div>
+		</div>
+	  </div>
+	)}
 	{getFlag("settingsPageThemeSelectorEnabled", false) && (
 	  <div className="col-12 mt-2">
 		<Subtitle>Extensions</Subtitle>
