@@ -56,16 +56,36 @@ html.site2020 .navbar-wrapper-main nav.navbar input {
   border-radius: 6px !important;
   height: 32px;
 }
-/* square 2020 logo on desktop */
-html.site2020 .navbar-wrapper-main nav.navbar [class*="imgDesktop"] {
-  background-image: url(/img/roblox_logo.svg) !important;
-  background-repeat: no-repeat;
-  background-size: contain !important;
-  width: 100px !important;
-  height: 28px !important;
-  filter: var(--s20-logo-filter, none);
+/* nav icons are white sprites: darken on light, search icon light on dark */
+html.site2020 .navbar-wrapper-main nav.navbar [class^="icon-nav"],
+html.site2020 .navbar-wrapper-main nav.navbar [class*=" icon-nav"] { filter: invert(1) brightness(0.4); }
+html.site2020.site2020-dark .navbar-wrapper-main nav.navbar [class^="icon-nav"],
+html.site2020.site2020-dark .navbar-wrapper-main nav.navbar [class*=" icon-nav"] { filter: none; }
+html.site2020.site2020-dark .navbar-wrapper-main nav.navbar svg { filter: invert(1); }
+html.site2020 .navbar-wrapper-main nav.navbar [class*="searchInput"] { background: var(--s20-bg) !important; box-shadow: none !important; }
+
+/* ---------- side nav ---------- */
+html.site2020 .rbx-sidebar > div {
+  background: var(--s20-nav) !important;
+  border-right: 1px solid var(--s20-line);
 }
-html.site2020.site2020-dark .navbar-wrapper-main nav.navbar [class*="imgDesktop"] { filter: invert(1); }
+html.site2020 .rbx-sidebar,
+html.site2020 .rbx-sidebar p,
+html.site2020 .rbx-sidebar a,
+html.site2020 .rbx-sidebar span { color: var(--s20-text) !important; }
+html.site2020 .rbx-sidebar [class*="upgradeNow"] { color: #fff !important; background: var(--s20-accent) !important; border-radius: 6px; }
+html.site2020 .rbx-sidebar [class*="divider"] { border-color: var(--s20-line) !important; }
+html.site2020.site2020-dark .rbx-sidebar [class^="icon-"],
+html.site2020.site2020-dark .rbx-sidebar [class*=" icon-"] { filter: invert(1); }
+html.site2020 .rbx-sidebar [class*="wrapper-"]:hover { background: var(--s20-hover); border-radius: 6px; }
+
+/* ---------- home / dashboard ---------- */
+html.site2020 .rbx-dash,
+html.site2020 .rbx-dash-main { background: transparent !important; }
+html.site2020 .rbx-dash [class*="card-"],
+html.site2020 .rbx-dash .card { background: transparent !important; box-shadow: none !important; border: 0 !important; }
+html.site2020 .rbx-dash h3, html.site2020 .rbx-dash p { color: var(--s20-text) !important; }
+html.site2020 .rbx-dash [class*="adSky"], html.site2020 .rbx-dash .d-lg-flex { visibility: hidden; }
 
 /* ---------- cards ---------- */
 html.site2020 .rbx-gamecard,

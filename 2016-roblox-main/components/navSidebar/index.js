@@ -122,7 +122,7 @@ const NavSideBar = props => {
   
   const characterUrl = avatarMenu === 'R15' ? '/My/Avatar' : '/My/Character.aspx';
 
-  return <div className={s.container}>
+  return <div className={s.container + ' rbx-sidebar'}>
     <div className={s.card} style={{ paddingTop: paddingTop }}>
       <p className={s.username}>{authStore.username}</p>
       <div className={s.divider} />

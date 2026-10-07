@@ -106,24 +106,24 @@ const MyDashboard = props => {
   }, []);
 
   if (!auth.userId) return null;
-  return <div className={'container ' + s.container}>
+  return <div className={'container rbx-dash ' + s.container}>
     <div className='row'>
       <div className='d-none d-lg-flex col-2'><AdSkyscraper context='dashboard-left' /></div>
-      <div className={'col-12 col-lg-8 ' + s.mainBody}>
+      <div className={'col-12 col-lg-8 rbx-dash-main ' + s.mainBody}>
         <div className='row'>
           <div className='col-3'>
-            <div className={s.headshotWrapper}>
+            <div className={s.headshotWrapper + ' rbx-profile-avatar'}>
               <PlayerHeadshot id={auth.userId} name={auth.username} />
             </div>
           </div>
           <div className='col-9'>
-            <h3 className={s.helloMessage}>Hello, {auth.username}!</h3>
+            <h3 className={s.helloMessage + ' rbx-profile-name'}>Hello, {auth.username}!</h3>
           </div>
         </div>
         {friends && <div className='row mt-4'>
           <div className='col-12'>
-            <h3 className={s.subHeader}>Friends ({friends.length})</h3>
-            <div className={'card pt-3 pb-3 ps-3 pe-2 ' + s.card}>
+            <h3 className={s.subHeader + ' rbx-subtitle'}>Friends ({friends.length})</h3>
+            <div className={'card rbx-friends pt-3 pb-3 ps-3 pe-2 ' + s.card}>
               <div className={'row ' + s.friendRow}>
                 {
                   friends.map(v => {
