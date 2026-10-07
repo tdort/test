@@ -52,6 +52,7 @@ const Games = props => {
     <div className='col-12 ps-0 pb-0'>
       <div className={'row pb-2 rbx-games ' + s.gamesContainer}>
         <div className='col-12'>
+          <h1 className='rbx-discover-title'>Discover</h1>
           {showSortDropdown &&
             <div className={s.selectorSort}>
               <Selector

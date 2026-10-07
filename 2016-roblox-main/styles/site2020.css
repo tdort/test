@@ -285,3 +285,30 @@ html.site2020 [class*="subtitle"], html.site2020 .text-muted { color: var(--s20-
 html.site2020 .text-dark { color: var(--s20-text) !important; }
 html.site2020 .bg-white, html.site2020 .bg-light { background: var(--s20-card) !important; }
 html.site2020 [style*="background: rgb(227, 227, 227)"], html.site2020 [style*="background:#e3e3e3"] { background: var(--s20-bg) !important; }
+
+/* ================= round 4: match real 2020 Discover ================= */
+.rbx-discover-title, .rbx-l20-col { display: none; }
+html.site2020 .rbx-l16-col { display: none; }
+html.site2020 .rbx-l20-col { display: block; }
+html.site2020 .rbx-discover-title { display: block; font-size: 24px; font-weight: 800; margin: 14px 0 6px 4px; color: var(--s20-text); }
+html.site2020 .rbx-gamerow-title { font-size: 18px !important; font-weight: 700; margin: 10px 0 8px 4px; }
+html.site2020 .rbx-gamerow-title::after { font-size: 12px; font-weight: 600; }
+/* tiles: slightly tighter, small radius, 2020 type */
+html.site2020 .rbx-gamecard-img img { border-radius: 4px; }
+html.site2020 .rbx-gamecard-img { border-radius: 4px; }
+html.site2020 .rbx-gamecard p[class*="label-"] { font-size: 14px !important; font-weight: 600; line-height: 1.2; margin-top: 4px;
+  white-space: normal !important; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; height: 34px; }
+html.site2020 .rbx-stats { font-size: 12px; margin-top: 4px; gap: 10px; }
+html.site2020 .rbx-pager { top: 60px; background: var(--s20-card) !important; box-shadow: 0 1px 4px rgba(0,0,0,.25); border: 0 !important; width: 32px !important; height: 32px !important; }
+html.site2020 .rbx-pager.rbx-pager { opacity: .95; }
+/* sidebar like the reference: gray, small, tight */
+html.site2020:not(.site2020-dark) .rbx-sidebar > div { background: #e3e3e3 !important; border-right: 0; width: 170px !important; }
+html.site2020 .rbx-sidebar [class*="username"] { font-size: 14px !important; font-weight: 600; color: var(--s20-sub) !important; border-bottom: 1px solid #c3c3c3; }
+html.site2020 .rbx-sidebar [class*="linkEntry"] { padding: 4px 6px !important; }
+html.site2020 .rbx-sidebar [class*="name-"] { font-size: 14px !important; font-weight: 600; }
+html.site2020 .rbx-sidebar [class*="upgradeNow"] { background: #fff !important; color: var(--s20-text) !important; border: 1px solid #c3c3c3; font-size: 14px !important; font-weight: 600; }
+/* navbar like the reference: white, thin, centered links, active underline */
+html.site2020:not(.site2020-dark) .navbar-wrapper-main nav.navbar { background: #fff !important; }
+html.site2020 .navbar-wrapper-main nav.navbar [class*="linkEntry"] { font-size: 15px; font-weight: 600; border-radius: 0; }
+html.site2020 .navbar-wrapper-main nav.navbar [class*="linkEntry"]:hover { background: transparent !important; box-shadow: 0 -2px 0 var(--s20-text) inset; }
+html.site2020 .navbar-wrapper-main nav.navbar [class*="searchInput"] { height: 30px; font-size: 14px; }
