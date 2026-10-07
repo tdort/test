@@ -1,3 +1,4 @@
+@import url('https://fonts.googleapis.com/css2?family=Source+Sans+3:wght@400;600;700;800&display=swap');
 /* Owner-only 2020 look. Everything is scoped to html.site2020 so the 2016 site is untouched. */
 html.site2020 {
   --s20-bg: #f2f4f5;
@@ -26,7 +27,7 @@ html.site2020 #__next,
 html.site2020 #__next > div {
   background: var(--s20-bg) !important;
   color: var(--s20-text);
-  font-family: "Builder Sans", "Source Sans Pro", "Helvetica Neue", Helvetica, Arial, sans-serif;
+  font-family: "Source Sans 3", "Source Sans Pro", "Helvetica Neue", Helvetica, Arial, sans-serif;
 }
 
 /* ---------- navbar ---------- */
@@ -168,3 +169,74 @@ html.site2020 .rbx-profile [class*="card-"] .col-12 { color: var(--s20-text); }
 html.site2020 .rbx-profile [class*="card-"] { background: var(--s20-card) !important; }
 html.site2020 .rbx-profile .rbx-friends,
 html.site2020 .rbx-profile .rbx-profile-header { background: transparent !important; }
+
+/* ================= round 2: go all out ================= */
+.rbx-stats { display: none; }
+html.site2020 .rbx-stats { display: flex; gap: 12px; margin: 2px 0 0; font-size: 13px; color: var(--s20-sub) !important; }
+html.site2020 .rbx-old { display: none !important; }
+html.site2020 .rbx-gamecard p[class*="label-"] { margin-top: 2px; }
+html.site2020 .rbx-gamecard-img img { transition: transform .15s; }
+html.site2020 .rbx-gamecard:hover .rbx-gamecard-img img { transform: scale(1.03); }
+
+html.site2020 * { font-family: "Source Sans 3", "Source Sans Pro", "Helvetica Neue", Arial, sans-serif; }
+html.site2020 h1, html.site2020 h2, html.site2020 h3, html.site2020 h4 { color: var(--s20-text); font-weight: 700; }
+html.site2020 a { color: var(--s20-accent); text-decoration: none; }
+html.site2020.site2020-dark a { color: #7a9cff; }
+html.site2020 hr, html.site2020 .divider-top { border-color: var(--s20-line) !important; }
+html.site2020 .container { max-width: 1280px; }
+
+/* announcement bar */
+html.site2020 [class*="globalAlert"], html.site2020 [class*="alert-"] { border-radius: 0; font-weight: 600; }
+
+/* generic cards, inputs, buttons, dropdowns, tables */
+html.site2020 .card, html.site2020 [class*="card-0-"] {
+  background: var(--s20-card); color: var(--s20-text); border: 1px solid var(--s20-line);
+  border-radius: 8px; box-shadow: none;
+}
+html.site2020 .form-control, html.site2020 select, html.site2020 textarea, html.site2020 input[type=text], html.site2020 input[type=password] {
+  background: var(--s20-card) !important; color: var(--s20-text) !important;
+  border: 1px solid var(--s20-line) !important; border-radius: 6px !important;
+}
+html.site2020 .btn, html.site2020 button, html.site2020 [class*="button-0-"], html.site2020 [class*="Button-0-"] {
+  border-radius: 6px !important; font-weight: 700; box-shadow: none;
+}
+html.site2020 .btn-primary, html.site2020 [class*="blueButton"], html.site2020 .btn-info { background: var(--s20-accent) !important; border-color: var(--s20-accent) !important; color: #fff !important; }
+html.site2020 .btn-success, html.site2020 [class*="greenButton"], html.site2020 [class*="primary-0-"] { background: #00b06f !important; border-color: #00b06f !important; color: #fff !important; }
+html.site2020 table { color: var(--s20-text); }
+html.site2020 table td, html.site2020 table th { border-color: var(--s20-line) !important; }
+html.site2020 .dropdown-menu, html.site2020 [class*="dropdown-0-"], html.site2020 [class*="wrapper-0-"][class*="Dropdown"] { background: var(--s20-card) !important; border: 1px solid var(--s20-line); border-radius: 8px; }
+
+/* navbar polish */
+html.site2020 .navbar-wrapper-main nav.navbar .row { align-items: center; }
+html.site2020 .navbar-wrapper-main nav.navbar [class*="linkEntry"] { font-size: 16px; padding: 6px 12px !important; }
+html.site2020 .navbar-wrapper-main nav.navbar [class*="searchInput"] { border-radius: 20px !important; padding-left: 14px; }
+
+/* footer */
+html.site2020 footer { background: var(--s20-card) !important; border-top: 1px solid var(--s20-line); margin-top: 40px; }
+html.site2020 footer, html.site2020 footer * { color: var(--s20-sub) !important; background: transparent; }
+html.site2020 footer a:hover { color: var(--s20-text) !important; }
+
+/* games page: sort selector + container */
+html.site2020 .rbx-games { background: transparent !important; padding: 0 8px; }
+html.site2020 .rbx-gamerow { margin-bottom: 8px; }
+html.site2020 .rbx-gamerow-title { display: flex; align-items: center; justify-content: space-between; }
+
+/* profile / home header, 2020 style */
+html.site2020 .rbx-profile-header { background: transparent !important; }
+html.site2020 .rbx-profile-header .card-body { display: block; padding: 20px 8px; }
+html.site2020 .rbx-profile-avatar { box-shadow: 0 0 0 4px var(--s20-card), 0 0 0 5px var(--s20-line); margin: 0 auto; }
+html.site2020 .rbx-profile-header [class*="statHeader"] { color: var(--s20-sub) !important; text-align: left !important; font-size: 14px !important; font-weight: 600; }
+html.site2020 .rbx-profile-header [class*="statValue"] { text-align: left !important; font-size: 22px !important; font-weight: 800 !important; }
+html.site2020 .rbx-profile-header [class*="statValue"] a { color: var(--s20-text) !important; }
+html.site2020 .rbx-profile [class*="tabs"], html.site2020 .rbx-profile .row.mt-4 > .col-12 > [class*="card-0-"] { border: 0; border-bottom: 1px solid var(--s20-line); border-radius: 0; background: transparent !important; }
+html.site2020 .rbx-profile [class*="entry-"] { font-size: 18px; font-weight: 700; }
+html.site2020 .rbx-subtitle { margin-bottom: 10px !important; }
+html.site2020 .rbx-friends { padding: 4px 0 0; }
+html.site2020 .rbx-friends [class*="friendCol"] { min-width: 112px; }
+html.site2020 .rbx-friends [class*="imageWrapper"] { background: var(--s20-card); }
+html.site2020 .rbx-friend-img { box-shadow: 0 0 0 1px var(--s20-line); }
+html.site2020 .rbx-friends [class*="buttonWrapper"] a, html.site2020 .rbx-friends [class*="buttonWrapper"] * { font-size: 14px; font-weight: 700; color: var(--s20-sub) !important; background: transparent !important; border: 0 !important; }
+html.site2020 .rbx-profile .row [class*="card-0-"] { background: var(--s20-card) !important; border: 1px solid var(--s20-line) !important; border-radius: 8px !important; }
+html.site2020 .rbx-profile [class*="assetContainerCard"] { background: var(--s20-card) !important; }
+html.site2020 .rbx-dash-main { padding-top: 12px; }
+html.site2020 .rbx-dash .rbx-profile-name { font-size: 36px !important; font-weight: 800 !important; margin-top: 50px; }

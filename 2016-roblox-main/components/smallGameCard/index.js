@@ -160,7 +160,7 @@ const SmallGameCard = props => {
     const sGreen = color ? s.solidGreenColor : s.solidGreen;
     const sRed = color ? s.solidRedColor : s.solidRed;
 
-    return <div className={s.ratioContainer + ' '}>
+    return <div className={s.ratioContainer + ' rbx-old'}>
       {squares.map((v, i) => {
         if (v.percentGreen) {
           const widthGreen = boxWidth * v.percentGreen;
@@ -197,9 +197,10 @@ const SmallGameCard = props => {
       </Link>
       <div className='pe-2 pb-2 pt-2 ps-2'>
         <p className={s.label + ' truncate'}>{props.name}</p>
-        <p className={s.labelPlaying + ' truncate'}>{abbreviateNumber(props.playerCount)} Playing</p>
+        <p className='rbx-stats'><span>👍 {Math.round(likePercent*100)}%</span> <span>👤 {abbreviateNumber(props.playerCount)}</span></p>
+        <p className={s.labelPlaying + ' rbx-old truncate'}>{abbreviateNumber(props.playerCount)} Playing</p>
         {
-          !showCreator && !hideVoting && <p className={s.thumbsUp + ' mt-2 d-inline-block'}>
+          !showCreator && !hideVoting && <p className={s.thumbsUp + ' rbx-old mt-2 d-inline-block'}>
             <span className='icon-thumbs-up'/>
           </p> || null
         }
@@ -209,7 +210,7 @@ const SmallGameCard = props => {
         }
 
         {
-          showCreator && <div className={s.creatorDetailsCard + ' ' + cardStyles.card} style={colRef ? { width: colRef.current.clientWidth + 'px' } : undefined}>
+          showCreator && <div className={'rbx-old ' + s.creatorDetailsCard + ' ' + cardStyles.card} style={colRef ? { width: colRef.current.clientWidth + 'px' } : undefined}>
             {!hideVoting ?
             <>
               <p className={s.thumbsUp + ' ps-2 pe-2 mt-2'}>
