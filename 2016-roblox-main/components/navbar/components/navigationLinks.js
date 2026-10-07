@@ -68,10 +68,10 @@ const NavigationLinks = props => {
   return <div className={`${s.col} col-10 col-lg-5`}>
     <div className={s.container}>
       <div className='row'>
-        <LinkEntry url='games'>Games</LinkEntry>
-        <LinkEntry url='catalog'>Catalog</LinkEntry>
-        <LinkEntry url='develop'>Develop</LinkEntry>
-        <LinkEntry url='https://bt.zawg.ca/downloads'>Download</LinkEntry>
+        <LinkEntry url='games'><span className='rbx-l16'>Games</span><span className='rbx-l20'>Discover</span></LinkEntry>
+        <LinkEntry url='catalog'><span className='rbx-l16'>Catalog</span><span className='rbx-l20'>Marketplace</span></LinkEntry>
+        <LinkEntry url='develop'><span className='rbx-l16'>Develop</span><span className='rbx-l20'>Create</span></LinkEntry>
+        <LinkEntry url='https://bt.zawg.ca/downloads'><span className='rbx-l16'>Download</span><span className='rbx-l20'>Download</span></LinkEntry>
       </div>
     </div>
   </div>

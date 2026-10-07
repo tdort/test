@@ -240,3 +240,48 @@ html.site2020 .rbx-profile .row [class*="card-0-"] { background: var(--s20-card)
 html.site2020 .rbx-profile [class*="assetContainerCard"] { background: var(--s20-card) !important; }
 html.site2020 .rbx-dash-main { padding-top: 12px; }
 html.site2020 .rbx-dash .rbx-profile-name { font-size: 36px !important; font-weight: 800 !important; margin-top: 50px; }
+
+/* ================= round 3 ================= */
+.rbx-l20 { display: none; }
+html.site2020 .rbx-l16 { display: none; }
+html.site2020 .rbx-l20 { display: inline; }
+html.site2020 { color-scheme: light; }
+html.site2020.site2020-dark { color-scheme: dark; }
+html.site2020 ::-webkit-scrollbar { width: 10px; height: 10px; }
+html.site2020 ::-webkit-scrollbar-thumb { background: var(--s20-line); border-radius: 6px; }
+html.site2020 ::-webkit-scrollbar-track { background: transparent; }
+
+/* top bar: taller, 2020 spacing, active underline feel */
+html.site2020 .navbar-wrapper-main nav.navbar { height: 56px; }
+html.site2020 .navbar-wrapper-main { margin-bottom: 56px; }
+html.site2020 .navbar-wrapper-main nav.navbar .container { padding-top: 8px; }
+html.site2020 .navbar-wrapper-main nav.navbar [class*="linkEntry"] { font-size: 17px; font-weight: 700; letter-spacing: 0; }
+
+/* sidebar: 2020 proportions */
+html.site2020 .rbx-sidebar > div { width: 190px !important; padding: 8px 12px !important; }
+html.site2020 .rbx-sidebar [class*="username"] { font-size: 20px !important; font-weight: 800; padding-bottom: 10px !important; }
+html.site2020 .rbx-sidebar [class*="linkEntry"] { padding: 8px 8px !important; border-radius: 8px; font-weight: 600; }
+html.site2020 .rbx-sidebar [class*="linkEntry"]:hover { background: var(--s20-hover); }
+html.site2020 .rbx-sidebar [class*="name-"] { font-size: 17px !important; font-weight: 600; }
+
+/* section headers get a "See All" feel, row spacing like 2020 */
+html.site2020 .rbx-gamerow { padding: 6px 0 14px; }
+html.site2020 .rbx-gamerow-title::after { content: "See All \2192"; font-size: 14px; font-weight: 700; color: var(--s20-sub); margin-right: 8px; }
+html.site2020 .rbx-gamecard { padding-bottom: 6px; }
+html.site2020 .rbx-gamecard-img { background: var(--s20-card); border-radius: 8px; }
+html.site2020 .rbx-gamecard p[class*="label-"] { font-size: 15px !important; font-weight: 700; }
+
+/* selectors / filters on games page */
+html.site2020 .rbx-games select, html.site2020 .rbx-games [class*="select"] { background: var(--s20-card) !important; color: var(--s20-text) !important; border: 1px solid var(--s20-line) !important; border-radius: 8px !important; height: 40px; }
+
+/* pagination, tabs, badges */
+html.site2020 .page-link, html.site2020 [class*="pageButton"] { background: var(--s20-card); color: var(--s20-text); border: 1px solid var(--s20-line); border-radius: 6px; margin: 0 2px; }
+html.site2020 .badge { border-radius: 10px; }
+html.site2020 .progress { background: var(--s20-line); border-radius: 6px; }
+
+/* catalog / game detail / generic page headers */
+html.site2020 [class*="title-0-"], html.site2020 [class*="header-0-"], html.site2020 [class*="Header-0-"] { color: var(--s20-text) !important; font-weight: 800; }
+html.site2020 [class*="subtitle"], html.site2020 .text-muted { color: var(--s20-sub) !important; }
+html.site2020 .text-dark { color: var(--s20-text) !important; }
+html.site2020 .bg-white, html.site2020 .bg-light { background: var(--s20-card) !important; }
+html.site2020 [style*="background: rgb(227, 227, 227)"], html.site2020 [style*="background:#e3e3e3"] { background: var(--s20-bg) !important; }
