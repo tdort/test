@@ -112,7 +112,7 @@ const GameRow = props => {
   const showForward = remainingGames >= limit;
   return <div className='row rbx-gamerow'>
     <div className='col-12'>
-      <h3 className={s.title + ' rbx-gamerow-title'}>{props.title.toUpperCase()}</h3>
+      <h3 className={s.title + ' rbx-gamerow-title'}>{props.title}</h3>
     </div>
     <div className={props.ads ? 'col-12 col-lg-9' : 'col-12'} ref={rowRef}>
       <div className={'rbx-pager ' + s.goBack + ' ' + s.pagerButton + ' ' + (offset === 0 ? 'opacity-25' : '')} onClick={() => {

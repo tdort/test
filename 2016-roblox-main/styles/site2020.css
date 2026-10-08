@@ -482,3 +482,31 @@ html.site2020 .rbx-dash .rbx-subtitle { font-size: 20px !important; font-weight:
 html.site2020 footer { background: transparent !important; border-top: 1px solid rgba(128,128,128,.3); }
 html.site2020.site2020-dark .card, html.site2020.site2020-dark [class*="card-0-"] { border-color: #111214; }
 html.site2020.site2020-dark { --s20-line: #4a4c4e; }
+
+/* ================= round 8 (verified in a real browser) ================= */
+html:not(.site2020) .rbx-gamerow-title { text-transform: uppercase; }
+html.site2020 .rbx-gamerow-title { text-transform: none; }
+html.site2020 .rbx-ad { display: none !important; }
+html.site2020 .navbar-wrapper-main nav.navbar a, html.site2020 .navbar-wrapper-main nav.navbar [class*="linkEntry"] { white-space: nowrap; }
+html.site2020 .navbar-wrapper-main nav.navbar .col-3 { flex: 0 0 auto; width: auto; max-width: none; padding: 0; }
+html.site2020 .rbx-sidebar > div { padding-top: 0 !important; border-radius: 0 !important; }
+html.site2020 .rbx-sidebar { top: 44px !important; }
+html.site2020 .rbx-discover-title { margin-bottom: 14px; }
+html.site2020 .rbx-sidebar > div { margin-top: 0 !important; }
+@media (min-width: 992px) {
+  html.site2020 .navbar-wrapper-main nav.navbar .row { flex-wrap: nowrap; }
+}
+html.site2020 .navbar-wrapper-main nav.navbar [class*="linkEntry"] { padding: 10px 20px !important; }
+@media (min-width: 992px) {
+  html.site2020 .navbar-wrapper-main nav.navbar [class*="col-lg-5"]:has(input) { flex: 1 1 320px; max-width: 420px; min-width: 240px; }
+  html.site2020 .navbar-wrapper-main nav.navbar [class*="col-lg-10"], html.site2020 .navbar-wrapper-main nav.navbar [class*="col-lg-5"]:not(:has(input)) { flex: 0 0 auto; width: auto; max-width: none; }
+}
+html.site2020 .navbar-wrapper-main nav.navbar div:has(> input) { background: rgba(128,128,128,.18) !important; border: 0 !important; border-radius: 6px; box-shadow: none !important; }
+html.site2020 .navbar-wrapper-main nav.navbar input { background: transparent !important; box-shadow: none !important; }
+html.site2020.site2020-dark .rbx-pager { background: #393b3d !important; color: #fff !important; box-shadow: 0 0 4px rgba(0,0,0,.6); }
+html.site2020.site2020-dark .rbx-pager * { color: #fff !important; }
+html.site2020 .rbx-pager p { color: inherit !important; }
+@media (min-width: 1300px) { html.site2020 .rbx-dash { margin-left: 195px !important; } }
+@media (max-width: 1299px) { html.site2020 .rbx-dash { margin-left: auto !important; } }
+html.site2020 .rbx-dash .rbx-profile-name { margin-top: 12px; margin-left: 0; }
+html.site2020 .rbx-dash [class*="gameRow"] { margin-left: 0; }
