@@ -1,4 +1,39 @@
-@import url('https://fonts.googleapis.com/css2?family=Source+Sans+3:wght@400;600;700;800&display=swap');
+@font-face {
+  font-family: Builder Sans;
+  src: url(https://css.rbxcdn.com/b386a6bfc8e0077f1187ab64fa702226-BuilderSans-Thin.woff2) format("woff2"),url(https://css.rbxcdn.com/0774273a9a07ff6dea86332b42898ae6-BuilderSans-Thin.woff) format("woff");
+  font-weight: 100;
+  font-style: normal
+}
+@font-face {
+  font-family: Builder Sans;
+  src: url(https://css.rbxcdn.com/f1cad4800853bba09a023250de102801-BuilderSans-Light.woff2) format("woff2"),url(https://css.rbxcdn.com/fd780b5ee50e93a0002581937ceb74f9-BuilderSans-Light.woff) format("woff");
+  font-weight: 300;
+  font-style: normal
+}
+@font-face {
+  font-family: Builder Sans;
+  src: url(https://css.rbxcdn.com/e1f6e032096b2924e561c3928b9dc73d-BuilderSans-Regular.woff2) format("woff2"),url(https://css.rbxcdn.com/3a390ad6e476846a971ab5923cb9ff1e-BuilderSans-Regular.woff) format("woff");
+  font-weight: 400;
+  font-style: normal
+}
+@font-face {
+  font-family: Builder Sans;
+  src: url(https://css.rbxcdn.com/cc7ad65e0558327d8fbe8ade40ab94e8-BuilderSans-Medium.woff2) format("woff2"),url(https://css.rbxcdn.com/0c1b1b913a2ad4b51e9a8aced52b4362-BuilderSans-Medium.woff) format("woff");
+  font-weight: 500;
+  font-style: normal
+}
+@font-face {
+  font-family: Builder Sans;
+  src: url(https://css.rbxcdn.com/60df02cbc9b6a531c2d3cf32025a4dc8-BuilderSans-Bold.woff2) format("woff2"),url(https://css.rbxcdn.com/27762afe0183d3d8ede503d4f5ad00b5-BuilderSans-Bold.woff) format("woff");
+  font-weight: 700;
+  font-style: normal
+}
+@font-face {
+  font-family: Builder Sans;
+  src: url(https://css.rbxcdn.com/b715a5dd019d1b8771a3031ff85c972b-BuilderSans-ExtraBold.woff2) format("woff2"),url(https://css.rbxcdn.com/041f792b40f49fc31c78d68dd72d3f83-BuilderSans-ExtraBold.woff) format("woff");
+  font-weight: 800;
+  font-style: normal
+}
 /* Owner-only 2020 look. Everything is scoped to html.site2020 so the 2016 site is untouched. */
 html.site2020 {
   --s20-bg: #f2f4f5;
@@ -27,7 +62,7 @@ html.site2020 #__next,
 html.site2020 #__next > div {
   background: var(--s20-bg) !important;
   color: var(--s20-text);
-  font-family: "Source Sans 3", "Source Sans Pro", "Helvetica Neue", Helvetica, Arial, sans-serif;
+  font-family: "Builder Sans", "Source Sans Pro", "Helvetica Neue", Helvetica, Arial, sans-serif;
 }
 
 /* ---------- navbar ---------- */
@@ -178,7 +213,7 @@ html.site2020 .rbx-gamecard p[class*="label-"] { margin-top: 2px; }
 html.site2020 .rbx-gamecard-img img { transition: transform .15s; }
 html.site2020 .rbx-gamecard:hover .rbx-gamecard-img img { transform: scale(1.03); }
 
-html.site2020 * { font-family: "Source Sans 3", "Source Sans Pro", "Helvetica Neue", Arial, sans-serif; }
+html.site2020 * { font-family: "Builder Sans", "Source Sans Pro", "Helvetica Neue", Arial, sans-serif; }
 html.site2020 h1, html.site2020 h2, html.site2020 h3, html.site2020 h4 { color: var(--s20-text); font-weight: 700; }
 html.site2020 a { color: var(--s20-accent); text-decoration: none; }
 html.site2020.site2020-dark a { color: #7a9cff; }
@@ -332,3 +367,41 @@ html.site2020 .rbx-discover-title { font-size: 22px; font-weight: 700; margin: 1
 html.site2020 .navbar-wrapper-main nav.navbar [class*="linkEntry"] { font-size: 14px; }
 html.site2020 .navbar-wrapper-main nav.navbar { border-bottom: 1px solid #e3e3e3; }
 html.site2020 footer { margin-top: 10px; }
+
+/* ================= round 6: palette + profile layout from a 2020 reference clone ================= */
+html.site2020.site2020-dark {
+  --s20-bg: #232527;
+  --s20-card: #393b3d;
+  --s20-nav: #191b1d;
+  --s20-line: #111214;
+  --s20-hover: #393b3d;
+  --s20-sub: #bdbebe;
+}
+html.site2020.site2020-dark .navbar-wrapper-main nav.navbar { border-bottom: 1px solid #111214; }
+html.site2020.site2020-dark .rbx-sidebar > div { background: #191b1d !important; border-right: 0; width: 175px !important; }
+html.site2020.site2020-dark .rbx-sidebar [class*="upgradeNow"] { background: #fff !important; color: #393b3d !important; border-radius: 8px; }
+
+/* game tiles: 150px rounded, bold title, 12px gray stats */
+html.site2020 .rbx-gamecard-img img { border-radius: 8px; }
+html.site2020 .rbx-gamecard-img { border-radius: 8px; }
+html.site2020 .rbx-gamecard p[class*="label-"] { font-weight: 700; margin-top: 4px; }
+html.site2020 .rbx-stats { font-size: 12px; font-weight: 600; color: #bdbebe !important; }
+
+/* profile: centered 1024px column, section header block, big name, inline counts */
+html.site2020 .rbx-profile { max-width: 1024px; margin: 0 auto; }
+html.site2020 .rbx-profile-header { background: var(--s20-card) !important; border-radius: 8px !important; padding: 8px; }
+html.site2020:not(.site2020-dark) .rbx-profile-header { background: #fff !important; }
+html.site2020 .rbx-profile-avatar { width: 128px !important; height: 128px !important; max-width: 128px !important; box-shadow: none; margin: 0 !important; }
+html.site2020 .rbx-profile-name { font-size: 32px !important; font-weight: 800 !important; line-height: 1.1; }
+html.site2020 .rbx-profile-header .row > [class*="col-lg-2"] { flex: 0 0 auto; width: auto; display: flex; align-items: baseline; gap: 4px; padding-right: 16px; }
+html.site2020 .rbx-profile-header [class*="statValue"] { order: 1; font-size: 16px !important; font-weight: 700 !important; margin: 0 !important; }
+html.site2020 .rbx-profile-header [class*="statHeader"] { order: 2; font-size: 14px !important; font-weight: 400 !important; margin: 0 !important; color: var(--s20-sub) !important; }
+/* About / Creations tabs: 4px underline, equal halves, section background */
+html.site2020 .rbx-profile [class*="entry-"] { background: var(--s20-card); padding: 10px 0 !important; font-weight: 600; box-shadow: none; }
+html.site2020 .rbx-profile [class*="entry-"]:hover { box-shadow: inset 0 -4px 0 0 rgba(128,128,128,.5) !important; }
+html.site2020 .rbx-profile [class*="entryActive-"] { box-shadow: inset 0 -4px 0 0 var(--s20-text) !important; }
+html.site2020:not(.site2020-dark) .rbx-profile [class*="entry-"] { background: #fff; }
+/* friends: 90px circles, small medium-weight names */
+html.site2020 .rbx-friend-img { width: 90px !important; height: 90px !important; }
+html.site2020 .rbx-friends p { font-size: 12px !important; font-weight: 500 !important; }
+html.site2020 .rbx-subtitle { font-size: 20px !important; font-weight: 700 !important; }
