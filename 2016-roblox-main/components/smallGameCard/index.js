@@ -197,7 +197,7 @@ const SmallGameCard = props => {
       </Link>
       <div className='pe-2 pb-2 pt-2 ps-2'>
         <p className={s.label + ' truncate'}>{props.name}</p>
-        <p className='rbx-stats'><span>👍 {Math.round(likePercent*100)}%</span> <span>👤 {abbreviateNumber(props.playerCount)}</span></p>
+        <p className='rbx-stats'><span><i className='s20-ico s20-thumb'/>{Math.round(likePercent*100)}%</span> <span><i className='s20-ico s20-user'/>{abbreviateNumber(props.playerCount)}</span></p>
         <p className={s.labelPlaying + ' rbx-old truncate'}>{abbreviateNumber(props.playerCount)} Playing</p>
         {
           !showCreator && !hideVoting && <p className={s.thumbsUp + ' rbx-old mt-2 d-inline-block'}>

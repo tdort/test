@@ -510,3 +510,13 @@ html.site2020 .rbx-pager p { color: inherit !important; }
 @media (max-width: 1299px) { html.site2020 .rbx-dash { margin-left: auto !important; } }
 html.site2020 .rbx-dash .rbx-profile-name { margin-top: 12px; margin-left: 0; }
 html.site2020 .rbx-dash [class*="gameRow"] { margin-left: 0; }
+
+/* ================= round 9: dependency-free icons + footer from the reference clone ================= */
+html.site2020 .s20-ico { display: inline-block; width: 14px; height: 14px; margin-right: 4px; vertical-align: -2px; background: currentColor; -webkit-mask: var(--m) center/contain no-repeat; mask: var(--m) center/contain no-repeat; }
+html.site2020 .s20-thumb { --m: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'><path d='M2 10h4v11H2zM8 21h9.4c.8 0 1.5-.5 1.8-1.2l2.6-6.4c.1-.3.2-.6.2-.9v-2c0-1.1-.9-2-2-2h-6.3l1-4.6v-.3c0-.4-.2-.8-.4-1.1L13 3 7.600 8.400C7.200 8.800 7 9.300 7 9.800V19c0 1.100.9 2 2 2z'/></svg>"); }
+html.site2020 .s20-user { --m: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'><circle cx='12' cy='7' r='4.500'/><path d='M3 21c0-4.400 4-7 9-7s9 2.600 9 7z'/></svg>"); }
+html.site2020 .rbx-stats span { display: inline-flex; align-items: center; }
+html.site2020 .rbx-gamerow-title::after { content: "See All  \2192"; white-space: pre; }
+html.site2020 footer { max-width: 1024px; margin: 48px auto 0 !important; padding-bottom: 24px; }
+html.site2020 footer .row { justify-content: space-between; border-bottom: 1px solid rgba(128,128,128,.5); padding-bottom: 20px; }
+html.site2020 footer h2, html.site2020 footer a { font-size: 14px !important; font-weight: 500 !important; }
