@@ -312,3 +312,23 @@ html.site2020:not(.site2020-dark) .navbar-wrapper-main nav.navbar { background: 
 html.site2020 .navbar-wrapper-main nav.navbar [class*="linkEntry"] { font-size: 15px; font-weight: 600; border-radius: 0; }
 html.site2020 .navbar-wrapper-main nav.navbar [class*="linkEntry"]:hover { background: transparent !important; box-shadow: 0 -2px 0 var(--s20-text) inset; }
 html.site2020 .navbar-wrapper-main nav.navbar [class*="searchInput"] { height: 30px; font-size: 14px; }
+
+/* ================= round 5: closer to the real Discover page ================= */
+html.site2020:not(.site2020-dark) { --s20-bg: #ffffff; }
+html.site2020 .rbx-gamerow > .col-lg-9 { flex: 0 0 100%; max-width: 100%; }
+html.site2020 .rbx-gamerow > .col-lg-3 { display: none; }
+html.site2020 .rbx-games [class*="selectorSort"] { display: none; }
+html.site2020 .rbx-gamerow-title { display: flex !important; justify-content: space-between; align-items: baseline; font-size: 16px !important; margin: 14px 0 6px 6px; padding-right: 48px; }
+html.site2020 .rbx-gamerow-title::after { color: #6e7071; }
+html.site2020 .rbx-gamecard { margin-bottom: 4px; }
+html.site2020 [class*="gameCard-"] { padding-left: 3px !important; padding-right: 3px !important; }
+html.site2020 .rbx-gamecard-img img { border-radius: 3px; box-shadow: none; }
+html.site2020 .rbx-gamecard p[class*="label-"] { font-size: 13px !important; font-weight: 600; height: 32px; color: var(--s20-text) !important; }
+html.site2020 .rbx-stats { font-size: 11px; color: #6e7071 !important; }
+html.site2020 .rbx-pager { background: #fff !important; box-shadow: 0 0 4px rgba(0,0,0,.35); }
+html.site2020 .rbx-games .row, html.site2020 .rbx-games { max-width: 100%; }
+html.site2020 .container { max-width: 100%; }
+html.site2020 .rbx-discover-title { font-size: 22px; font-weight: 700; margin: 12px 0 2px 6px; }
+html.site2020 .navbar-wrapper-main nav.navbar [class*="linkEntry"] { font-size: 14px; }
+html.site2020 .navbar-wrapper-main nav.navbar { border-bottom: 1px solid #e3e3e3; }
+html.site2020 footer { margin-top: 10px; }
