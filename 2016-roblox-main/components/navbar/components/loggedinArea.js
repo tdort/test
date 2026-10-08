@@ -110,9 +110,12 @@ const LoggedInArea = props => {
   const tixLabel = unavailable ? '?' : abbreviateNumber(authStore.tix);
   const robuxTitle = unavailable ? '?' : authStore.robux.toLocaleString();
   const tixTitle = unavailable ? '?' : authStore.tix.toLocaleString();
-  return <div className={`${s.linkContainerCol} `}>
+  return <div className={`${s.linkContainerCol} rbx-navright`}>
     <div className='row'>
       <div className={`col-12 ${s.linkContainer}`}>
+        <p className={s.text + ' rbx-userchip'}>
+          <Link href={`/users/${authStore.userId}/profile`}><a>@{authStore.username}</a></Link> <small>13+</small>
+        </p>
         <p className={s.text} title={robuxTitle}>
           <Link href='/My/Money.aspx'>
             <a>

@@ -405,3 +405,45 @@ html.site2020:not(.site2020-dark) .rbx-profile [class*="entry-"] { background: #
 html.site2020 .rbx-friend-img { width: 90px !important; height: 90px !important; }
 html.site2020 .rbx-friends p { font-size: 12px !important; font-weight: 500 !important; }
 html.site2020 .rbx-subtitle { font-size: 20px !important; font-weight: 700 !important; }
+
+/* ================= round 7: header/sidebar/section structure from the reference clone ================= */
+.rbx-userchip { display: none !important; }
+html.site2020 .rbx-userchip { display: inline-block !important; margin-right: 16px; font-size: 12px; white-space: nowrap; }
+html.site2020 .rbx-userchip a { font-weight: 600; }
+html.site2020 .rbx-userchip small { color: var(--s20-sub) !important; font-size: 12px; font-weight: 400; margin-left: 2px; }
+html.site2020 .rbx-navright { max-width: none !important; float: right; }
+
+/* header: 42px strip, wide nav items with 2px hover underline */
+html.site2020 .navbar-wrapper-main nav.navbar { height: 42px; }
+html.site2020 .navbar-wrapper-main { margin-bottom: 42px; }
+html.site2020 .navbar-wrapper-main nav.navbar .container { padding-top: 0; }
+html.site2020 .navbar-wrapper-main nav.navbar .col-12.col-lg-8 > .row { align-items: center; flex-wrap: nowrap; }
+html.site2020 .navbar-wrapper-main nav.navbar [class*="linkEntry"] { padding: 9px 30px !important; font-weight: 500; font-size: 16px; border-radius: 0; border-bottom: 2px solid transparent; }
+html.site2020 .navbar-wrapper-main nav.navbar [class*="linkEntry"]:hover { background: rgba(0,0,0,.05) !important; box-shadow: none !important; border-bottom-color: currentColor; }
+html.site2020.site2020-dark .navbar-wrapper-main nav.navbar [class*="linkEntry"]:hover { background: rgba(255,255,255,.08) !important; }
+html.site2020 .navbar-wrapper-main nav.navbar [class*="searchInput"] { background: var(--s20-card) !important; border: 1px solid var(--s20-line) !important; border-radius: 6px !important; height: 30px; padding-left: 12px; max-width: 360px; }
+
+/* sidebar: 175px rail, name row with divider, 28px rows, white Premium button */
+html.site2020 .rbx-sidebar > div { width: 175px !important; padding: 0 !important; height: calc(100vh - 42px); margin-top: 42px; }
+html.site2020 .rbx-sidebar [class*="username"] { padding: 10px 12px !important; margin: 0 !important; border-bottom: 1px solid #4b4d4f; font-weight: 500; font-size: 15px !important; color: var(--s20-text) !important; }
+html.site2020 .rbx-sidebar [class*="divider"] { display: none; }
+html.site2020 .rbx-sidebar [class*="linkEntry"] { padding: 4px 12px !important; margin: 0; border-radius: 0; }
+html.site2020 .rbx-sidebar [class*="linkEntry"]:hover { background: rgba(255,255,255,.06); }
+html.site2020 .rbx-sidebar [class*="upgradeNow"] { width: 83% !important; margin: 10px auto 0 !important; padding: 6px 0 !important; background: #fff !important; color: #393b3d !important; border: 0; border-radius: 8px; font-weight: 500; font-size: 15px !important; }
+
+/* sections: 20px bold title, "See All" + arrow, generous spacing */
+html.site2020 .rbx-gamerow { margin-bottom: 24px; }
+html.site2020 .rbx-gamerow-title { font-size: 20px !important; font-weight: 700 !important; margin: 0 0 4px 4px; }
+html.site2020 .rbx-gamerow-title::after { content: "See All  \2192"; font-size: 14px; font-weight: 500; color: var(--s20-text); opacity: .9; }
+
+/* tiles: exactly 150px thumbnail + 20px gap (card pitch stays 170px) */
+html.site2020 [class*="gameCard-"] { padding-left: 0 !important; padding-right: 20px !important; width: 170px; }
+html.site2020 .rbx-gamecard-img { width: 150px; padding: 0 !important; }
+html.site2020 .rbx-gamecard-img img { width: 150px; height: 150px; border-radius: 8px; }
+html.site2020 .rbx-gamecard .pe-2 { padding: 0 !important; width: 150px; }
+html.site2020 .rbx-gamecard p[class*="label-"] { font-size: 16px !important; font-weight: 700; line-height: 1.25; height: auto; max-height: 40px; margin-top: 4px; -webkit-line-clamp: 2; }
+html.site2020 .rbx-stats { font-size: 12px; font-weight: 600; margin-top: 2px; }
+
+/* profile sections spacing like the clone */
+html.site2020 .rbx-profile > [class*="row"], html.site2020 .rbx-profile .row { margin-bottom: 12px; }
+html.site2020 .rbx-profile-header { padding: 16px !important; }
