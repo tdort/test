@@ -4036,6 +4036,46 @@ Thank you for your understanding,
         throw new StaffException("Feature has been removed");
     }
 
+    private static bool MaintenanceConfigured =>
+        !string.IsNullOrWhiteSpace(Configuration.CloudflareApiToken) &&
+        !string.IsNullOrWhiteSpace(Configuration.CloudflareAccountId) &&
+        !string.IsNullOrWhiteSpace(Configuration.CloudflareKvNamespaceId);
+
+    private static string MaintenanceKvUrl =>
+        $"https://api.cloudflare.com/client/v4/accounts/{Configuration.CloudflareAccountId}/storage/kv/namespaces/{Configuration.CloudflareKvNamespaceId}/values/maintenance";
+
+    [HttpGet("maintenance"), StaffFilter(Access.ManageFeatureFlags)]
+    public async Task<dynamic> GetMaintenance()
+    {
+        if (!MaintenanceConfigured)
+            return new { configured = false, enabled = false };
+        using var client = new HttpClient();
+        using var req = new HttpRequestMessage(HttpMethod.Get, MaintenanceKvUrl);
+        req.Headers.Add("Authorization", "Bearer " + Configuration.CloudflareApiToken);
+        var res = await client.SendAsync(req);
+        if (res.StatusCode == System.Net.HttpStatusCode.NotFound)
+            return new { configured = true, enabled = false };
+        if (!res.IsSuccessStatusCode)
+            throw new StaffException("Cloudflare returned " + (int)res.StatusCode + ": " + await res.Content.ReadAsStringAsync());
+        var value = (await res.Content.ReadAsStringAsync()).Trim();
+        return new { configured = true, enabled = value == "on" };
+    }
+
+    [HttpPost("maintenance"), StaffFilter(Access.ManageFeatureFlags)]
+    public async Task SetMaintenance(bool enabled)
+    {
+        if (!MaintenanceConfigured)
+            throw new StaffException("Cloudflare is not configured (appsettings: Cloudflare:ApiToken, AccountId, KvNamespaceId)");
+        using var client = new HttpClient();
+        using var req = new HttpRequestMessage(HttpMethod.Put, MaintenanceKvUrl);
+        req.Headers.Add("Authorization", "Bearer " + Configuration.CloudflareApiToken);
+        req.Content = new StringContent(enabled ? "on" : "off");
+        var res = await client.SendAsync(req);
+        if (!res.IsSuccessStatusCode)
+            throw new StaffException("Cloudflare returned " + (int)res.StatusCode + ": " + await res.Content.ReadAsStringAsync());
+        Console.WriteLine($"[maintenance] set to {(enabled ? "on" : "off")} by user {userSession.userId}");
+    }
+
     [HttpGet("feature-flags/all"), StaffFilter(Access.ManageFeatureFlags)]
     public dynamic GetAllFlags()
     {

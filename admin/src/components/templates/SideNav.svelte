@@ -145,6 +145,12 @@
 					icon: FlagIcon,
 					permission: "ManageFeatureFlags",
 				},
+				{
+					name: "Maintenance",
+					link: "/admin/maintenance",
+					icon: FlagIcon,
+					permission: "ManageFeatureFlags",
+				},
 			]
 		},
 		{

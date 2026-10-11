@@ -113,6 +113,12 @@ public static class Configuration
         }
     }
 
+    // Cloudflare Workers maintenance switch (admin panel -> Maintenance). All three must be set in appsettings:
+    // "Cloudflare": { "ApiToken": "...", "AccountId": "...", "KvNamespaceId": "..." }
+    public static string? CloudflareApiToken { get; set; }
+    public static string? CloudflareAccountId { get; set; }
+    public static string? CloudflareKvNamespaceId { get; set; }
+
     // set "GameServerDomain" in appsettings to your game server's domain (must NOT be proxied by Cloudflare)
     public static string GameServerDomain { get; set; } = "games.queef.bond";
 }

@@ -82,6 +82,9 @@ if (!string.IsNullOrWhiteSpace(configuration.GetSection("GameServerCallbackUrl")
     Roblox.Configuration.GameServerCallbackUrl = configuration.GetSection("GameServerCallbackUrl").Value;
 if (!string.IsNullOrWhiteSpace(configuration.GetSection("GameServerDomain").Value))
     Roblox.Configuration.GameServerDomain = configuration.GetSection("GameServerDomain").Value;
+Roblox.Configuration.CloudflareApiToken = configuration.GetSection("Cloudflare:ApiToken").Value;
+Roblox.Configuration.CloudflareAccountId = configuration.GetSection("Cloudflare:AccountId").Value;
+Roblox.Configuration.CloudflareKvNamespaceId = configuration.GetSection("Cloudflare:KvNamespaceId").Value;
 Roblox.Configuration.RenderAuthorization = configuration.GetSection("Render:Authorization").Value;
 Roblox.Configuration.BotAuthorization = configuration.GetSection("BotAuthorization").Value;
 // game-server config stuff

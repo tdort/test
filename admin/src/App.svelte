@@ -37,6 +37,7 @@
 	import * as rank from "./stores/rank";
 import Lottery from "./pages/Lottery.svelte";
 import FeatureFlags from "./pages/FeatureFlags.svelte";
+import Maintenance from "./pages/Maintenance.svelte";
 import ManageUserTransactions from "./pages/ManageUserTransactions.svelte";
 import UserModerationHistory from "./pages/ViewModerationHistory.svelte";
 import Applications from "./pages/Applications.svelte";
@@ -189,6 +190,9 @@ import UploadCustomItem from "./pages/UploadCustomItem.svelte";
 		</Route>
 		<Route path="/admin/lottery">
 			<Lottery />
+		</Route>
+		<Route path="/admin/maintenance">
+			<Maintenance />
 		</Route>
 		<Route path="/admin/feature-flags">
 			<FeatureFlags />
