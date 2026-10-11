@@ -43,6 +43,16 @@ export default {
   async fetch(request, env, ctx) {
     const url = new URL(request.url);
 
+    // /__maintenance/preview: always show the maintenance page (even if unlocked)
+    if (url.pathname === "/__maintenance/preview") return page(env, 200);
+    // /__maintenance/lock: forget the bypass cookie, back to what visitors see
+    if (url.pathname === "/__maintenance/lock") {
+      return new Response(null, {
+        status: 302,
+        headers: { location: "/", "set-cookie": `${COOKIE}=; Path=/; Max-Age=0; HttpOnly; Secure; SameSite=Lax` },
+      });
+    }
+
     // unlock form
     if (url.pathname === "/__maintenance/unlock" && request.method === "POST") {
       const form = await request.formData();
