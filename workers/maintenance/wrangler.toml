@@ -1,0 +1,20 @@
+name = "zaplix-maintenance"
+main = "src/index.js"
+compatibility_date = "2024-11-01"
+
+# Route the worker in front of your site (the domain must be proxied/orange-cloud in Cloudflare):
+# routes = [{ pattern = "zaplix.xyz/*", zone_name = "zaplix.xyz" }]
+
+[vars]
+MAINTENANCE = "off"            # "on" = maintenance for everyone (except bypass)
+MESSAGE = "The site is currently offline for maintenance and upgrades."
+ALLOW_IPS = "87.236.196.36"    # your VPS (RCC callbacks) always pass through
+# ALLOW_PATHS = "/gs/,/game/validate-machine,/universes/validate-place-join,/robots.txt"
+
+# Optional: flip maintenance without redeploying.
+# 1) npx wrangler kv namespace create MAINT_KV   2) paste the id below  3) npx wrangler kv key put --binding=MAINT_KV maintenance on
+# [[kv_namespaces]]
+# binding = "MAINT_KV"
+# id = "PASTE_ID_HERE"
+
+# Secret (do not put in this file):  npx wrangler secret put BYPASS_KEY
