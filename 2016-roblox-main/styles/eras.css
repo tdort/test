@@ -1,0 +1,66 @@
+/*
+ * Era skins. 2016 = default, so it has no block here.
+ * Values below are STARTING POINTS: tune them against reference screenshots of each year.
+ * Body background needs !important because _app.js sets it inline.
+ */
+
+/* ---------- 2013 ---------- */
+html.era-2013 {
+  --era-nav-bg: #1a1a1a;
+  --era-nav-text: #e6e6e6;
+  --era-page-bg: #f5f5f5;
+  --era-font: Arial, Helvetica, sans-serif;
+}
+
+/* ---------- 2014 ---------- */
+html.era-2014 {
+  --era-nav-bg: #2b2b2b;
+  --era-nav-text: #ffffff;
+  --era-page-bg: #ececec;
+  --era-font: Arial, Helvetica, sans-serif;
+}
+
+/* ---------- 2015 ---------- */
+html.era-2015 {
+  --era-nav-bg: #00a2ff;
+  --era-nav-text: #ffffff;
+  --era-page-bg: #e3e3e3;
+  --era-font: 'Source Sans Pro', Arial, Helvetica, sans-serif;
+}
+
+/* ---------- 2017 ---------- */
+html.era-2017 {
+  --era-nav-bg: #0074bd;
+  --era-nav-text: #ffffff;
+  --era-page-bg: #e3e3e3;
+  --era-font: 'Source Sans Pro', Arial, Helvetica, sans-serif;
+}
+
+/* ---------- 2018 ---------- */
+html.era-2018 {
+  --era-nav-bg: #0066cc;
+  --era-nav-text: #ffffff;
+  --era-page-bg: #f2f4f5;
+  --era-font: 'Source Sans Pro', Arial, Helvetica, sans-serif;
+}
+
+/* ---------- 2019 ---------- */
+html.era-2019 {
+  --era-nav-bg: #232527;
+  --era-nav-text: #ffffff;
+  --era-page-bg: #f2f4f5;
+  --era-font: 'Source Sans Pro', Arial, Helvetica, sans-serif;
+}
+
+/* ---------- shared wiring (applies to every non-default era) ---------- */
+html[class*='era-'] body {
+  background: var(--era-page-bg) !important;
+  font-family: var(--era-font) !important;
+}
+html[class*='era-'] .navbar-wrapper-main nav.navbar {
+  background-color: var(--era-nav-bg);
+}
+html[class*='era-'] .navbar-wrapper-main nav.navbar a,
+html[class*='era-'] .navbar-wrapper-main nav.navbar .nav-link {
+  color: var(--era-nav-text);
+}

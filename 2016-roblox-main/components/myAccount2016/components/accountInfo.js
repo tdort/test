@@ -3,6 +3,7 @@ import { createUseStyles } from "react-jss";
 import getFlag from "../../../lib/getFlag";
 import { setUserDescription } from "../../../services/accountInformation";
 import { getTheme, setTheme } from "../../../services/theme";
+import { eras, getEra, setEra } from "../../../services/era";
 import { getSite2020, setSite2020, applySite2020 } from "../../../services/site2020";
 import { getAvatarMenu, setAvatarYear } from "../../../services/avatarmenu";
 import { get2020Menu, set2020Menu } from "../../../services/develop";
@@ -200,6 +201,25 @@ const AccountInfo = props => {
 			  </select>
 			</div>
 		  </div>
+			  <div className="row mt-3">
+				<div className="col pe-0">
+				  <input
+					className={"form-control " + s.select + " " + s.disabled}
+					value="Site Era"
+					readOnly
+					type="text"
+				  />
+				</div>
+				<div className="col ps-0 pe-0">
+				  <select
+					className={"form-control " + s.select}
+					defaultValue={getEra()}
+					onChange={(ev) => setEra(ev.currentTarget.value)}
+				  >
+					{eras.map(e => <option key={e.id} value={e.id}>{e.label}</option>)}
+				  </select>
+				</div>
+			  </div>
 		  <div className="row mt-3">
 			<div className="col pe-0">
 			  <input

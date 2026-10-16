@@ -1,5 +1,6 @@
 import '../styles/globals.css';
 import '../styles/site2020.css';
+import '../styles/eras.css';
 import '../styles/helpers/textHelpers.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
 // Roblox CSS
@@ -22,6 +23,7 @@ import Chat from "../components/chat";
 import Router from 'next/router';
 import { getMyBan } from '../services/users';
 import { getSite2020, applySite2020 } from '../services/site2020';
+import '../services/era';
 
 if (typeof window !== 'undefined') {
   console.log(String.raw`
