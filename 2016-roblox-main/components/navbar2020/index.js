@@ -102,9 +102,9 @@ const Navbar2020 = () => {
           {auth.isPending ? null : auth.isAuthenticated ? (
             <>
               <ul className='nav navbar-right rbx-navbar-right-nav'>
-                <li className='age-bracket-label'>
-                  <Link href={`/users/${auth.userId}/profile`}><a className='text-header age-bracket-label-username font-caption-header'>{auth.username}</a></Link>
-                  <span className='age-bracket-label-age'><span className='text-header font-caption-header'>13+</span></span>
+                <li className='age-bracket-label' style={{ display: 'flex', alignItems: 'center', height: 40, paddingTop: 0, marginTop: 0 }}>
+                  <Link href={`/users/${auth.userId}/profile`}><a className='text-header age-bracket-label-username font-caption-header' style={{ padding: 0, lineHeight: '40px', height: 40 }}>{auth.username}</a></Link>
+                  <span className='age-bracket-label-age' style={{ lineHeight: '40px', margin: '0 0 0 6px', padding: 0 }}><span className='text-header font-caption-header' style={{ lineHeight: '40px' }}>13+</span></span>
                 </li>
               </ul>
               <ul className='nav navbar-right rbx-navbar-icon-group'>
