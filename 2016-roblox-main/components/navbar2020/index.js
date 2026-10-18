@@ -8,6 +8,7 @@ import LoginModalStore from '../../stores/loginModal';
 import LoginModal from '../loginModal';
 import { logout } from '../../services/auth';
 import getFlag from '../../lib/getFlag';
+import { abbreviateNumber } from '../../lib/numberUtils';
 
 const guestLinks = [
   ['/games', 'Games'],
@@ -37,6 +38,13 @@ const Navbar2020 = () => {
   const loginModal = LoginModalStore.useContainer();
   const [q, setQ] = useState('');
   const [navOpen, setNavOpen] = useState(false);
+  const [menuOpen, setMenuOpen] = useState(false);
+  useEffect(() => {
+    if (!menuOpen) return;
+    const close = (e) => { if (!e.target.closest || !e.target.closest('#navbar-settings')) setMenuOpen(false); };
+    document.addEventListener('click', close);
+    return () => document.removeEventListener('click', close);
+  }, [menuOpen]);
   const authed = !!auth.isAuthenticated;
   useEffect(() => {
     document.body.classList.toggle('logged-in', authed);
@@ -62,7 +70,9 @@ const Navbar2020 = () => {
     e.preventDefault();
     Router.push(`/games?keyword=${encodeURIComponent(q)}`);
   };
-  const robux = auth.robux !== null && auth.robux !== undefined ? Number(auth.robux).toLocaleString() : '?';
+  const fmt = (v) => (v === null || v === undefined ? '?' : abbreviateNumber(v));
+  const robux = fmt(auth.robux);
+  const tix = fmt(auth.tix);
 
   return (
     <>
@@ -98,9 +108,23 @@ const Navbar2020 = () => {
                 </li>
               </ul>
               <ul className='nav navbar-right rbx-navbar-icon-group'>
-                <li className='navbar-icon-item'><a className='rbx-menu-item' href='#' onClick={doLogout}><span className='font-header-2 text-header'>Logout</span></a></li>
-                <li id='navbar-settings' className='navbar-icon-item'>
-                  <Link href='/My/Account'><a className='rbx-menu-item'><span className='icon-nav-settings' id='nav-settings' /></a></Link>
+                <li id='navbar-settings' className='navbar-icon-item' style={{ position: 'relative' }}>
+                  <a className='rbx-menu-item' href='#' onClick={(e) => { e.preventDefault(); setMenuOpen(!menuOpen); }}>
+                    <span className='icon-nav-settings' id='nav-settings' />
+                  </a>
+                  {menuOpen && (
+                    <div className='popover bottom' style={{ display: 'block', position: 'absolute', top: '100%', right: 0, left: 'auto', marginTop: 4, width: 125 }}>
+                      <div className='popover-content'>
+                        <ul id='settings-popover-menu' className='dropdown-menu' style={{ display: 'block', position: 'static', float: 'none', boxShadow: 'none', border: 0, margin: 0, padding: 0, minWidth: 0 }}>
+                          <li><Link href='/My/Account'><a className='rbx-menu-item'>Settings</a></Link></li>
+                          <li><a className='rbx-menu-item' href='#' onClick={doLogout}>Logout</a></li>
+                        </ul>
+                      </div>
+                    </div>
+                  )}
+                </li>
+                <li id='navbar-tix' className='navbar-icon-item'>
+                  <Link href='/My/Money.aspx'><a className='rbx-menu-item'><span className='icon-nav-tix' /><span className='rbx-text-navbar-right text-header'>{tix}</span></a></Link>
                 </li>
                 <li id='navbar-robux' className='navbar-icon-item'>
                   <Link href='/My/Money.aspx'><a className='rbx-menu-item'><span id='nav-robux-icon'><span className='icon-robux-28x28' /></span><span className='rbx-text-navbar-right text-header'>{robux}</span></a></Link>

@@ -32,3 +32,16 @@ div#simplemodal-container{box-sizing:content-box;}@media(max-width:480px){div#si
 .rbx-header .rbx-navbar-icon-group li .rbx-menu-item{padding:0 9px;height:40px}
 .rbx-header #nav-robux-icon{display:inline-flex}
 .rbx-header .rbx-text-navbar-right{margin-left:4px!important;font-size:16px}
+
+/* ===== revival fixes (bootstrap 5 .row vs real footer/popover) ===== */
+.container-footer .row>*{width:auto;max-width:none;flex-shrink:1;padding-left:0;padding-right:0;margin-top:0}
+.container-footer .row{margin-left:0;margin-right:0}
+.container-footer .copyright-container>.col-sm-12{width:100%}
+.container-footer .footer-links{margin-bottom:32px}
+.rbx-header .icon-nav-tix{filter:invert(1) brightness(.4);vertical-align:middle}
+.dark-theme .rbx-header .icon-nav-tix{filter:none}
+.rbx-header .popover{background:#fff;border:0;border-radius:3px;box-shadow:0 1px 6px rgba(25,25,25,.3);z-index:1100}
+.rbx-header .popover .popover-content{padding:0}
+.rbx-header .popover .dropdown-menu li a{display:block;padding:10px 12px;color:#393b3d}
+.dark-theme .rbx-header .popover{background:#393b3d}
+.dark-theme .rbx-header .popover .dropdown-menu li a{color:#fff}
