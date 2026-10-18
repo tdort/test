@@ -122,6 +122,8 @@ namespace Roblox.Website.Controllers
 		private async Task<dynamic> DoMobileLogin()
 		{
 			var (username, password) = await ReadMobileCredentials();
+			// debug: shows what the app really sent (no password text, only its length)
+			Console.WriteLine($"[mobile-login] ct={Request.ContentType} form={Request.HasFormContentType} user='{username}' passLen={password?.Length ?? -1}");
 			FeatureFlags.FeatureCheck(FeatureFlag.LoginEnabled);
 			await RateLimitCheck();
 
