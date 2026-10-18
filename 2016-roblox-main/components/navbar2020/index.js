@@ -1,23 +1,30 @@
 // 2020 header using Roblox's real 2020 markup + classes (styled by /css/roblox2020/roblox2020.css).
 import Link from 'next/link';
 import Router from 'next/router';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import NavSidebar2020 from '../navSidebar2020';
 import AuthenticationStore from '../../stores/authentication';
 import LoginModalStore from '../../stores/loginModal';
 import LoginModal from '../loginModal';
 import { logout } from '../../services/auth';
 import getFlag from '../../lib/getFlag';
 
-const links = [
+const guestLinks = [
   ['/games', 'Games'],
   ['/catalog', 'Avatar Shop'],
   ['/develop', 'Create'],
   ['/My/Money.aspx', 'Robux'],
 ];
+const userLinks = [
+  ['/games', 'Games'],
+  ['/catalog', 'Catalog'],
+  ['/develop', 'Create'],
+  ['/My/Trades.aspx', 'Trade'],
+];
 
-const Menu = ({ cls }) => (
+const Menu = ({ cls, authed }) => (
   <ul className={`nav rbx-navbar ${cls}`}>
-    {links.map(([href, label]) => (
+    {(authed ? userLinks : guestLinks).map(([href, label]) => (
       <li className='cursor-pointer' key={href}>
         <Link href={href}><a className='font-header-2 nav-menu-title text-header'>{label}</a></Link>
       </li>
@@ -29,6 +36,13 @@ const Navbar2020 = () => {
   const auth = AuthenticationStore.useContainer();
   const loginModal = LoginModalStore.useContainer();
   const [q, setQ] = useState('');
+  const [navOpen, setNavOpen] = useState(false);
+  const authed = !!auth.isAuthenticated;
+  useEffect(() => {
+    document.body.classList.toggle('logged-in', authed);
+    document.body.classList.toggle('no-gutter-ads', authed);
+    return () => document.body.classList.remove('logged-in', 'no-gutter-ads');
+  }, [authed]);
 
   const doLogin = (e) => {
     e.preventDefault();
@@ -51,14 +65,18 @@ const Navbar2020 = () => {
   const robux = auth.robux !== null && auth.robux !== undefined ? Number(auth.robux).toLocaleString() : '?';
 
   return (
+    <>
     <div id='header' className='navbar-fixed-top rbx-header' role='navigation'>
       <div className='container-fluid'>
+        {authed && (
+          <div className='rbx-nav-collapse' onClick={() => setNavOpen(!navOpen)}><span className='icon-nav-menu' /></div>
+        )}
         <div className='rbx-navbar-header'>
           <div className='navbar-header'>
             <Link href='/home'><a className='navbar-brand'><span className='icon-logo' /><span className='icon-logo-r' /></a></Link>
           </div>
         </div>
-        <Menu cls='hidden-xs hidden-sm col-md-5 col-lg-4' />
+        <Menu authed={authed} cls='hidden-xs hidden-sm col-md-5 col-lg-4' />
         <div id='navbar-universal-search' className='navbar-left navbar-search col-xs-5 col-sm-6 col-md-2 col-lg-3' role='search'>
           <div className='input-group'>
             <form onSubmit={search}>
@@ -81,6 +99,9 @@ const Navbar2020 = () => {
               </ul>
               <ul className='nav navbar-right rbx-navbar-icon-group'>
                 <li className='navbar-icon-item'><a className='rbx-menu-item' href='#' onClick={doLogout}><span className='font-header-2 text-header'>Logout</span></a></li>
+                <li id='navbar-settings' className='navbar-icon-item'>
+                  <Link href='/My/Account'><a className='rbx-menu-item'><span className='icon-nav-settings' id='nav-settings' /></a></Link>
+                </li>
                 <li id='navbar-robux' className='navbar-icon-item'>
                   <Link href='/My/Money.aspx'><a className='rbx-menu-item'><span id='nav-robux-icon'><span className='icon-robux-28x28' /></span><span className='rbx-text-navbar-right text-header'>{robux}</span></a></Link>
                 </li>
@@ -97,10 +118,12 @@ const Navbar2020 = () => {
             </ul>
           )}
         </div>
-        <Menu cls='hidden-md hidden-lg col-xs-12' />
+        <Menu authed={authed} cls='hidden-md hidden-lg col-xs-12' />
       </div>
       {loginModal.open && <LoginModal />}
     </div>
+    {authed && <NavSidebar2020 open={navOpen} />}
+    </>
   );
 };
 
