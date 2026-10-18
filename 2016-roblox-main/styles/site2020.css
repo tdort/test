@@ -520,3 +520,8 @@ html.site2020 .rbx-gamerow-title::after { content: "See All  \2192"; white-space
 html.site2020 footer { max-width: 1024px; margin: 48px auto 0 !important; padding-bottom: 24px; }
 html.site2020 footer .row { justify-content: space-between; border-bottom: 1px solid rgba(128,128,128,.5); padding-bottom: 20px; }
 html.site2020 footer h2, html.site2020 footer a { font-size: 14px !important; font-weight: 500 !important; }
+
+/* 2020 skin: pages not yet converted to real 2020 markup (no top-level .content) sit beside the fixed 175px sidebar */
+@media (min-width:1688px){
+  html.rbx2020 body.logged-in .rbx-main-wrap:not(:has(> .content)){margin-left:175px}
+}
