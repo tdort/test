@@ -74,45 +74,82 @@ namespace Roblox.Website.Controllers
 			public string password { get; set; }
 		}
 		
+		// The 2016 iOS app posts "username=..&password=.." (form) to /login/v1/; JSON is accepted too.
+		private async Task<(string? username, string? password)> ReadMobileCredentials()
+		{
+			if (Request.HasFormContentType)
+				return (Request.Form["username"].ToString(), Request.Form["password"].ToString());
+			using var reader = new StreamReader(Request.Body);
+			var body = await reader.ReadToEndAsync();
+			try
+			{
+				var parsed = JsonConvert.DeserializeObject<MobileLoginReq>(body);
+				return (parsed?.username, parsed?.password);
+			}
+			catch
+			{
+				return (null, null);
+			}
+		}
+
 		[HttpPostBypass("mobileapi/login")]
-        public async Task<dynamic> MobileLogin([FromBody] MobileLoginReq request)
-        {
-            FeatureFlags.FeatureCheck(FeatureFlag.LoginEnabled);
-            await RateLimitCheck();
+		public Task<dynamic> MobileLogin() => DoMobileLogin();
 
-            if (string.IsNullOrEmpty(request.username) || string.IsNullOrEmpty(request.password))
-                throw new BadRequestException(3, "Username and Password are required. Please try again.");
+		[HttpPostBypass("login/v1")]
+		public Task<dynamic> MobileLoginV1() => DoMobileLogin();
 
-            UserInfo userInfo;
-            try
-            {
-                userInfo = await services.users.GetUserByName(request.username);
-            }
-            catch (RecordNotFoundException)
-            {
-                throw new ForbiddenException(1, "Incorrect username or password. Please try again.");
-            }
+		private static object MobileUserInfo(string username, long userId, long robux, long tickets) => new
+		{
+			UserName = username,
+			RobuxBalance = robux,
+			TicketsBalance = tickets,
+			IsAnyBuildersClubMember = true,
+			ThumbnailUrl = $"{Configuration.BaseUrl}/Thumbs/Avatar.ashx?userId={userId}",
+			UserID = userId
+		};
 
-            if(await Login(request.username, request.password, userInfo.userId))
-                await CreateSessionAndSetCookie(userInfo.userId);
+		[HttpGetBypass("mobileapi/userinfo")]
+		[HttpPostBypass("mobileapi/userinfo")]
+		public async Task<dynamic> MobileUserInfoEndpoint()
+		{
+			var session = userSession;
+			if (session == null) return StatusCode(401, new { Status = "Error", Message = "Not logged in" });
+			var info = await services.users.GetUserById(session.userId);
+			var bal = await services.economy.GetUserBalance(session.userId);
+			return MobileUserInfo(info.username, session.userId, bal.robux, bal.tickets);
+		}
 
-            var userBalance = await services.economy.GetUserBalance(userInfo.userId);
+		private async Task<dynamic> DoMobileLogin()
+		{
+			var (username, password) = await ReadMobileCredentials();
+			FeatureFlags.FeatureCheck(FeatureFlag.LoginEnabled);
+			await RateLimitCheck();
 
-            return new
-            {
-                Status = "OK",
-                UserInfo = new
-                {
-                    UserName = request.username,
-                    RobuxBalance = userBalance.robux,
-                    TicketsBalance = userBalance.tickets,
-                    IsAnyBuildersClubMember = true,
-                    ThumbnailUrl = $"{Configuration.BaseUrl}/Thumbs/Avatar.ashx?userId={userInfo.userId}",
-                    UserID = userInfo.userId
-                }
-            };
-        }
-		
+			if (string.IsNullOrEmpty(username) || string.IsNullOrEmpty(password))
+				throw new BadRequestException(3, "Username and Password are required. Please try again.");
+
+			UserInfo userInfo;
+			try
+			{
+				userInfo = await services.users.GetUserByName(username);
+			}
+			catch (RecordNotFoundException)
+			{
+				throw new ForbiddenException(1, "Incorrect username or password. Please try again.");
+			}
+
+			if (await Login(username, password, userInfo.userId))
+				await CreateSessionAndSetCookie(userInfo.userId);
+
+			var userBalance = await services.economy.GetUserBalance(userInfo.userId);
+
+			return new
+			{
+				Status = "OK",
+				UserInfo = MobileUserInfo(userInfo.username, userInfo.userId, userBalance.robux, userBalance.tickets)
+			};
+		}
+
 		private async Task<bool> Login(string username, string password, long userId)
 		{
 			try
@@ -137,6 +174,19 @@ namespace Roblox.Website.Controllers
 			return true;
 		}
 		
+		// ".zaplix.xyz" so the cookie is shared by www./api./m./chat. hosts the app talks to
+		private static string? MobileCookieDomain()
+		{
+			try
+			{
+				var host = new Uri(Configuration.BaseUrl.Contains("://") ? Configuration.BaseUrl : "http://" + Configuration.BaseUrl).Host;
+				if (host.StartsWith("www.")) host = host.Substring(4);
+				if (host == "localhost" || System.Net.IPAddress.TryParse(host, out _)) return null;
+				return "." + host;
+			}
+			catch { return null; }
+		}
+
 		private async Task<string> CreateSessionAndSetCookie(long userId)
 		{
 			var sessionCookie = Middleware.SessionMiddleware.CreateJwt(new Middleware.JwtEntry()
@@ -147,7 +197,7 @@ namespace Roblox.Website.Controllers
 
 			HttpContext.Response.Cookies.Append(Middleware.SessionMiddleware.CookieName, sessionCookie, new CookieOptions()
 			{
-				Domain = ".{Configuration.BaseUrl}",
+				Domain = MobileCookieDomain(),
 				Secure = false,
 				Expires = DateTimeOffset.Now.Add(TimeSpan.FromDays(364)),
 				IsEssential = true,
