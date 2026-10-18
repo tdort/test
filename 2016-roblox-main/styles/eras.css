@@ -1,66 +1,151 @@
 /*
- * Era skins. 2016 = default, so it has no block here.
- * Values below are STARTING POINTS: tune them against reference screenshots of each year.
- * Body background needs !important because _app.js sets it inline.
+ * Era skins (original CSS, written to recreate each year's look; not Roblox's own stylesheets).
+ * 2016 = default (no block). JSS class names look like `name-0-2-1`, so [class*="name-"] hooks work.
+ * Everything is scoped under html.era-YYYY.
  */
 
-/* ---------- 2013 ---------- */
-html.era-2013 {
-  --era-nav-bg: #1a1a1a;
-  --era-nav-text: #e6e6e6;
-  --era-page-bg: #f5f5f5;
-  --era-font: Arial, Helvetica, sans-serif;
-}
-
-/* ---------- 2014 ---------- */
-html.era-2014 {
-  --era-nav-bg: #2b2b2b;
-  --era-nav-text: #ffffff;
-  --era-page-bg: #ececec;
-  --era-font: Arial, Helvetica, sans-serif;
-}
-
-/* ---------- 2015 ---------- */
-html.era-2015 {
-  --era-nav-bg: #00a2ff;
-  --era-nav-text: #ffffff;
-  --era-page-bg: #e3e3e3;
-  --era-font: 'Source Sans Pro', Arial, Helvetica, sans-serif;
-}
-
-/* ---------- 2017 ---------- */
-html.era-2017 {
-  --era-nav-bg: #0074bd;
-  --era-nav-text: #ffffff;
-  --era-page-bg: #e3e3e3;
-  --era-font: 'Source Sans Pro', Arial, Helvetica, sans-serif;
-}
-
-/* ---------- 2018 ---------- */
-html.era-2018 {
-  --era-nav-bg: #0066cc;
-  --era-nav-text: #ffffff;
-  --era-page-bg: #f2f4f5;
-  --era-font: 'Source Sans Pro', Arial, Helvetica, sans-serif;
-}
-
-/* ---------- 2019 ---------- */
-html.era-2019 {
-  --era-nav-bg: #232527;
-  --era-nav-text: #ffffff;
-  --era-page-bg: #f2f4f5;
-  --era-font: 'Source Sans Pro', Arial, Helvetica, sans-serif;
-}
-
-/* ---------- shared wiring (applies to every non-default era) ---------- */
-html[class*='era-'] body {
-  background: var(--era-page-bg) !important;
-  font-family: var(--era-font) !important;
-}
+/* ===================== shared hooks ===================== */
+html[class*='era-'] body { background: var(--e-bg) !important; font-family: var(--e-font) !important; color: var(--e-text); }
 html[class*='era-'] .navbar-wrapper-main nav.navbar {
-  background-color: var(--era-nav-bg);
+  background: var(--e-nav-bg) !important;
+  border-bottom: var(--e-nav-border);
+  box-shadow: var(--e-nav-shadow);
+  padding-top: var(--e-nav-pad) !important;
+  padding-bottom: var(--e-nav-pad) !important;
 }
 html[class*='era-'] .navbar-wrapper-main nav.navbar a,
 html[class*='era-'] .navbar-wrapper-main nav.navbar .nav-link {
-  color: var(--era-nav-text);
+  color: var(--e-nav-text) !important;
+  font-weight: var(--e-nav-weight);
+  text-transform: var(--e-nav-case);
+  text-shadow: var(--e-nav-textshadow);
+}
+html[class*='era-'] .navbar-wrapper-main nav.navbar a:hover { background: var(--e-nav-hover); }
+html[class*='era-'] html div.container, html[class*='era-'] div.container { max-width: var(--e-width); }
+html[class*='era-'] a, html[class*='era-'] .fake-link { color: var(--e-link); }
+html[class*='era-'] a:hover { color: var(--e-link-hover); text-decoration: var(--e-link-deco) !important; }
+html[class*='era-'] h1, html[class*='era-'] h2, html[class*='era-'] h3, html[class*='era-'] h4 {
+  font-family: var(--e-head-font); color: var(--e-head); font-weight: var(--e-head-weight);
+}
+html[class*='era-'] [class*="card"], html[class*='era-'] .card {
+  background: var(--e-card-bg) !important;
+  border: var(--e-card-border) !important;
+  border-radius: var(--e-radius) !important;
+  box-shadow: var(--e-card-shadow) !important;
+}
+html[class*='era-'] button, html[class*='era-'] .btn, html[class*='era-'] input[type=submit],
+html[class*='era-'] [class*="Button-"], html[class*='era-'] [class*="button-"], html[class*='era-'] [class*="legacyButton"] {
+  background: var(--e-btn-bg) !important;
+  color: var(--e-btn-text) !important;
+  border: var(--e-btn-border) !important;
+  border-radius: var(--e-btn-radius) !important;
+  box-shadow: var(--e-btn-shadow);
+  text-shadow: var(--e-btn-textshadow);
+  font-family: var(--e-font);
+}
+html[class*='era-'] button:hover, html[class*='era-'] .btn:hover,
+html[class*='era-'] [class*="Button-"]:hover, html[class*='era-'] [class*="button-"]:hover {
+  background: var(--e-btn-bg-hover) !important;
+}
+html[class*='era-'] input.form-control, html[class*='era-'] select.form-control, html[class*='era-'] textarea {
+  border: var(--e-input-border); border-radius: var(--e-radius); background: #fff; box-shadow: var(--e-input-shadow);
+}
+html[class*='era-'] [class*="footer"] { background: var(--e-foot-bg) !important; color: var(--e-foot-text) !important; border-top: var(--e-foot-border); }
+html[class*='era-'] [class*="footer"] a { color: var(--e-foot-text) !important; }
+html[class*='era-'] .divider-top, html[class*='era-'] .divider-bottom, html[class*='era-'] .divider-right { border-color: var(--e-line) !important; }
+
+/* ===================== 2013 : black glossy bar, beveled boxes, Arial ===================== */
+html.era-2013 {
+  --e-bg: #e6e6e6 url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="4" height="4"><rect width="4" height="4" fill="%23e6e6e6"/><rect width="1" height="1" fill="%23dcdcdc"/></svg>');
+  --e-font: Arial, Helvetica, sans-serif; --e-head-font: Arial, Helvetica, sans-serif; --e-text: #222;
+  --e-head: #222; --e-head-weight: bold;
+  --e-nav-bg: linear-gradient(#4d4d4d 0%, #1a1a1a 50%, #000 100%);
+  --e-nav-border: 1px solid #000; --e-nav-shadow: 0 2px 4px rgba(0,0,0,.5); --e-nav-pad: 2px;
+  --e-nav-text: #e8e8e8; --e-nav-weight: bold; --e-nav-case: none; --e-nav-textshadow: 0 -1px 0 #000;
+  --e-nav-hover: rgba(255,255,255,.15);
+  --e-width: 970px; --e-link: #0055b3; --e-link-hover: #003d80; --e-link-deco: underline;
+  --e-radius: 0; --e-card-bg: #fff; --e-card-border: 1px solid #999; --e-card-shadow: inset 0 0 0 1px #fff, 1px 1px 3px rgba(0,0,0,.25);
+  --e-btn-bg: linear-gradient(#f4f4f4, #bdbdbd); --e-btn-bg-hover: linear-gradient(#fff, #d0d0d0);
+  --e-btn-text: #000; --e-btn-border: 1px solid #5a5a5a; --e-btn-radius: 3px;
+  --e-btn-shadow: inset 0 1px 0 #fff; --e-btn-textshadow: 0 1px 0 #fff;
+  --e-input-border: 1px solid #7f7f7f; --e-input-shadow: inset 1px 1px 2px rgba(0,0,0,.25);
+  --e-foot-bg: #222; --e-foot-text: #bbb; --e-foot-border: 3px solid #000; --e-line: #aaa;
+}
+html.era-2013 body { font-size: 12px; }
+html.era-2013 h1, html.era-2013 h2 { text-shadow: 0 1px 0 #fff; }
+html.era-2013 h2 { border-bottom: 1px solid #999; padding-bottom: 2px; }
+
+/* ===================== 2014 : lighter bar, glossy buttons, Verdana-ish ===================== */
+html.era-2014 {
+  --e-bg: #f0f0f0; --e-font: Verdana, Arial, sans-serif; --e-head-font: Arial, Helvetica, sans-serif;
+  --e-text: #333; --e-head: #1f1f1f; --e-head-weight: bold;
+  --e-nav-bg: linear-gradient(#6a6a6a 0%, #3a3a3a 100%); --e-nav-border: 1px solid #1c1c1c;
+  --e-nav-shadow: 0 1px 3px rgba(0,0,0,.4); --e-nav-pad: 4px; --e-nav-text: #fff; --e-nav-weight: bold;
+  --e-nav-case: none; --e-nav-textshadow: 0 1px 1px #000; --e-nav-hover: rgba(255,255,255,.2);
+  --e-width: 970px; --e-link: #0b5cad; --e-link-hover: #083f77; --e-link-deco: underline;
+  --e-radius: 2px; --e-card-bg: #fff; --e-card-border: 1px solid #b0b0b0; --e-card-shadow: 0 1px 2px rgba(0,0,0,.2);
+  --e-btn-bg: linear-gradient(#ffffff, #d6d6d6); --e-btn-bg-hover: linear-gradient(#ffffff, #cfe0ff);
+  --e-btn-text: #222; --e-btn-border: 1px solid #6e6e6e; --e-btn-radius: 3px;
+  --e-btn-shadow: 0 1px 1px rgba(0,0,0,.2); --e-btn-textshadow: none;
+  --e-input-border: 1px solid #8a8a8a; --e-input-shadow: inset 0 1px 2px rgba(0,0,0,.15);
+  --e-foot-bg: #e0e0e0; --e-foot-text: #444; --e-foot-border: 1px solid #aaa; --e-line: #c3c3c3;
+}
+html.era-2014 body { font-size: 12px; }
+
+/* ===================== 2015 : light-blue bar, grey page, glossy ===================== */
+html.era-2015 {
+  --e-bg: #e3e3e3; --e-font: 'Source Sans Pro', Arial, sans-serif; --e-head-font: 'Source Sans Pro', Arial, sans-serif;
+  --e-text: #333; --e-head: #222; --e-head-weight: 600;
+  --e-nav-bg: linear-gradient(#27aaff 0%, #0090e8 100%); --e-nav-border: 1px solid #0073bc;
+  --e-nav-shadow: none; --e-nav-pad: 5px; --e-nav-text: #fff; --e-nav-weight: 600; --e-nav-case: none;
+  --e-nav-textshadow: 0 1px 0 rgba(0,0,0,.25); --e-nav-hover: rgba(255,255,255,.18);
+  --e-width: 970px; --e-link: #0055b3; --e-link-hover: #003a7a; --e-link-deco: none;
+  --e-radius: 0; --e-card-bg: #fff; --e-card-border: 1px solid #c3c3c3; --e-card-shadow: none;
+  --e-btn-bg: linear-gradient(#ffffff, #e0e0e0); --e-btn-bg-hover: linear-gradient(#ffffff, #cbd8ff);
+  --e-btn-text: #000; --e-btn-border: 1px solid #444; --e-btn-radius: 0;
+  --e-btn-shadow: none; --e-btn-textshadow: none;
+  --e-input-border: 1px solid #c3c3c3; --e-input-shadow: none;
+  --e-foot-bg: transparent; --e-foot-text: #666; --e-foot-border: 1px solid #c3c3c3; --e-line: #c3c3c3;
+}
+
+/* ===================== 2017 : #0074bd bar, flat green/blue buttons ===================== */
+html.era-2017 {
+  --e-bg: #e3e3e3; --e-font: 'Source Sans Pro', Arial, sans-serif; --e-head-font: 'Source Sans Pro', Arial, sans-serif;
+  --e-text: #343434; --e-head: #343434; --e-head-weight: 600;
+  --e-nav-bg: #0074bd; --e-nav-border: 0; --e-nav-shadow: 0 1px 2px rgba(0,0,0,.3); --e-nav-pad: 6px;
+  --e-nav-text: #fff; --e-nav-weight: 600; --e-nav-case: none; --e-nav-textshadow: none; --e-nav-hover: rgba(255,255,255,.15);
+  --e-width: 1000px; --e-link: #0074bd; --e-link-hover: #005a94; --e-link-deco: none;
+  --e-radius: 2px; --e-card-bg: #fff; --e-card-border: 1px solid #e3e3e3; --e-card-shadow: 0 1px 3px rgba(0,0,0,.12);
+  --e-btn-bg: #fff; --e-btn-bg-hover: #f2f2f2; --e-btn-text: #343434; --e-btn-border: 1px solid #b8b8b8; --e-btn-radius: 3px;
+  --e-btn-shadow: none; --e-btn-textshadow: none;
+  --e-input-border: 1px solid #b8b8b8; --e-input-shadow: none;
+  --e-foot-bg: #fff; --e-foot-text: #666; --e-foot-border: 1px solid #e3e3e3; --e-line: #e3e3e3;
+}
+
+/* ===================== 2018 : flat, light grey page, rounded, thin shadows ===================== */
+html.era-2018 {
+  --e-bg: #f2f4f5; --e-font: 'Source Sans Pro', 'Helvetica Neue', Arial, sans-serif; --e-head-font: inherit;
+  --e-text: #393b3d; --e-head: #393b3d; --e-head-weight: 700;
+  --e-nav-bg: #fff; --e-nav-border: 1px solid #e3e3e3; --e-nav-shadow: 0 1px 3px rgba(25,25,25,.15); --e-nav-pad: 8px;
+  --e-nav-text: #393b3d; --e-nav-weight: 600; --e-nav-case: none; --e-nav-textshadow: none; --e-nav-hover: #f2f4f5;
+  --e-width: 1040px; --e-link: #00a2ff; --e-link-hover: #0074bd; --e-link-deco: none;
+  --e-radius: 4px; --e-card-bg: #fff; --e-card-border: 1px solid #e3e3e3; --e-card-shadow: 0 1px 3px rgba(25,25,25,.15);
+  --e-btn-bg: #00a2ff; --e-btn-bg-hover: #0090e0; --e-btn-text: #fff; --e-btn-border: 1px solid #00a2ff; --e-btn-radius: 4px;
+  --e-btn-shadow: none; --e-btn-textshadow: none;
+  --e-input-border: 1px solid #d0d3d6; --e-input-shadow: none;
+  --e-foot-bg: #fff; --e-foot-text: #606060; --e-foot-border: 1px solid #e3e3e3; --e-line: #e3e3e3;
+}
+
+/* ===================== 2019 : dark bar, rounded, bigger pill buttons ===================== */
+html.era-2019 {
+  --e-bg: #f2f4f5; --e-font: 'Builder Sans', 'Source Sans Pro', Arial, sans-serif; --e-head-font: inherit;
+  --e-text: #392213; --e-text: #393b3d; --e-head: #1e2023; --e-head-weight: 700;
+  --e-nav-bg: #232527; --e-nav-border: 0; --e-nav-shadow: none; --e-nav-pad: 8px;
+  --e-nav-text: #fff; --e-nav-weight: 500; --e-nav-case: none; --e-nav-textshadow: none; --e-nav-hover: #393b3d;
+  --e-width: 1080px; --e-link: #0066cc; --e-link-hover: #004c99; --e-link-deco: none;
+  --e-radius: 6px; --e-card-bg: #fff; --e-card-border: 0; --e-card-shadow: 0 1px 4px rgba(25,25,25,.2);
+  --e-btn-bg: #335fff; --e-btn-bg-hover: #2850e0; --e-btn-text: #fff; --e-btn-border: 1px solid #335fff; --e-btn-radius: 6px;
+  --e-btn-shadow: none; --e-btn-textshadow: none;
+  --e-input-border: 1px solid #bdbebe; --e-input-shadow: none;
+  --e-foot-bg: #232527; --e-foot-text: #bdbebe; --e-foot-border: 0; --e-line: #e3e3e3;
 }
