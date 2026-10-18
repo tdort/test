@@ -22,7 +22,8 @@ import getFlag from "../lib/getFlag";
 import Chat from "../components/chat";
 import Router from 'next/router';
 import { getMyBan } from '../services/users';
-import { getSite2020, applySite2020 } from '../services/site2020';
+import { getSite2020, applySite2020, useRbx2020 } from '../services/site2020';
+import Footer2020 from '../components/footer2020';
 import '../services/era';
 
 if (typeof window !== 'undefined') {
@@ -50,6 +51,7 @@ function RobloxApp({ Component, pageProps }) {
   // Banned users get sent to /notapproved no matter which page they open or navigate to client-side.
   // The page stays covered until the first ban check finishes (fails open after 5s so an API outage doesn't lock everyone out).
   const [verified, setVerified] = useState(false);
+  const is2020 = useRbx2020();
   useEffect(() => {
     let inflight = false;
     const onBanPage = () => window.location.pathname.toLowerCase().startsWith('/notapproved');
@@ -95,7 +97,7 @@ function RobloxApp({ Component, pageProps }) {
     if (el && el.length) {
       const theme = getTheme();
       const divBackground = theme === themeType.obc2016 ? 'url(/img/Unofficial/obc_theme_2016_bg.png) repeat-x #222224' : document.getElementById('theme-2016-enabled') ? '#e3e3e3' : '#fff';
-      if (document.documentElement.classList.contains('site2020')) el[0].removeAttribute('style');
+      if (document.documentElement.classList.contains('rbx2020')) el[0].removeAttribute('style');
       else el[0].setAttribute('style', 'background: ' + divBackground);
     }
   }, [pageProps]);
@@ -123,7 +125,7 @@ function RobloxApp({ Component, pageProps }) {
           <Chat />
         </ThumbnailStore.Provider>
       </MainWrapper>
-      <Footer/>
+      {is2020 ? <Footer2020/> : <Footer/>}
     </AuthenticationStore.Provider>
   </div>
 }
