@@ -2300,7 +2300,7 @@ public class UsersService : ServiceBase, IService
     public async Task<bool> GetSite2020Public()
     {
         var v = await redis.StringGetAsync("Site2020Public:v1");
-        return v.HasValue && v.ToString() == "1";
+        return v == "1";
     }
 
     public async Task SetSite2020Public(bool enabled)
