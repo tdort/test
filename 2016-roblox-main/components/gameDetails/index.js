@@ -10,7 +10,9 @@ import Passess from "../catalogDetailsPage/components/passess";
 import OldVerticalTabs from "../oldVerticalTabs";
 import GameOverview from "./components/gameOverview";
 import GameServers from "./components/gameServers";
-import GameDetailsStore from "./stores/gameDetailsStore"
+import GameDetailsStore from "./stores/gameDetailsStore";
+import GameDetails2020 from "../gameDetails2020";
+import { useRbx2020 } from "../../services/site2020";
 
 const useStyles = createUseStyles({
   gameContainer: {
@@ -25,11 +27,13 @@ const GameDetails = props => {
   const s = useStyles();
 
   const store = GameDetailsStore.useContainer();
+  const is2020 = useRbx2020();
   useEffect(() => {
     store.setDetails(details);
   }, [props]);
 
   if (!store.details) return null;
+  if (is2020) return <GameDetails2020 details={details} />;
   return <div className='container'>
     <AdBanner></AdBanner>
     <div className={s.gameContainer}>
