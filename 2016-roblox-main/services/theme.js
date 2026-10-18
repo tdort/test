@@ -112,4 +112,12 @@ if (isLocalStorageAvailable && typeof window !== 'undefined') {
   apply(getTheme());
 }
 
-export { themeType, getTheme, setTheme };
+// while the 2020 look is on, the 2016 themes (OBC / dark) are fully switched off; they come back when it's off
+const suspendTheme = () => {
+  if (typeof document === 'undefined') return;
+  Object.values(themeType).forEach((t) => document.documentElement.classList.remove(t));
+  nodarkmode();
+};
+const resumeTheme = () => { if (isLocalStorageAvailable) apply(getTheme()); };
+
+export { themeType, getTheme, setTheme, suspendTheme, resumeTheme };

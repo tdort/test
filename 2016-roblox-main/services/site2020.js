@@ -1,6 +1,8 @@
 // Owner-only 2020 website look, using Roblox's real 2020 stylesheet (public/css/roblox2020/roblox2020.css).
 // Stored client-side; 2016 stays the default. values: 'off' | 'light' | 'dark'
 import { useEffect, useState } from 'react';
+import { suspendTheme, resumeTheme } from './theme';
+import { applyEra } from './era';
 import request, { getFullUrl } from '../lib/request';
 
 const KEY = 'rbx_site2020_v1';
@@ -41,6 +43,9 @@ const applySite2020 = (mode, allowed = true) => {
   } else if (old) {
     old.remove();
   }
+  // 2020 look cancels the 2016 themes and site eras entirely
+  if (on) suspendTheme(); else resumeTheme();
+  applyEra();
   window.dispatchEvent(new CustomEvent('rbx2020change', { detail: on }));
 };
 

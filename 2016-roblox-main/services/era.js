@@ -28,6 +28,7 @@ const applyEra = (era = getEra()) => {
   if (typeof document === 'undefined') return;
   const html = document.documentElement;
   ids.forEach(id => html.classList.remove('era-' + id));
+  if (html.classList.contains('rbx2020')) return; // 2020 look overrides eras
   if (era !== defaultEra && ids.includes(era)) html.classList.add('era-' + era);
 };
 
