@@ -51,7 +51,7 @@ const Row = ({ title, games, icons, sortId }) => {
         <a className='btn-more see-all-link-icon' href={`/games?SortFilter=${encodeURIComponent(sortId || '')}`} style={{ float: 'right' }}>See All</a>
       </div>
       <div className='horizontal-scroller' style={{ clear: 'both' }}>
-        <a className={'scroller prev' + (edge.l ? ' disabled' : '')} style={{ left: -30, height: 'auto', bottom: 0 }} onClick={() => go(-1)}>
+        <a className={'scroller prev' + (edge.l ? ' disabled' : '')} style={{ left: -30, height: 150, top: 0 }} onClick={() => go(-1)}>
           <div className='arrow'><span className='icon-games-carousel-left' /></div>
         </a>
         <div className='game-carousel' ref={ref} onScroll={upd} style={{ overflowX: 'auto', overflowY: 'hidden', scrollbarWidth: 'none' }}>
@@ -59,7 +59,7 @@ const Row = ({ title, games, icons, sortId }) => {
             {games ? games.map(g => <Card key={g.universeId} g={g} icon={icons && icons[g.universeId]} />) : null}
           </ul>
         </div>
-        <a className={'scroller next' + (edge.r ? ' disabled' : '')} style={{ right: -30, height: 'auto', bottom: 0 }} onClick={() => go(1)}>
+        <a className={'scroller next' + (edge.r ? ' disabled' : '')} style={{ right: -30, height: 150, top: 0 }} onClick={() => go(1)}>
           <div className='arrow'><span className='icon-games-carousel-right' /></div>
         </a>
       </div>
