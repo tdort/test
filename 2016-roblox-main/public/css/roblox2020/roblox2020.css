@@ -45,3 +45,9 @@ div#simplemodal-container{box-sizing:content-box;}@media(max-width:480px){div#si
 .rbx-header .popover .dropdown-menu li a{display:block;padding:10px 12px;color:#393b3d}
 .dark-theme .rbx-header .popover{background:#393b3d}
 .dark-theme .rbx-header .popover .dropdown-menu li a{color:#fff}
+
+/* ===== revival fixes 2 (age label padding, footer row) ===== */
+.rbx-header .age-bracket-label>a,.rbx-header .age-bracket-label>span{padding:0!important;display:inline-flex;align-items:center;height:40px}
+.rbx-header .rbx-navbar-right-nav{margin:0}
+html .container-footer .footer-links>li.footer-link{width:auto!important;max-width:none!important;flex:0 1 auto!important;padding:0!important;margin:6px!important}
+html .container-footer ul.footer-links{display:flex!important;flex-direction:row!important;flex-wrap:wrap;justify-content:space-between;margin:20px 0 32px!important}
