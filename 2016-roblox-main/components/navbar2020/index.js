@@ -100,15 +100,21 @@ const Navbar2020 = () => {
         </div>
         <div className='navbar-right rbx-navbar-right'>
           {auth.isPending ? null : auth.isAuthenticated ? (
-            <>
-              <ul className='nav navbar-right rbx-navbar-right-nav'>
-                <li className='age-bracket-label' style={{ display: 'flex', alignItems: 'center', height: 40, paddingTop: 0, marginTop: 0 }}>
-                  <Link href={`/users/${auth.userId}/profile`}><a className='text-header age-bracket-label-username font-caption-header' style={{ padding: 0, lineHeight: '40px', height: 40 }}>{auth.username}</a></Link>
-                  <span className='age-bracket-label-age' style={{ lineHeight: '40px', margin: '0 0 0 6px', padding: 0 }}><span className='text-header font-caption-header' style={{ lineHeight: '40px' }}>13+</span></span>
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-end', height: 40 }}>
+              <ul className='nav navbar-right rbx-navbar-right-nav' style={{ float: 'none', margin: 0, display: 'flex', alignItems: 'center', height: 40 }}>
+                <li className='age-bracket-label' style={{ float: 'none', display: 'flex', alignItems: 'center', height: 40, padding: 0, margin: '0 8px 0 0' }}>
+                  <Link href={`/users/${auth.userId}/profile`}><a className='text-header age-bracket-label-username font-caption-header' style={{ padding: 0, lineHeight: '40px' }}>{auth.username}:</a></Link>
+                  <span className='age-bracket-label-age' style={{ lineHeight: '40px', margin: '0 0 0 4px', padding: 0 }}><span className='text-header font-caption-header' style={{ lineHeight: '40px' }}>13+</span></span>
                 </li>
               </ul>
-              <ul className='nav navbar-right rbx-navbar-icon-group'>
-                <li id='navbar-settings' className='navbar-icon-item' style={{ position: 'relative' }}>
+              <ul className='nav navbar-right rbx-navbar-icon-group' style={{ float: 'none', margin: 0, display: 'flex', alignItems: 'center', height: 40 }}>
+                <li id='navbar-tix' className='navbar-icon-item' style={{ float: 'none', display: 'flex', alignItems: 'center', height: 40, padding: 0 }}>
+                  <Link href='/My/Money.aspx'><a className='rbx-menu-item'><span className='icon-nav-tix' /><span className='rbx-text-navbar-right text-header'>{tix}</span></a></Link>
+                </li>
+                <li id='navbar-robux' className='navbar-icon-item' style={{ float: 'none', display: 'flex', alignItems: 'center', height: 40, padding: 0 }}>
+                  <Link href='/My/Money.aspx'><a className='rbx-menu-item'><span id='nav-robux-icon'><span className='icon-robux-28x28' /></span><span className='rbx-text-navbar-right text-header'>{robux}</span></a></Link>
+                </li>
+                <li id='navbar-settings' className='navbar-icon-item' style={{ float: 'none', display: 'flex', alignItems: 'center', height: 40, padding: 0, position: 'relative' }}>
                   <a className='rbx-menu-item' href='#' onClick={(e) => { e.preventDefault(); setMenuOpen(!menuOpen); }}>
                     <span className='icon-nav-settings' id='nav-settings' />
                   </a>
@@ -116,21 +122,15 @@ const Navbar2020 = () => {
                     <div className='popover bottom' style={{ display: 'block', position: 'absolute', top: '100%', right: 0, left: 'auto', marginTop: 4, width: 125 }}>
                       <div className='popover-content'>
                         <ul id='settings-popover-menu' className='dropdown-menu' style={{ display: 'block', position: 'static', float: 'none', boxShadow: 'none', border: 0, margin: 0, padding: 0, minWidth: 0 }}>
-                          <li><Link href='/My/Account'><a className='rbx-menu-item'>Settings</a></Link></li>
-                          <li><a className='rbx-menu-item' href='#' onClick={doLogout}>Logout</a></li>
+                          <li style={{ float: 'none' }}><Link href='/My/Account'><a className='rbx-menu-item'>Settings</a></Link></li>
+                          <li style={{ float: 'none' }}><a className='rbx-menu-item' href='#' onClick={doLogout}>Logout</a></li>
                         </ul>
                       </div>
                     </div>
                   )}
                 </li>
-                <li id='navbar-tix' className='navbar-icon-item'>
-                  <Link href='/My/Money.aspx'><a className='rbx-menu-item'><span className='icon-nav-tix' /><span className='rbx-text-navbar-right text-header'>{tix}</span></a></Link>
-                </li>
-                <li id='navbar-robux' className='navbar-icon-item'>
-                  <Link href='/My/Money.aspx'><a className='rbx-menu-item'><span id='nav-robux-icon'><span className='icon-robux-28x28' /></span><span className='rbx-text-navbar-right text-header'>{robux}</span></a></Link>
-                </li>
               </ul>
-            </>
+            </div>
           ) : (
             <ul className='nav navbar-right rbx-navbar-right-nav'>
               <li className='signup-button-container'>
