@@ -72,16 +72,20 @@ const Navbar2020 = () => {
         </div>
         <div className='navbar-right rbx-navbar-right'>
           {auth.isPending ? null : auth.isAuthenticated ? (
-            <ul className='nav navbar-right rbx-navbar-right-nav'>
-              <li><a className='rbx-menu-item' href='#' onClick={doLogout}><span className='font-header-2 text-header'>Logout</span></a></li>
-              <li className='navbar-icon-item'>
-                <Link href='/My/Money.aspx'><a className='rbx-menu-item'><span className='icon-nav-robux' /><span className='rbx-text-navbar-right text-header'>{robux}</span></a></Link>
-              </li>
-              <li className='age-bracket-label'>
-                <Link href={`/users/${auth.userId}/profile`}><a className='text-header age-bracket-label-username font-caption-header'>{auth.username}</a></Link>
-                <span className='age-bracket-label-age text-header font-caption-header'>13+</span>
-              </li>
-            </ul>
+            <>
+              <ul className='nav navbar-right rbx-navbar-right-nav'>
+                <li className='age-bracket-label'>
+                  <Link href={`/users/${auth.userId}/profile`}><a className='text-header age-bracket-label-username font-caption-header'>{auth.username}</a></Link>
+                  <span className='age-bracket-label-age'><span className='text-header font-caption-header'>13+</span></span>
+                </li>
+              </ul>
+              <ul className='nav navbar-right rbx-navbar-icon-group'>
+                <li className='navbar-icon-item'><a className='rbx-menu-item' href='#' onClick={doLogout}><span className='font-header-2 text-header'>Logout</span></a></li>
+                <li id='navbar-robux' className='navbar-icon-item'>
+                  <Link href='/My/Money.aspx'><a className='rbx-menu-item'><span id='nav-robux-icon'><span className='icon-robux-28x28' /></span><span className='rbx-text-navbar-right text-header'>{robux}</span></a></Link>
+                </li>
+              </ul>
+            </>
           ) : (
             <ul className='nav navbar-right rbx-navbar-right-nav'>
               <li className='signup-button-container'>

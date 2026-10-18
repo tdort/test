@@ -54,7 +54,7 @@ const Navbar = () => {
     applySite2020(getSite2020(), authStore.userId === 1);
   }, [authStore.isPending, authStore.userId]);
 
-  if (is2020) return <div className={s.wrapper + ' navbar-wrapper-main'}><Navbar2020 /></div>;
+  if (is2020) return <div className='navbar-wrapper-main' style={{ margin: 0 }}><Navbar2020 /></div>;
 
   return <div className={s.wrapper + ' navbar-wrapper-main'}>
     <nav className={`navbar fixed-top navbar-expand-lg ${s.navbar}`} ref={mainNavBarRef}>
