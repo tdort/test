@@ -1,5 +1,5 @@
 // Games page using Roblox's real 2020 markup (styled by /css/roblox2020/roblox2020.css).
-import React, { useEffect } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import GamesPageStore from '../../stores/gamesPage';
 import { getQueryParams } from '../../lib/getQueryParams';
 
@@ -35,18 +35,37 @@ const Card = ({ g, icon }) => {
   );
 };
 
-const Row = ({ title, games, icons }) => (
-  <div className='game-sort-carousel-wrapper'>
-    <div className='container-header'>
-      <h3>{title}</h3>
+const Row = ({ title, games, icons, sortId }) => {
+  const ref = useRef(null);
+  const [edge, setEdge] = useState({ l: true, r: false });
+  const upd = () => {
+    const el = ref.current;
+    if (el) setEdge({ l: el.scrollLeft <= 1, r: el.scrollLeft + el.clientWidth >= el.scrollWidth - 1 });
+  };
+  useEffect(upd, [games]);
+  const go = (dir) => ref.current && ref.current.scrollBy({ left: dir * ref.current.clientWidth * 0.8, behavior: 'smooth' });
+  return (
+    <div className='game-sort-carousel-wrapper'>
+      <div className='container-header'>
+        <h3>{title}</h3>
+        <a className='btn-more see-all-link-icon' href={`/games?SortFilter=${encodeURIComponent(sortId || '')}`} style={{ float: 'right' }}>See All</a>
+      </div>
+      <div className='horizontal-scroller' style={{ clear: 'both' }}>
+        <a className={'scroller prev' + (edge.l ? ' disabled' : '')} style={{ left: -30, height: 'auto', bottom: 0 }} onClick={() => go(-1)}>
+          <div className='arrow'><span className='icon-games-carousel-left' /></div>
+        </a>
+        <div className='game-carousel' ref={ref} onScroll={upd} style={{ overflowX: 'auto', overflowY: 'hidden', scrollbarWidth: 'none' }}>
+          <ul className='game-cards' style={{ whiteSpace: 'nowrap' }}>
+            {games ? games.map(g => <Card key={g.universeId} g={g} icon={icons && icons[g.universeId]} />) : null}
+          </ul>
+        </div>
+        <a className={'scroller next' + (edge.r ? ' disabled' : '')} style={{ right: -30, height: 'auto', bottom: 0 }} onClick={() => go(1)}>
+          <div className='arrow'><span className='icon-games-carousel-right' /></div>
+        </a>
+      </div>
     </div>
-    <div className='game-carousel' style={{ overflowX: 'auto', overflowY: 'hidden' }}>
-      <ul className='game-cards'>
-        {games ? games.map(g => <Card key={g.universeId} g={g} icon={icons && icons[g.universeId]} />) : null}
-      </ul>
-    </div>
-  </div>
-);
+  );
+};
 
 const Games2020 = () => {
   const query = getQueryParams();
@@ -73,7 +92,7 @@ const Games2020 = () => {
             (store.sorts || []).map(s => {
               if (seen[s.token]) return null;
               seen[s.token] = true;
-              return <Row key={s.token} title={s.displayName} games={store.games && store.games[s.token]} icons={store.icons} />;
+              return <Row key={s.token} title={s.displayName} games={store.games && store.games[s.token]} icons={store.icons} sortId={s.token} />;
             })
           )}
         </div>

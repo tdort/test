@@ -4,7 +4,7 @@ import getFlag from "../../../lib/getFlag";
 import { setUserDescription } from "../../../services/accountInformation";
 import { getTheme, setTheme } from "../../../services/theme";
 import { eras, getEra, setEra } from "../../../services/era";
-import { getSite2020, setSite2020, applySite2020 } from "../../../services/site2020";
+import { getSite2020, setSite2020, applySite2020, useRbx2020, useSite2020Public } from "../../../services/site2020";
 import { getAvatarMenu, setAvatarYear } from "../../../services/avatarmenu";
 import { get2020Menu, set2020Menu } from "../../../services/develop";
 import AuthenticationStore from "../../../stores/authentication";
@@ -30,6 +30,8 @@ const EditButton = (props) => {
 const AccountInfo = props => {
   const store = MyAccountStore.useContainer();
   const auth = AuthenticationStore.useContainer();
+  const on2020 = useRbx2020();
+  const [site2020Public, setPublic] = useSite2020Public();
   const descRef = useRef(null);
   const [is2020MenuEnabled, set2020MenuEnabled] = useState(false);
   const [avatarMenu, setAvatarMenu] = useState(getAvatarMenu());
@@ -147,7 +149,7 @@ const AccountInfo = props => {
         <div className='mt-4 mb-4'>&emsp;</div>
       </div>
     </div>
-	{auth.userId === 1 && (
+	{(auth.userId === 1 || site2020Public) && (
 	  <div className="col-12 mt-2">
 		<Subtitle>Site Look (Owner)</Subtitle>
 		<div className={cardStyles.card + " p-3"}>
@@ -170,6 +172,20 @@ const AccountInfo = props => {
 			  </select>
 			</div>
 		  </div>
+		  {auth.userId === 1 && (
+			<div className="row mt-3">
+			  <div className="col pe-0">
+				<input className={"form-control " + s.select + " " + s.disabled} value="2020 Look For Everyone" readOnly type="text" />
+			  </div>
+			  <div className="col ps-0 pe-0">
+				<select className={"form-control " + s.select} value={site2020Public ? "on" : "off"}
+				  onChange={(ev) => setPublic(ev.currentTarget.value === "on")}>
+				  <option value="off">Off</option>
+				  <option value="on">On</option>
+				</select>
+			  </div>
+			</div>
+		  )}
 		</div>
 	  </div>
 	)}
@@ -189,6 +205,7 @@ const AccountInfo = props => {
 			<div className="col ps-0 pe-0">
 			  <select
 				className={"form-control " + s.select}
+				disabled={on2020}
 				value={getTheme()}
 				onChange={(ev) => {
 				  setTheme(ev.currentTarget.value);
@@ -213,6 +230,7 @@ const AccountInfo = props => {
 				<div className="col ps-0 pe-0">
 				  <select
 					className={"form-control " + s.select}
+					disabled={on2020}
 					defaultValue={getEra()}
 					onChange={(ev) => setEra(ev.currentTarget.value)}
 				  >

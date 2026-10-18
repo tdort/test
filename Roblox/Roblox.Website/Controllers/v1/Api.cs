@@ -82,6 +82,20 @@ public class ApiController : ControllerBase
         };
     }
 
+    [HttpGet("site/2020-public")]
+    public async Task<dynamic> GetSite2020Public()
+    {
+        return new { enabled = await services.users.GetSite2020Public() };
+    }
+
+    [HttpPost("site/2020-public")]
+    public async Task<dynamic> SetSite2020Public([Microsoft.AspNetCore.Mvc.FromBody] Site2020PublicRequest request)
+    {
+        if (userSession.userId != 1) throw new Roblox.Services.Exceptions.RobloxException(403, 0, "Forbidden");
+        await services.users.SetSite2020Public(request.enabled);
+        return new { enabled = request.enabled };
+    }
+
     [HttpGet("alerts/alert-info")]
     public async Task<dynamic> GetAlert()
     {
@@ -103,3 +117,7 @@ public class ApiController : ControllerBase
     }
 }
 
+public class Site2020PublicRequest
+{
+    public bool enabled { get; set; }
+}

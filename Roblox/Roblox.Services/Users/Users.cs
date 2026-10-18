@@ -2297,6 +2297,17 @@ public class UsersService : ServiceBase, IService
         return "GlobalAlert:v2";
     }
 
+    public async Task<bool> GetSite2020Public()
+    {
+        var v = await redis.StringGetAsync("Site2020Public:v1");
+        return v.HasValue && v.ToString() == "1";
+    }
+
+    public async Task SetSite2020Public(bool enabled)
+    {
+        await redis.StringSetAsync("Site2020Public:v1", enabled ? "1" : "0");
+    }
+
     public async Task<Alert?> GetGlobalAlert()
     {
         var result = await redis.StringGetAsync(GetAlertKey());

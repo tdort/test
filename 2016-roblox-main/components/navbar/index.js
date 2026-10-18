@@ -10,7 +10,7 @@ import LoginArea from "./components/loginArea";
 import Logo from "./components/logo";
 import NavigationLinks from "./components/navigationLinks";
 import Search from "./components/search";
-import { getSite2020, applySite2020, useRbx2020 } from "../../services/site2020";
+import { getSite2020, getSite2020Public, applySite2020, useRbx2020 } from "../../services/site2020";
 import Navbar2020 from "../navbar2020";
 
 const useNavBarStyles = createUseStyles({
@@ -48,11 +48,13 @@ const Navbar = () => {
   const mainNavBarRef = useRef(null);
   const is2020 = useRbx2020();
 
-  // 2020 look: owner only (user id 1)
+  // 2020 look: owner always; everyone else only while the owner's global switch is on
   useEffect(() => {
     if (authStore.isPending) return;
-    applySite2020(getSite2020(), authStore.userId === 1);
-  }, [authStore.isPending, authStore.userId]);
+    if (authStore.userId === 1) { applySite2020(getSite2020(), true); return; }
+    if (!authStore.isAuthenticated) { applySite2020('off', false); return; }
+    getSite2020Public().then(pub => applySite2020(getSite2020(), pub));
+  }, [authStore.isPending, authStore.userId, authStore.isAuthenticated]);
 
   if (is2020) return <div className='navbar-wrapper-main' style={{ margin: 0 }}><Navbar2020 /></div>;
 
