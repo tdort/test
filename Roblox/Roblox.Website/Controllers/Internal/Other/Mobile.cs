@@ -133,7 +133,7 @@ namespace Roblox.Website.Controllers
 			UserInfo userInfo;
 			try
 			{
-				userInfo = await services.users.GetUserByName(username);
+				userInfo = await services.users.GetUserByNameIgnoreCase(username.Trim()); // iOS keyboards lowercase the first letter
 			}
 			catch (RecordNotFoundException)
 			{
