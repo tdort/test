@@ -162,7 +162,7 @@ namespace Roblox.Website.Controllers
 			{
 				throw new RobloxException(503, 0, "Login is currently disabled. Please try again later.");
 			}
-			await RateLimitCheck();
+			// (rate limit already checked in DoMobileLogin)
 			try
 			{
 				if (!await services.users.VerifyPassword(userId, password))
