@@ -112,6 +112,7 @@ namespace Roblox.Website.Controllers
 		public async Task<dynamic> MyBalance()
 		{
 			var session = userSession;
+			Console.WriteLine($"[my/balance] session={(session == null ? "NONE" : session.userId.ToString())} hasCookie={Request.Cookies.ContainsKey(".ROBLOSECURITY")}");
 			if (session == null) return StatusCode(401, new { errors = new[] { new { code = 0, message = "Authorization has been denied for this request." } } });
 			var bal = await services.economy.GetUserBalance(session.userId);
 			return new { robux = bal.robux, tickets = bal.tickets };
@@ -154,6 +155,7 @@ namespace Roblox.Website.Controllers
 
 			var userBalance = await services.economy.GetUserBalance(userInfo.userId);
 
+			Console.WriteLine($"[mobile-login] OK user={userInfo.userId} -> returning 200 + Set-Cookie");
 			// The v1 login parser reads several differently-named fields across app versions, so return all of them.
 			var info = MobileUserInfo(userInfo.username, userInfo.userId, userBalance.robux, userBalance.tickets);
 			var now = DateTime.UtcNow;
