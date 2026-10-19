@@ -123,7 +123,7 @@ namespace Roblox.Website.Controllers
 		{
 			var (username, password) = await ReadMobileCredentials();
 			// debug: shows what the app really sent (no password text, only its length)
-			Console.WriteLine($"[mobile-login] ct={Request.ContentType} form={Request.HasFormContentType} user='{username}' passLen={password?.Length ?? -1}");
+			Console.WriteLine($"[mobile-login] cookies={Request.Headers.Cookie.Count} ct={Request.ContentType} form={Request.HasFormContentType} user='{username}' passLen={password?.Length ?? -1}");
 			FeatureFlags.FeatureCheck(FeatureFlag.LoginEnabled);
 			await RateLimitCheck();
 
@@ -145,10 +145,26 @@ namespace Roblox.Website.Controllers
 
 			var userBalance = await services.economy.GetUserBalance(userInfo.userId);
 
-			return new
+			// The v1 login parser reads several differently-named fields across app versions, so return all of them.
+			var info = MobileUserInfo(userInfo.username, userInfo.userId, userBalance.robux, userBalance.tickets);
+			var now = DateTime.UtcNow;
+			return new Dictionary<string, object?>
 			{
-				Status = "OK",
-				UserInfo = MobileUserInfo(userInfo.username, userInfo.userId, userBalance.robux, userBalance.tickets)
+				["Status"] = "OK",
+				["UserInfo"] = info,
+				["Username"] = userInfo.username,
+				["UserName"] = userInfo.username,
+				["UserID"] = userInfo.userId,
+				["UserId"] = userInfo.userId,
+				["HasPasswordSet"] = true,
+				["Email"] = "",
+				["LastSuccessfulLoginDate"] = now.ToString("o"),
+				["LastSuccessfulLoginExpectedExpiration"] = now.AddDays(364).ToString("o"),
+				["RobuxBalance"] = userBalance.robux,
+				["TicketsBalance"] = userBalance.tickets,
+				["tickets"] = userBalance.tickets,
+				["IsAnyBuildersClubMember"] = true,
+				["ThumbnailUrl"] = $"{Configuration.BaseUrl}/Thumbs/Avatar.ashx?userId={userInfo.userId}",
 			};
 		}
 
