@@ -108,6 +108,15 @@ namespace Roblox.Website.Controllers
 			UserID = userId
 		};
 
+		[HttpGetBypass("my/balance")]
+		public async Task<dynamic> MyBalance()
+		{
+			var session = userSession;
+			if (session == null) return StatusCode(401, new { errors = new[] { new { code = 0, message = "Authorization has been denied for this request." } } });
+			var bal = await services.economy.GetUserBalance(session.userId);
+			return new { robux = bal.robux, tickets = bal.tickets };
+		}
+
 		[HttpGetBypass("mobileapi/userinfo")]
 		[HttpPostBypass("mobileapi/userinfo")]
 		public async Task<dynamic> MobileUserInfoEndpoint()

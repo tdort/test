@@ -435,23 +435,46 @@ namespace Roblox.Website.Controllers
         [HttpPostBypass("users/account-info")]
         public async Task<dynamic> accountInfo()
         {
-
             var roles = new string[] { };
-            //var userBalance = await services.economy.GetUserBalance(safeUserSession.userId);
-            var jsonData = new
+            // real data for the logged in user (the iOS app reads its identity from here)
+            var session = userSession;
+            object jsonData;
+            if (session != null)
             {
-                UserId = 10,
-                Username = "harry",
-                DisplayName = "harry",
-                HasPasswordSet = true,
-                Email = "Higu@higu.ca",
-                MembershipType = 3,
-                RobuxBalance = 15,
-                AgeBracket = 0,
-                Roles = roles,
-                EmailNotificationEnabled = false,
-                PasswordNotificationEnabled = false,
-            };
+                var info = await services.users.GetUserById(session.userId);
+                var bal = await services.economy.GetUserBalance(session.userId);
+                jsonData = new
+                {
+                    UserId = session.userId,
+                    Username = info.username,
+                    DisplayName = info.username,
+                    HasPasswordSet = true,
+                    Email = "",
+                    MembershipType = 3,
+                    RobuxBalance = bal.robux,
+                    AgeBracket = 0,
+                    Roles = roles,
+                    EmailNotificationEnabled = false,
+                    PasswordNotificationEnabled = false,
+                };
+            }
+            else
+            {
+                jsonData = new
+                {
+                    UserId = 0,
+                    Username = "",
+                    DisplayName = "",
+                    HasPasswordSet = false,
+                    Email = "",
+                    MembershipType = 0,
+                    RobuxBalance = 0,
+                    AgeBracket = 0,
+                    Roles = roles,
+                    EmailNotificationEnabled = false,
+                    PasswordNotificationEnabled = false,
+                };
+            }
             string jsonString = JsonConvert.SerializeObject(jsonData);
             return Content(jsonString, "application/json");
         }
