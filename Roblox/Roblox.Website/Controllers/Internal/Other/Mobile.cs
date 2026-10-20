@@ -159,6 +159,21 @@ namespace Roblox.Website.Controllers
 			};
 		}
 
+		[HttpGetBypass("incoming-items/counts")]
+		public dynamic MobileIncomingItemsCounts()
+		{
+			return new Dictionary<string, object?>
+			{
+				["friendRequestsCount"] = 0,
+				["unreadMessageCount"] = 0,
+				["unreadNotificationsCount"] = 0,
+				["unreadNotifications"] = 0,
+				["unreadMessages"] = 0,
+				["friendRequests"] = 0,
+				["tradeRequests"] = 0,
+			};
+		}
+
 		[HttpGetBypass("notifications/account")]
 		public dynamic MobileNotificationsAccount()
 		{
