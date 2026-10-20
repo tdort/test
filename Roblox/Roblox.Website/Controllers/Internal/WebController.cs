@@ -491,6 +491,9 @@ public class WebController : ControllerBase
 			throw new BadRequestException(400, "You can not access this place at this time.");
 		}
 
+		if (await services.games.IsPlacePrivate(placeId) && !await services.assets.CanUserModifyItem(placeId, userSession?.userId ?? 0))
+			throw new BadRequestException(400, "This place is private.");
+
 		var placeInfo = await services.assets.GetAssetCatalogInfo(placeId);
 		if (placeInfo.assetType != Models.Assets.Type.Place)
 			throw new BadRequestException();

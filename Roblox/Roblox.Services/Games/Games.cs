@@ -161,6 +161,17 @@ public class GamesService : ServiceBase, IService
             });
         }
 
+        // hide private games from everyone except their owner
+        var hiddenPlaces = await GetPrivatePlaces();
+        if (hiddenPlaces.Count > 0)
+        {
+            var idList = string.Join(",", hiddenPlaces);
+            if (contextUserId is > 0)
+                query.Where("(asset.id NOT IN (" + idList + ") OR (asset.creator_type = 1 AND asset.creator_id = " + contextUserId.Value + "))");
+            else
+                query.Where("asset.id NOT IN (" + idList + ")");
+        }
+
         var is18Plus = false;
         if (contextUserId != null)
         {
@@ -296,6 +307,27 @@ public class GamesService : ServiceBase, IService
 		await redis.StringSetAsync(BannedPlacesKey, string.Join(",", set));
 	}
 
+	private const string PrivatePlacesKey = "PrivatePlaces:v1";
+
+	public async Task<HashSet<long>> GetPrivatePlaces()
+	{
+		var v = await redis.StringGetAsync(PrivatePlacesKey);
+		var set = new HashSet<long>();
+		if (string.IsNullOrEmpty(v)) return set;
+		foreach (var part in v.Split(',', StringSplitOptions.RemoveEmptyEntries))
+			if (long.TryParse(part, out var id)) set.Add(id);
+		return set;
+	}
+
+	public async Task<bool> IsPlacePrivate(long placeId) => (await GetPrivatePlaces()).Contains(placeId);
+
+	public async Task SetPlacePrivate(long placeId, bool isPrivate)
+	{
+		var set = await GetPrivatePlaces();
+		if (isPrivate) set.Add(placeId); else set.Remove(placeId);
+		await redis.StringSetAsync(PrivatePlacesKey, string.Join(",", set));
+	}
+
 	public async Task<bool> IsPlayable(long placeId)
 	{
 		if (await IsPlaceBanned(placeId)) return false;
@@ -365,8 +397,11 @@ public class GamesService : ServiceBase, IService
 
         var places = (await db.QueryAsync<PlaceEntry>(temp.RawSql, temp.Parameters)).ToList();
         var banned = await GetBannedPlaces();
+        var privatePlaces = await GetPrivatePlaces();
         foreach (var place in places)
         {
+            if (privatePlaces.Contains(place.placeId))
+                place.isPrivate = true;
             if (banned.Contains(place.placeId))
             {
                 place.isBanned = true;

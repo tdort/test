@@ -2,7 +2,7 @@ import updatePlaceStore from "../stores/updatePlaceStore";
 import {useEffect, useState} from "react";
 import ActionButton from "../../actionButton";
 import useButtonStyles from "../../../styles/buttonStyles";
-import {updateAsset, setPlayable} from "../../../services/develop";
+import {updateAsset, setPlayable, setPrivate} from "../../../services/develop";
 /*
     public enum Genre
     {
@@ -98,6 +98,7 @@ const BasicSettings = props => {
   const [commentsEnabled, setCommentsEnabled] = useState(false);
   const [genre, setGenre] = useState('All');
   const [isPlayable, setIsPlayable] = useState(true);
+  const [isPrivate, setIsPrivate] = useState(false);
   const [feedback, setFeedback] = useState(null);
   const s = useButtonStyles();
 
@@ -107,6 +108,7 @@ const BasicSettings = props => {
     setDescription(store.details.description);
     setGenre(store.details.genre);
     setIsPlayable(store.details.isPlayable ?? true);
+    setIsPrivate(!!store.details.isPrivate);
   }
 
   useEffect(() => {
@@ -136,6 +138,16 @@ const BasicSettings = props => {
       await setPlayable({
         universeId: store.details.universeId,
         isPlayable: isPlayable
+      });
+    }
+
+    if (isPrivate !== !!store.details.isPrivate) {
+      if (!store.details?.universeId) {
+        throw new Error("could not get universe");
+      }
+      await setPrivate({
+        universeId: store.details.universeId,
+        isPrivate: isPrivate
       });
     }
 	
@@ -191,6 +203,15 @@ const BasicSettings = props => {
           <option value={false}>No</option>
         </select>
         
+        <p className='mb-0 fw-bold mt-2'>Private (only you can see and play it):</p>
+        <select
+          value={isPrivate}
+          onChange={e => setIsPrivate(e.currentTarget.value === 'true')}
+        >
+          <option value={false}>No</option>
+          <option value={true}>Yes</option>
+        </select>
+
         <p className='mb-0 fw-bold mt-2'>Genre:</p>
         <select 
           value={genre} 

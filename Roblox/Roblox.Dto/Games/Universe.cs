@@ -118,6 +118,11 @@ public class SetGearPermissionRequest
     public bool isEnabled { get; set; }
 }
 
+public class SetPrivateRequest
+{
+    public bool isPrivate { get; set; }
+}
+
 public class SetPlayableRequest
 {
     public bool isPlayable { get; set; }

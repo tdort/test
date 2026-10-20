@@ -37,7 +37,7 @@ const PlayButton = props => {
   const buttonStyles = useButtonStyles();
   
   const onClick = e => {
-    if (!gameDetails.placeDetails?.isPlayable) return;
+    if (!gameDetails.placeDetails?.isPlayable || (gameDetails.placeDetails?.isPrivate && !(auth.userId && gameDetails.placeDetails?.builderId === auth.userId))) return;
     
     if (getFlag('launchUsingEsURI', false)) {
       e?.preventDefault();
@@ -61,12 +61,15 @@ const PlayButton = props => {
     }
   }
 
-  const isDisabled = !gameDetails.placeDetails?.isPlayable;
+  const pd = gameDetails.placeDetails;
+  const isOwner = !!(pd && auth.userId && pd.builderId === auth.userId && (pd.builderType === 1 || pd.builderType === 'User'));
+  const lockedPrivate = !!pd?.isPrivate && !isOwner;
+  const isDisabled = !pd?.isPlayable || lockedPrivate;
 
   return <div className='row'>
     <div className={'col-12 mx-auto ' + s.buttonWrapper}>
       {error && <p className='text-danger mb-1 mt-1'>{error}</p>}
-      {isDisabled && <p className={s.disabledText}>You cannot access this place at this time.</p>}
+      {isDisabled && <p className={s.disabledText}>{lockedPrivate && pd?.isPlayable ? 'This place is private.' : 'You cannot access this place at this time.'}</p>}
       <ActionButton 
         label='Play' 
         className={s.button + ' ' + buttonStyles.buyButton} 

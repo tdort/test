@@ -236,6 +236,16 @@ namespace Roblox.Website.Controllers
 				}
 			}
 				
+			if (await services.games.IsPlacePrivate(placeId) && !await services.assets.CanUserModifyItem(placeId, userId))
+			{
+				return BadRequest(new
+				{
+					jobId = (string?)null,
+					status = (int)JoinStatus.Error,
+					message = "This place is private."
+				});
+			}
+
 			GameServerJwt details = new GameServerJwt
 			{
 				userId = userId != 0 ? userId : 1,

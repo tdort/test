@@ -96,6 +96,12 @@ export const setPlayable = async ({universeId, isPlayable}) => {
   });
 }
 
+export const setPrivate = async ({universeId, isPrivate}) => {
+  return await request('PATCH', getFullUrl('develop', `/v1/universes/${universeId}/private`), {
+    isPrivate,
+  });
+}
+
 export const get2020Menu = async () => {
   try {
     const response = await request('GET', getFullUrl('users', '/v1/user/get-2020-menu'));
