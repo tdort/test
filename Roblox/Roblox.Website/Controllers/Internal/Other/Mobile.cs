@@ -167,6 +167,7 @@ namespace Roblox.Website.Controllers
 				["UserName"] = userInfo.username,
 				["UserID"] = userInfo.userId,
 				["UserId"] = userInfo.userId,
+				["userId"] = userInfo.userId, // iOS 2.257 login parser does objectForKey:@"userId" (case-sensitive)
 				["HasPasswordSet"] = true,
 				["Email"] = "",
 				["LastSuccessfulLoginDate"] = now.ToString("o"),
