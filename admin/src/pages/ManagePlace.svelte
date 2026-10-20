@@ -60,6 +60,7 @@
 							<span class="badge bg-success">{info.visits.toLocaleString()} Visits</span>
 							<span class="badge bg-primary">{info.currentPlayers} Players</span>
 							<span class="badge bg-dark">Year: {info.year}</span>
+							{#if info.isBanned}<span class="badge bg-danger">Banned</span>{/if}
 						</p>
 						<p class="mb-0">Last updated: {moment(info.created_at).format("MMM DD YYYY, h:mm A")}</p>
 					</div>
@@ -96,6 +97,21 @@
 					}}
 				>
 					<FileTextIcon /> Reset Description
+				</button>
+				<button
+					class="btn-outline-danger btn w-100 mb-2"
+					on:click={() => {
+						const unban = info.isBanned;
+						modalBody = unban ? "Unban this game so it can be played again?" : "Ban this game? Its Play button will be disabled and all running servers will be shut down.";
+						modalCb = (t) => {
+							if (t) {
+								request.post(`/games/${placeId}/${unban ? "unban" : "ban"}`).then(() => window.location.reload()).catch((err) => errorMessage = err.message);
+							}
+						};
+						modalVisible = true;
+					}}
+				>
+					<UserMinusIcon /> {info.isBanned ? "Unban Game" : "Ban Game"}
 				</button>
 				<button
 					class="btn-outline-danger btn w-100 mb-2"

@@ -275,8 +275,30 @@ public class GamesService : ServiceBase, IService
 		});
 	}
 	
+	private const string BannedPlacesKey = "BannedPlaces:v1";
+
+	public async Task<HashSet<long>> GetBannedPlaces()
+	{
+		var v = await redis.StringGetAsync(BannedPlacesKey);
+		var set = new HashSet<long>();
+		if (string.IsNullOrEmpty(v)) return set;
+		foreach (var part in v.Split(',', StringSplitOptions.RemoveEmptyEntries))
+			if (long.TryParse(part, out var id)) set.Add(id);
+		return set;
+	}
+
+	public async Task<bool> IsPlaceBanned(long placeId) => (await GetBannedPlaces()).Contains(placeId);
+
+	public async Task SetPlaceBanned(long placeId, bool banned)
+	{
+		var set = await GetBannedPlaces();
+		if (banned) set.Add(placeId); else set.Remove(placeId);
+		await redis.StringSetAsync(BannedPlacesKey, string.Join(",", set));
+	}
+
 	public async Task<bool> IsPlayable(long placeId)
 	{
+		if (await IsPlaceBanned(placeId)) return false;
 		var result = await db.QuerySingleOrDefaultAsync<bool>(
 			"SELECT playable FROM asset_place WHERE asset_id = :id",
 			new { id = placeId });
@@ -341,7 +363,17 @@ public class GamesService : ServiceBase, IService
             query.OrWhere("(asset.asset_type = " + (int) Type.Place + " AND asset.id = " + id + ")");
         }
 
-        return await db.QueryAsync<PlaceEntry>(temp.RawSql, temp.Parameters);
+        var places = (await db.QueryAsync<PlaceEntry>(temp.RawSql, temp.Parameters)).ToList();
+        var banned = await GetBannedPlaces();
+        foreach (var place in places)
+        {
+            if (banned.Contains(place.placeId))
+            {
+                place.isBanned = true;
+                place.isPlayable = false;
+            }
+        }
+        return places;
     }
 
     public async Task<IEnumerable<GamesForCreatorEntry>> GetGamesForType(CreatorType creatorType, long creatorId, int limit,

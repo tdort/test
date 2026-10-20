@@ -2,7 +2,7 @@
 import React, { useEffect, useState } from 'react';
 import dayjs from 'dayjs';
 import GameDetailsStore from '../gameDetails/stores/gameDetailsStore';
-import GameServers from '../gameDetails/components/gameServers';
+import Servers2020, { SERVERS_CSS } from './servers2020';
 import Passess from '../catalogDetailsPage/components/passess';
 import PlayButton from '../gameDetails/components/playButton';
 import AuthenticationStore from '../../stores/authentication';
@@ -45,6 +45,7 @@ const CSS = `
 .gd20-stat b{display:block;color:var(--fg);font-weight:600;margin-top:10px;font-size:11px}
 .gd20-report{text-align:right;margin-top:26px;font-size:12px}.gd20-report a{color:#e04a3f}
 .gd20-pad{margin-top:16px}
+.gd20-banned{margin-top:auto;color:var(--fg);font-size:15px;line-height:1.35;padding-bottom:4px}
 `;
 
 const Icon = ({ d, children }) => <svg viewBox="0 0 24 24">{children || <path d={d} />}</svg>;
@@ -52,6 +53,7 @@ const Icon = ({ d, children }) => <svg viewBox="0 0 24 24">{children || <path d=
 const GameDetails2020 = ({ details }) => {
   const store = GameDetailsStore.useContainer();
   const auth = AuthenticationStore.useContainer();
+  const banned = !!(store.placeDetails && store.placeDetails.isBanned);
   const [tab, setTab] = useState('about');
   const [img, setImg] = useState(null);
   const [votes, setVotes] = useState(null);
@@ -83,7 +85,7 @@ const GameDetails2020 = ({ details }) => {
 
   return (
     <div className='content gd20-content' id='content' style={{ paddingTop: 0 }}>
-      <style>{CSS}</style>
+      <style>{CSS + SERVERS_CSS}</style>
       <div className='gd20'><div className='gd20-wrap'>
         <div className='gd20-top'>
           <div className='gd20-thumb'>{img ? <img src={img} alt='' /> : <div style={{ aspectRatio: '16/9', background: 'var(--bar)', borderRadius: 8 }} />}</div>
@@ -91,7 +93,7 @@ const GameDetails2020 = ({ details }) => {
             <span className='gd20-dots'>•••</span>
             <h1 className='gd20-title'>{details.name}</h1>
             <p className='gd20-by'>By <a href={details.creatorType === 'Group' ? `/groups/${details.creatorTargetId}/--` : `/users/${details.creatorTargetId}/profile`}>{details.creatorName}</a></p>
-            <div className='gd20-play'><PlayButton placeId={details.id} /></div>
+            {banned ? <div className='gd20-banned'>Sorry, this place is currently under review. Try again later.</div> : <div className='gd20-play'><PlayButton placeId={details.id} /></div>}
             <div className='gd20-actions'>
               <button className='gd20-act'><Icon><path d='M12 3l2.7 5.6 6.1.9-4.4 4.3 1 6.1L12 17l-5.4 2.9 1-6.1L3.2 9.5l6.1-.9z' /></Icon><span>Favorite</span></button>
               <button className='gd20-act'><Icon><path d='M5 5a14 14 0 0114 14M5 11a8 8 0 018 8' /><circle cx='6' cy='18' r='1.5' /></Icon><span>Follow</span></button>
@@ -122,7 +124,7 @@ const GameDetails2020 = ({ details }) => {
           <div className='gd20-report'><a href={`/abusereport/asset?id=${details.id}`}>Report Abuse</a></div>
         </>}
         {tab === 'store' && <div className='gd20-pad'><Passess assetId={details.id} assetType={34} /></div>}
-        {tab === 'servers' && <div className='gd20-pad'><GameServers /></div>}
+        {tab === 'servers' && <div className='gd20-pad'><Servers2020 banned={banned} /></div>}
       </div></div>
     </div>
   );

@@ -14,6 +14,7 @@ public class PlaceEntry
     public long universeRootPlaceId { get; set; }
     public long? price { get; set; }
     public bool isPlayable { get; set; }
+    public bool isBanned { get; set; }
     public string imageToken => "T_" + placeId + "_icon";
     public string reasonProhibited { get; set; } = "None";
     public int maxPlayerCount { get; set; }

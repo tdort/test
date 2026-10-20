@@ -4686,8 +4686,42 @@ Thank you for your understanding,
 			currentPlayers = result.currentplayers,
 			creatorId = result.creatorid,
 			creatorName = result.creatorname,
-			year = result.year
+			year = result.year,
+			isBanned = await services.games.IsPlaceBanned(placeId),
 		};
+	}
+
+	[HttpPost("games/{placeId}/ban"), StaffFilter(Access.ManageGames)]
+	public async Task<dynamic> BanPlace(long placeId)
+	{
+		var exists = await db.QuerySingleOrDefaultAsync<bool>("SELECT COUNT(1) > 0 FROM asset WHERE id = :placeId AND asset_type = :type", new { placeId, type = Type.Place });
+		if (!exists)
+			throw new StaffException("Place not found or not a valid place");
+		await services.games.SetPlaceBanned(placeId, true);
+
+		// shut down every running server for this place
+		var shutDown = 0;
+		var servers = await services.gameServer.GetGameServers(placeId, 0, 1000);
+		foreach (var server in servers)
+		{
+			try
+			{
+				services.gameServer.ShutDownServer(server.id);
+				await db.ExecuteAsync("DELETE FROM asset_server_player WHERE server_id = :id::uuid", new { id = server.id });
+				shutDown++;
+			}
+			catch (Exception ex)
+			{
+				Console.WriteLine($"[ban-place] failed to shut down {server.id}: {ex.Message}");
+			}
+		}
+		return new { success = true, serversShutDown = shutDown };
+	}
+
+	[HttpPost("games/{placeId}/unban"), StaffFilter(Access.ManageGames)]
+	public async Task UnbanPlace(long placeId)
+	{
+		await services.games.SetPlaceBanned(placeId, false);
 	}
 
 	[HttpPost("games/{placeId}/reset-name"), StaffFilter(Access.ManageGames)]
