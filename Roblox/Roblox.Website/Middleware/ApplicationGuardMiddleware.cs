@@ -302,7 +302,7 @@ public class ApplicationGuardMiddleware
             && !normalizedPath.StartsWith("/thumbs") && !normalizedPath.StartsWith("/images")
             && (dbgUa.Length == 0 || dbgUa.Contains("oblox", StringComparison.OrdinalIgnoreCase) || normalizedPath.StartsWith("/game") || normalizedPath.StartsWith("/universes") || normalizedPath.StartsWith("/gs")))
         {
-            Console.WriteLine("[req] {0} {1}{2} UA={3}", ctx.Request.Method, ctx.Request.Path, ctx.Request.QueryString, dbgUa);
+            Console.WriteLine("[req] {0} {1}{2} host={4} cookie={5} UA={3}", ctx.Request.Method, ctx.Request.Path, ctx.Request.QueryString, dbgUa, ctx.Request.Host, ctx.Request.Cookies.ContainsKey(".ROBLOSECURITY"));
         }
 
         if (normalizedPath == "/robots.txt")
