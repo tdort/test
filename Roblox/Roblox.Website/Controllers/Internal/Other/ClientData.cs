@@ -73,6 +73,7 @@ namespace Roblox.Website.Controllers
 		{
 			try
 			{
+				if (type.Equals("iOSAppSettings", StringComparison.OrdinalIgnoreCase)) return new {}; // iOS app settings: none
 				if (!Configuration.AllowedQuietGetJson.Any(x => x.Equals(type, StringComparison.OrdinalIgnoreCase)))
 				{
 					Console.WriteLine($"[RetrieveClientFFlags] disallowed JSON trying to be requested!");

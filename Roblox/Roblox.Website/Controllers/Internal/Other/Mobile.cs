@@ -129,6 +129,60 @@ namespace Roblox.Website.Controllers
 			return MobileUserInfo(info.username, session.userId, bal.robux, bal.tickets);
 		}
 
+		// ---- endpoints the iOS app calls right after login (previously 404) ----
+		[HttpGetBypass("my/account/json")]
+		public async Task<dynamic> MobileMyAccountJson()
+		{
+			var session = userSession;
+			if (session == null) return StatusCode(401, new { errors = new[] { new { code = 0, message = "Authorization has been denied for this request." } } });
+			var info = await services.users.GetUserById(session.userId);
+			var bal = await services.economy.GetUserBalance(session.userId);
+			return new Dictionary<string, object?>
+			{
+				["UserId"] = session.userId,
+				["Name"] = info.username,
+				["DisplayName"] = info.username,
+				["HasPasswordSet"] = true,
+				["Email"] = new { Value = "", IsVerified = true },
+				["AgeBracket"] = 0,
+				["Roles"] = new string[0],
+				["MembershipType"] = 3,
+				["RobuxBalance"] = bal.robux,
+				["TicketsBalance"] = bal.tickets,
+				["NotificationCount"] = 0,
+				["UserEmail"] = "",
+				["UserEmailMasked"] = true,
+				["UserEmailVerified"] = true,
+				["CanHideInventory"] = false,
+				["CanTrade"] = false,
+				["IsPremium"] = true,
+			};
+		}
+
+		[HttpGetBypass("notifications/account")]
+		public dynamic MobileNotificationsAccount()
+		{
+			return new Dictionary<string, object?>
+			{
+				["success"] = true,
+				["Enabled"] = false,
+				["NotificationsEnabled"] = false,
+				["PushNotificationsEnabled"] = false,
+			};
+		}
+
+		[HttpGetBypass("social/has-user-set-password")]
+		public dynamic MobileHasUserSetPassword()
+		{
+			return new Dictionary<string, object?>
+			{
+				["success"] = true,
+				["HasPasswordSet"] = true,
+				["hasPasswordSet"] = true,
+				["HasUserSetPassword"] = true,
+			};
+		}
+
 		private async Task<dynamic> DoMobileLogin()
 		{
 			var (username, password) = await ReadMobileCredentials();
