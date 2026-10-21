@@ -298,9 +298,9 @@ public class ApplicationGuardMiddleware
 
         // TEMP DEBUG: log requests from game clients/servers so we can see what the client asks for during a join
         var dbgUa = ctx.Request.Headers.UserAgent.ToString();
-        if (!normalizedPath.StartsWith("/_next") && !normalizedPath.StartsWith("/asset") && !normalizedPath.StartsWith("/static")
+        if (!normalizedPath.StartsWith("/_next") && !normalizedPath.StartsWith("/css") && !normalizedPath.StartsWith("/js") && !normalizedPath.StartsWith("/fonts") && !normalizedPath.StartsWith("/asset") && !normalizedPath.StartsWith("/static")
             && !normalizedPath.StartsWith("/thumbs") && !normalizedPath.StartsWith("/images")
-            && (dbgUa.Length == 0 || dbgUa.Contains("oblox", StringComparison.OrdinalIgnoreCase) || normalizedPath.StartsWith("/game") || normalizedPath.StartsWith("/universes") || normalizedPath.StartsWith("/gs")))
+            && (dbgUa.Length == 0 || dbgUa.Contains("oblox", StringComparison.OrdinalIgnoreCase) || dbgUa.Contains("iPhone", StringComparison.OrdinalIgnoreCase) || normalizedPath.StartsWith("/game") || normalizedPath.StartsWith("/universes") || normalizedPath.StartsWith("/gs")))
         {
             Console.WriteLine("[req] {0} {1}{2} host={4} cookie={5} UA={3}", ctx.Request.Method, ctx.Request.Path, ctx.Request.QueryString, dbgUa, ctx.Request.Host, ctx.Request.Cookies.ContainsKey(".ROBLOSECURITY"));
         }
