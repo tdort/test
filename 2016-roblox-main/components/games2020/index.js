@@ -10,7 +10,7 @@ const abbr = (n) => {
   return String(n);
 };
 
-const Card = ({ g, icon }) => {
+export const Card = ({ g, icon }) => {
   const up = g.totalUpVotes || 0, down = g.totalDownVotes || 0;
   const pct = up + down > 0 ? Math.floor((up / (up + down)) * 100) + '%' : '--';
   return (
@@ -35,7 +35,7 @@ const Card = ({ g, icon }) => {
   );
 };
 
-const Row = ({ title, games, icons, sortId }) => {
+export const Row = ({ title, games, icons, sortId }) => {
   const ref = useRef(null);
   const [edge, setEdge] = useState({ l: true, r: false });
   const upd = () => {
