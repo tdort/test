@@ -3,12 +3,26 @@ import config from '../lib/config';
 import Router from 'next/router';
 let _csrf = '';
 
+// If the page is served from www.<domain> but the config points at <domain> (or the reverse), browsers treat the
+// API calls as cross-origin (CORS preflight + no cookies). Rewrite to the page's own origin so everything is same-origin.
+const toPageOrigin = (url) => {
+  if (typeof window === 'undefined' || typeof url !== 'string') return url;
+  try {
+    const u = new URL(url);
+    const strip = h => h.replace(/^www\./, '');
+    if (u.host !== window.location.host && strip(u.host) === strip(window.location.host)) {
+      return window.location.origin + u.pathname + u.search + u.hash;
+    }
+  } catch (e) {}
+  return url;
+}
+
 const getFullUrl = (apiSite, fullUrl) => {
-  return config.publicRuntimeConfig.backend.apiFormat.replace(/\{0\}/g, apiSite).replace(/\{1\}/g, fullUrl);
+  return toPageOrigin(config.publicRuntimeConfig.backend.apiFormat.replace(/\{0\}/g, apiSite).replace(/\{1\}/g, fullUrl));
 }
 
 const getBaseUrl = () => {
-  return config.publicRuntimeConfig.backend.baseUrl;
+  return toPageOrigin(config.publicRuntimeConfig.backend.baseUrl);
 }
 
 // No proxy regardless cause there's nothing for it anyway
@@ -47,7 +61,7 @@ const request = async (method, url, data) => {
     }
     const result = await axios.request({
       method,
-      url: getUrlWithProxy(url),
+      url: toPageOrigin(getUrlWithProxy(url)),
       data: data,
       headers: headers,
       maxRedirects: 0,
