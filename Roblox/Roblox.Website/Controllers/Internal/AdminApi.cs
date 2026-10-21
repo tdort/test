@@ -4688,6 +4688,7 @@ Thank you for your understanding,
 			creatorName = result.creatorname,
 			year = result.year,
 			isBanned = await services.games.IsPlaceBanned(placeId),
+			isEasterEgg = await services.games.IsSecretPlace(placeId),
 		};
 	}
 
@@ -4716,6 +4717,23 @@ Thank you for your understanding,
 			}
 		}
 		return new { success = true, serversShutDown = shutDown };
+	}
+
+	[HttpPost("games/{placeId}/easter-egg"), StaffFilter(Access.ManageGames)]
+	public async Task SetEasterEggPlace(long placeId, long badgeId = 0)
+	{
+		var exists = await db.QuerySingleOrDefaultAsync<bool>("SELECT COUNT(1) > 0 FROM asset WHERE id = :placeId AND asset_type = :type", new { placeId, type = Type.Place });
+		if (!exists)
+			throw new StaffException("Place not found or not a valid place");
+		await services.games.SetEasterEgg(placeId, badgeId);
+		await services.games.SetMaxPlayerCount(placeId, 1);
+	}
+
+	[HttpPost("games/{placeId}/easter-egg/remove"), StaffFilter(Access.ManageGames)]
+	public async Task RemoveEasterEggPlace(long placeId)
+	{
+		if (await services.games.IsSecretPlace(placeId))
+			await services.games.ClearEasterEgg();
 	}
 
 	[HttpPost("games/{placeId}/unban"), StaffFilter(Access.ManageGames)]

@@ -61,6 +61,7 @@
 							<span class="badge bg-primary">{info.currentPlayers} Players</span>
 							<span class="badge bg-dark">Year: {info.year}</span>
 							{#if info.isBanned}<span class="badge bg-danger">Banned</span>{/if}
+							{#if info.isEasterEgg}<span class="badge bg-warning text-dark">Easter Egg</span>{/if}
 						</p>
 						<p class="mb-0">Last updated: {moment(info.created_at).format("MMM DD YYYY, h:mm A")}</p>
 					</div>
@@ -128,6 +129,21 @@
 					}}
 				>
 					<TrashIcon /> Delete Place
+				</button>
+
+				<button
+					class="btn-outline-dark btn w-100 mb-2"
+					on:click={() => {
+						if (info.isEasterEgg) {
+							request.post(`/games/${placeId}/easter-egg/remove`).then(() => window.location.reload()).catch((err) => errorMessage = err.message);
+							return;
+						}
+						const badge = window.prompt("Badge ID to award when someone finds the easter egg (0 for none):", "0");
+						if (badge === null) return;
+						request.post(`/games/${placeId}/easter-egg?badgeId=${parseInt(badge) || 0}`).then(() => window.location.reload()).catch((err) => errorMessage = err.message);
+					}}
+				>
+					{info.isEasterEgg ? "Remove Easter Egg Place" : "Set as Easter Egg Place"}
 				</button>
 
 				<div class="card mb-2 mt-3">

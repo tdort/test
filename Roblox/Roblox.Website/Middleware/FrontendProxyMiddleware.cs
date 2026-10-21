@@ -35,6 +35,7 @@ public class FrontendProxyMiddleware
         // Razor Files
         "/feeds/getuserfeed",
         "/auth/",
+        "/easter-egg/",
         "/membership/notapproved.aspx",
         // Razor Public
         "/unsecuredcontent/",

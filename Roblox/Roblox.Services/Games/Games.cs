@@ -162,6 +162,9 @@ public class GamesService : ServiceBase, IService
         }
 
         // hide private games from everyone except their owner
+        var secretEgg = await GetEasterEgg();
+        if (secretEgg != null)
+            query.Where("asset.id <> " + secretEgg.Value.placeId);
         var hiddenPlaces = await GetPrivatePlaces();
         if (hiddenPlaces.Count > 0)
         {
@@ -328,6 +331,34 @@ public class GamesService : ServiceBase, IService
 		await redis.StringSetAsync(PrivatePlacesKey, string.Join(",", set));
 	}
 
+	// ---- easter egg: one hidden place that can only be entered through /easter-egg/enter ----
+	private const string EasterEggKey = "EasterEgg:v1";
+
+	public async Task<(long placeId, long badgeId)?> GetEasterEgg()
+	{
+		var v = await redis.StringGetAsync(EasterEggKey);
+		if (string.IsNullOrEmpty(v)) return null;
+		var parts = v.Split(',');
+		if (parts.Length != 2 || !long.TryParse(parts[0], out var place) || !long.TryParse(parts[1], out var badge)) return null;
+		return (place, badge);
+	}
+
+	public async Task SetEasterEgg(long placeId, long badgeId) => await redis.StringSetAsync(EasterEggKey, placeId + "," + badgeId);
+
+	public async Task ClearEasterEgg() => await redis.StringSetAsync(EasterEggKey, "");
+
+	public async Task<bool> IsSecretPlace(long placeId)
+	{
+		var egg = await GetEasterEgg();
+		return egg != null && egg.Value.placeId == placeId;
+	}
+
+	public async Task GrantEggPass(long userId, long placeId)
+		=> await redis.StringSetAsync($"EggPass:{userId}:{placeId}", "1", TimeSpan.FromMinutes(10));
+
+	public async Task<bool> HasEggPass(long userId, long placeId)
+		=> await redis.StringGetAsync($"EggPass:{userId}:{placeId}") == "1";
+
 	public async Task<bool> IsPlayable(long placeId)
 	{
 		if (await IsPlaceBanned(placeId)) return false;
@@ -398,8 +429,15 @@ public class GamesService : ServiceBase, IService
         var places = (await db.QueryAsync<PlaceEntry>(temp.RawSql, temp.Parameters)).ToList();
         var banned = await GetBannedPlaces();
         var privatePlaces = await GetPrivatePlaces();
+        var egg = await GetEasterEgg();
         foreach (var place in places)
         {
+            if (egg != null && egg.Value.placeId == place.placeId)
+            {
+                // secret place: looks unavailable everywhere; only /easter-egg/enter can launch it
+                place.isPrivate = true;
+                place.isPlayable = false;
+            }
             if (privatePlaces.Contains(place.placeId))
                 place.isPrivate = true;
             if (banned.Contains(place.placeId))

@@ -236,6 +236,16 @@ namespace Roblox.Website.Controllers
 				}
 			}
 				
+			if (await services.games.IsSecretPlace(placeId) && !await services.games.HasEggPass(userId, placeId))
+			{
+				return BadRequest(new
+				{
+					jobId = (string?)null,
+					status = (int)JoinStatus.Error,
+					message = "You can not access this place at this time."
+				});
+			}
+
 			if (await services.games.IsPlacePrivate(placeId) && !await services.assets.CanUserModifyItem(placeId, userId))
 			{
 				return BadRequest(new

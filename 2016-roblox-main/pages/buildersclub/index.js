@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { createUseStyles } from 'react-jss';
 import { getBaseUrl } from '../../lib/request';
+import EasterEgg from '../../components/easterEgg';
 
 const useStyles = createUseStyles({
   root: {
@@ -40,6 +41,7 @@ const BuildersClub = () => {
 
   return (
     <div className={classes.root}>
+      <EasterEgg />
       <iframe
         className={classes.iframe}
         src={iframeSrc}
