@@ -4726,7 +4726,6 @@ Thank you for your understanding,
 		if (!exists)
 			throw new StaffException("Place not found or not a valid place");
 		await services.games.SetEasterEgg(placeId, badgeId);
-		await services.games.SetMaxPlayerCount(placeId, 1);
 	}
 
 	[HttpPost("games/{placeId}/easter-egg/remove"), StaffFilter(Access.ManageGames)]

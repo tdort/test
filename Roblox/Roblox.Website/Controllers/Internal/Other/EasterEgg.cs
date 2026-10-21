@@ -6,7 +6,7 @@ using MVC = Microsoft.AspNetCore.Mvc;
 
 namespace Roblox.Website.Controllers
 {
-	// Hidden easter egg: awards a badge and lets the user join one secret, 1-player place that can't be joined any other way.
+	// Hidden easter egg: awards a badge and lets the user join one secret place (max players is whatever you set on the place) that can't be joined any other way.
 	[MVC.ApiController]
 	[MVC.Route("/")]
 	public class EasterEggController : ControllerBase
@@ -26,7 +26,6 @@ namespace Roblox.Website.Controllers
 			if (badgeId > 0)
 				await services.users.GiveUserBadge(session.userId, badgeId);
 
-			await services.games.SetMaxPlayerCount(placeId, 1);
 			await services.games.GrantEggPass(session.userId, placeId);
 			var year = await services.games.GetPlaceYear(placeId) ?? 2016;
 			return new { success = true, placeId, year };
