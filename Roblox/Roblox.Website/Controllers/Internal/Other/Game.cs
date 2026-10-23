@@ -36,7 +36,7 @@ namespace Roblox.Website.Controllers
 		private bool IsRcc()
         {
             var rccAccessKey = Request.Headers.ContainsKey("accesskey") ? Request.Headers["accesskey"].ToString() : null;
-            var isRcc = rccAccessKey == Configuration.RccAuthorization;
+            var isRcc = Roblox.Website.Lib.SecretCompare.IsValid(rccAccessKey, Configuration.RccAuthorization);
             return isRcc;
         }	
 		

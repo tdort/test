@@ -505,7 +505,7 @@ public class AdminApiController : ControllerBase
         throw new StaffException("Unsupported action");
     }
 	
-	[HttpGet("assets/pending-assets/image/{contentUrl}")]
+	[HttpGet("assets/pending-assets/image/{contentUrl}"), StaffFilter(Access.GetPendingModerationItems)]
 	public async Task<IActionResult> GetPendingImage(string contentUrl)
 	{
 		// for security as anyone could do path traversal
@@ -539,7 +539,7 @@ public class AdminApiController : ControllerBase
 		}
 	}	
 	
-	[HttpGet("assets/pending-assets/mesh/{contentUrl}.obj")]
+	[HttpGet("assets/pending-assets/mesh/{contentUrl}.obj"), StaffFilter(Access.GetPendingModerationItems)]
 	public async Task<IActionResult> GetMeshOBJ(string contentUrl)
 	{
 		// for security as anyone could do path traversal

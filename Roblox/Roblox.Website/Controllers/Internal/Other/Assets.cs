@@ -80,7 +80,7 @@ namespace Roblox.Website.Controllers
         private bool IsRcc()
         {
             var rccAccessKey = Request.Headers.ContainsKey("accesskey") ? Request.Headers["accesskey"].ToString() : null;
-            var isRcc = rccAccessKey == Configuration.RccAuthorization;
+            var isRcc = Roblox.Website.Lib.SecretCompare.IsValid(rccAccessKey, Configuration.RccAuthorization);
             return isRcc;
         }
 				
@@ -133,7 +133,7 @@ namespace Roblox.Website.Controllers
 				id = assetVersionId.Value;
 			}
 			
-			if (apiKey == Configuration.RccAuthorization || apiKey == Configuration.RenderAuthorization)
+			if (Roblox.Website.Lib.SecretCompare.IsValid(apiKey, Configuration.RccAuthorization) || Roblox.Website.Lib.SecretCompare.IsValid(apiKey, Configuration.RenderAuthorization))
 			{
 				var latestVersionSecret = await services.assets.GetLatestAssetVersion(id);
 				if (latestVersionSecret?.contentUrl == null)
