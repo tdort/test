@@ -146,6 +146,8 @@ public class EconomyService : ServiceBase, IService
     
     public async Task IncrementCurrency(CreatorType creatorType, long creatorId, CurrencyType currency, long amount)
     {
+        if (amount < 0)
+            throw new ArgumentOutOfRangeException(nameof(amount), "Cannot increment by a negative amount");
         long newBalance;
         if (currency == CurrencyType.Robux)
         {
@@ -195,6 +197,8 @@ public class EconomyService : ServiceBase, IService
     
     public async Task DecrementCurrency(CreatorType creatorType, long creatorId, CurrencyType currency, long amount)
     {
+        if (amount < 0)
+            throw new ArgumentOutOfRangeException(nameof(amount), "Cannot decrement by a negative amount (that would add currency)");
         long newBalance = -1;
         if (currency == CurrencyType.Robux)
         {

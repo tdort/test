@@ -128,9 +128,10 @@ public class CurrencyExchangeService : ServiceBase, IService
     {
         var logger = Writer.CreateWithId(LogGroup.CurrencyExchange);
         logger.Info($"attempt buy order {toBuyOrderId} for {sourceOrderId}. amt = {desiredAmount}");
-#if RELEASE
-        await using var positionLock = await GetLockForOrder(toBuyOrderId);
-#endif
+        // Lock BOTH orders (always, not just in release builds), lowest id first so two buyers can't deadlock.
+        // Without this, parallel requests could spend the same order balance twice and duplicate currency.
+        await using var firstLock = await GetLockForOrder(Math.Min(sourceOrderId, toBuyOrderId));
+        await using var secondLock = sourceOrderId == toBuyOrderId ? null : await GetLockForOrder(Math.Max(sourceOrderId, toBuyOrderId));
         var sourceData = await GetOrderById(sourceOrderId);
         var destData = await GetOrderById(toBuyOrderId);
         // source is buying dest
@@ -208,11 +209,14 @@ public class CurrencyExchangeService : ServiceBase, IService
         if (amount < 1)
             throw new ArgumentException("Cannot deduct less than 1 from balance: " + amount);
         
-        await db.ExecuteAsync("UPDATE trade_currency_order SET balance = balance - :amt WHERE id = :id", new
+        // atomic: only deducts if the order still has enough, so a balance can never go negative / be spent twice
+        var affected = await db.ExecuteAsync("UPDATE trade_currency_order SET balance = balance - :amt WHERE id = :id AND balance >= :amt", new
         {
             id = orderId,
             amt = amount,
         });
+        if (affected != 1)
+            throw new RobloxException(400, 0, "Order balance changed, please try again");
     }
 
     private async Task AttemptBuyForPosition(long orderId, bool isMarketOrder)
