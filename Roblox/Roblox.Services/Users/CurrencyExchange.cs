@@ -389,6 +389,11 @@ public class CurrencyExchangeService : ServiceBase, IService
             throw new RobloxException(400, 0, "Too many attempts. Try again in a few minutes.");
         }
 
+        // one order at a time per user: stops parallel requests from all passing the balance check below
+        await using var userOrderLock = await Cache.redLock.CreateLockAsync("PlaceOrder:V1:" + userId, TimeSpan.FromSeconds(10));
+        if (userOrderLock == null || !userOrderLock.IsAcquired)
+            throw new RobloxException(429, 0, "Too many attempts. Try again in a few seconds.");
+
         var logger = Writer.CreateWithId(LogGroup.CurrencyExchange);
         logger.Info(
             $"new order created. userId={userId} amount={amount} rate={exchangeRate1K} sourceCurrency={sourceCurrency} isMarket={isMarketOrder}");

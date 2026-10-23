@@ -95,15 +95,21 @@ public class EconomyService : ServiceBase, IService
     private async Task UnsafeDecrementUserRobux(long userId, long amount)
     {
         if (amount < 0) throw new ArgumentException("Amount must be zero or more");
-        await db.ExecuteAsync("UPDATE user_economy SET balance_robux = balance_robux - :amt WHERE user_id = :user_id",
+        // atomic: only deducts if the balance covers it, so parallel requests can never overdraw (no negative balances)
+        var affected = await db.ExecuteAsync("UPDATE user_economy SET balance_robux = balance_robux - :amt WHERE user_id = :user_id AND balance_robux >= :amt",
             new { user_id = userId, amt = amount });
+        if (affected != 1)
+            throw new InvalidOperationException("Insufficient Robux balance");
     }
 
     private async Task UnsafeDecrementUserTickets(long userId, long amount)
     {
         if (amount < 0) throw new ArgumentException("Amount must be zero or more");
-        await db.ExecuteAsync("UPDATE user_economy SET balance_tickets = balance_tickets - :amt WHERE user_id = :user_id",
+        // atomic: only deducts if the balance covers it, so parallel requests can never overdraw (no negative balances)
+        var affected = await db.ExecuteAsync("UPDATE user_economy SET balance_tickets = balance_tickets - :amt WHERE user_id = :user_id AND balance_tickets >= :amt",
             new { user_id = userId, amt = amount });
+        if (affected != 1)
+            throw new InvalidOperationException("Insufficient Tickets balance");
     }
 
     private async Task UnsafeIncrementGroupRobux(long groupId, long amount)
