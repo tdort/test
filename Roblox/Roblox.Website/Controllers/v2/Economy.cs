@@ -313,48 +313,36 @@ public class EconomyControllerV2 : ControllerBase
 				});
 
 
-		const decimal rate = 10m;
+		// SECURITY: only Robux (1) and Tickets (2) are valid. A raw 0 (or any undefined enum value) used to skip both
+		// balance checks below and fall into the Tickets branch, letting users convert Tix they never had into Robux.
+		if (request.sourceCurrency != CurrencyType.Robux && request.sourceCurrency != CurrencyType.Tickets)
+			return StatusCode(400, new { errors = new[] { new { code = 0, message = "Invalid currency" } } });
+		if (request.amount > 1_000_000_000)
+			return StatusCode(400, new { errors = new[] { new { code = 0, message = "Invalid amount" } } });
+
+		const long rate = 10;
 		try
 		{
+			// lock FIRST, then read + change the balance atomically under it (previously read before the lock = race)
+			await using var lockhandle = await services.economy.AcquireEconomyLock(CreatorType.User, safeUserSession.userId);
 			var balance = await services.economy.GetUserBalance(safeUserSession.userId);
+			var userId = safeUserSession.userId;
 
-			if (request.sourceCurrency == CurrencyType.Robux && balance.robux < request.amount)
-				return StatusCode(500, new 
-					{
-						errors = new[] 
-						{
-							new { code = 0, message = "Insufficient Robux" }
-						}
-					});
-
-				
-			if (request.sourceCurrency == CurrencyType.Tickets && balance.tickets < request.amount)
-				return StatusCode(500, new 
-					{
-						errors = new[] 
-						{
-							new { code = 0, message = "Insufficient Tickets" }
-						}
-					});
-
-			long NewRobux = balance.robux;
-			long NewTix = balance.tickets;
-			
 			if (request.sourceCurrency == CurrencyType.Robux)
 			{
-				NewRobux -= request.amount;
-				NewTix += (long)(request.amount * rate);
+				if (balance.robux < request.amount)
+					return StatusCode(500, new { errors = new[] { new { code = 0, message = "Insufficient Robux" } } });
+				await services.economy.DecrementCurrency(CreatorType.User, userId, CurrencyType.Robux, request.amount);
+				await services.economy.IncrementCurrency(CreatorType.User, userId, CurrencyType.Tickets, request.amount * rate);
 			}
 			else
 			{
-				NewTix -= request.amount;
-				NewRobux += (long)(request.amount / rate);
+				if (balance.tickets < request.amount)
+					return StatusCode(500, new { errors = new[] { new { code = 0, message = "Insufficient Tickets" } } });
+				await services.economy.DecrementCurrency(CreatorType.User, userId, CurrencyType.Tickets, request.amount);
+				await services.economy.IncrementCurrency(CreatorType.User, userId, CurrencyType.Robux, request.amount / rate);
 			}
 
-			await using var lockhandle = await services.economy.AcquireEconomyLock(CreatorType.User, safeUserSession.userId);
-			
-			await services.economy.SetUserBalance(safeUserSession.userId, NewRobux, NewTix);
-			
 			return Ok();
 		}
 		catch (Exception ex)

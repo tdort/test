@@ -364,6 +364,8 @@ public class CurrencyExchangeService : ServiceBase, IService
 
     public async Task PlaceOrder(long userId, long amount, long exchangeRate1K, CurrencyType sourceCurrency, bool isMarketOrder)
     {
+        if (sourceCurrency != CurrencyType.Robux && sourceCurrency != CurrencyType.Tickets)
+            throw new RobloxException(400, 0, "Invalid currency");
         if (exchangeRate1K <= 0 || exchangeRate1K >= (1000 * 10000))
             throw new RobloxException(400, 0, "BadRequest");
 
